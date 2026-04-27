@@ -10,7 +10,7 @@
       "https://docs.google.com",
       "https://*.googleusercontent.com",
       "https://sheets.googleapis.com",
-      "https://translate.googleapis.com"
+      "https://api.mymemory.translated.net"
     ]
   }
 }

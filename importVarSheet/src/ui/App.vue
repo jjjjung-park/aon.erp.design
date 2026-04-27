@@ -62,6 +62,11 @@
       <p class="text-[11px] text-gray-500">
         탭 목록/값을 읽기 위해 Sheets API를 사용합니다.
       </p>
+      <p class="text-[11px] text-gray-500">
+        <code class="text-[10px] bg-gray-100 px-1 rounded">name</code>이 비어 있으면
+        <a href="https://mymemory.translated.net/" target="_blank" rel="noopener noreferrer" class="text-blue-600 underline">MyMemory</a>
+        로 <code class="text-[10px] bg-gray-100 px-1 rounded">label</code>을 ko→en 번역해 변수명을 만듭니다.
+      </p>
     </section>
 
     <section class="flex items-end gap-2">

@@ -33,6 +33,7 @@ const STORAGE_KEYS = {
 async function readSettings(): Promise<Settings> {
   const apiKey = (await figma.clientStorage.getAsync(STORAGE_KEYS.apiKey)) as string | undefined
   const recentUrls = (await figma.clientStorage.getAsync(STORAGE_KEYS.recentUrls)) as string[] | undefined
+
   return {
     apiKey: typeof apiKey === 'string' ? apiKey : '',
     recentUrls: Array.isArray(recentUrls) ? recentUrls.filter((u) => typeof u === 'string') : [],
@@ -56,23 +57,37 @@ function addRecentUrl(recentUrls: string[], url: string): string[] {
   return deduped.slice(0, 10)
 }
 
-async function translateToEnglish(text: string): Promise<string> {
+/** https://api.mymemory.translated.net — 무료 할당량(일일 한도 있음) */
+async function translateWithMyMemory(text: string): Promise<string> {
   const q = text.trim()
   if (!q) return ''
 
-  // Unofficial but widely-used endpoint (no API key). Public sheets use-case only.
   const url =
-    'https://translate.googleapis.com/translate_a/single' +
-    `?client=gtx&sl=auto&tl=en&dt=t&q=${encodeURIComponent(q)}`
+    'https://api.mymemory.translated.net/get' +
+    `?q=${encodeURIComponent(q)}&langpair=ko|en`
 
   const res = await fetch(url)
-  if (!res.ok) throw new Error('자동 번역에 실패했습니다. 네트워크/도메인 허용을 확인해주세요.')
+  if (!res.ok) {
+    throw new Error('MyMemory 번역 요청 실패. 네트워크/도메인 허용을 확인해주세요.')
+  }
 
   const data: any = await res.json()
-  // data[0] is array of translation chunks: [[translated, original, ...], ...]
-  const chunks: any[] = Array.isArray(data?.[0]) ? data[0] : []
-  const translated = chunks.map((c) => String(c?.[0] ?? '')).join('')
-  return translated.trim()
+  const status = data?.responseStatus
+  const ok = status === 200 || status === '200'
+  const translated = String(data?.responseData?.translatedText ?? '').trim()
+
+  if (!ok) {
+    const detail = String(data?.responseDetails ?? data?.quotaFinished ?? '').trim()
+    throw new Error(
+      detail ? `MyMemory: ${detail}` : 'MyMemory 번역에 실패했습니다. 할당량 초과일 수 있습니다.',
+    )
+  }
+  if (!translated) throw new Error('MyMemory가 빈 번역을 반환했습니다.')
+  return translated
+}
+
+async function translateToEnglish(text: string): Promise<string> {
+  return translateWithMyMemory(text)
 }
 
 function toCamelCaseVariableName(text: string): string {
