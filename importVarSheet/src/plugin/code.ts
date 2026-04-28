@@ -91,10 +91,19 @@ async function translateToEnglish(text: string): Promise<string> {
 }
 
 function toCamelCaseVariableName(text: string): string {
-  const cleaned = text
-    .trim()
+  const trimmed = text.trim().replace(/['"]/g, '')
+  const hasPhraseBreaks = /\s/.test(trimmed) || /[^a-zA-Z0-9]/.test(trimmed)
+
+  if (trimmed && !hasPhraseBreaks && /^[a-zA-Z0-9]+$/.test(trimmed)) {
+    if (/^[0-9]+$/.test(trimmed)) return 'variable'
+    if (trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed)) {
+      return trimmed.toLowerCase()
+    }
+    return trimmed.charAt(0).toLowerCase() + trimmed.slice(1)
+  }
+
+  const cleaned = trimmed
     .toLowerCase()
-    .replace(/['"]/g, '')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
 
