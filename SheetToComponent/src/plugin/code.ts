@@ -32,6 +32,8 @@ type UiToPluginMessage =
       apiKey: string
       keywordRows: SheetRow[]
       tabScope?: string
+      /** 복제 인스턴스 나열: 아래로 | 오른쪽으로 (미지정 시 아래) */
+      generateLayout?: 'below' | 'right'
     }
   | { type: 'close' }
 
@@ -409,18 +411,33 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
         recentUrls: addRecentUrl(prev.recentUrls, msg.url),
       })
 
+      const layout = msg.generateLayout === 'right' ? 'right' : 'below'
+      const gap = 20
+      const spacing = 16
       const generated: SceneNode[] = []
-      let currentY = selection.y + selection.height + 20
 
-      for (const row of msg.keywordRows) {
-        const clone = selection.clone()
-        clone.x = selection.x
-        clone.y = currentY
-        currentY += clone.height + 16
-        figma.currentPage.appendChild(clone)
-
-        applyRowToSelectionClone(clone, row)
-        generated.push(clone)
+      if (layout === 'right') {
+        let currentX = selection.x + selection.width + gap
+        for (const row of msg.keywordRows) {
+          const clone = selection.clone()
+          clone.x = currentX
+          clone.y = selection.y
+          currentX += clone.width + spacing
+          figma.currentPage.appendChild(clone)
+          applyRowToSelectionClone(clone, row)
+          generated.push(clone)
+        }
+      } else {
+        let currentY = selection.y + selection.height + gap
+        for (const row of msg.keywordRows) {
+          const clone = selection.clone()
+          clone.x = selection.x
+          clone.y = currentY
+          currentY += clone.height + spacing
+          figma.currentPage.appendChild(clone)
+          applyRowToSelectionClone(clone, row)
+          generated.push(clone)
+        }
       }
 
       figma.currentPage.selection = generated

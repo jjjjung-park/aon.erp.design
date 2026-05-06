@@ -163,6 +163,17 @@
             이 존재하면 각각 시트의 값으로 자동 연결합니다. (2개 이상 있어도 각각 연결)
           </div>
         </div>
+
+        <div class="pt-2">
+          <label class="text-xs font-medium text-gray-700 block mb-1">복제 배치</label>
+          <select
+            v-model="generateLayout"
+            class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="below">아래로 (세로)</option>
+            <option value="right">오른쪽으로 (가로)</option>
+          </select>
+        </div>
       </section>
 
       <p v-if="statusMessage" class="text-xs text-gray-500">{{ statusMessage }}</p>
@@ -219,6 +230,7 @@ const rows = ref<SheetRow[]>([])
 const selectedRowIds = ref<Set<string>>(new Set())
 
 const selection = ref<SelectionInfo | null>(null)
+const generateLayout = ref<'below' | 'right'>('below')
 
 const isLoadingTabs = ref(false)
 const isSearching = ref(false)
@@ -450,6 +462,7 @@ function connectAndGenerate() {
       apiKey: apiKey.value,
       keywordRows,
       tabScope: tabScope.value || undefined,
+      generateLayout: generateLayout.value,
     },
   }, '*')
 }
