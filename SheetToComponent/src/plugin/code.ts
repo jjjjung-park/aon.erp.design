@@ -301,6 +301,50 @@ function sendSelection() {
   figma.ui.postMessage(out)
 }
 
+/** 선택에서 페이지까지 올라갈 때, 페이지의 직접 자식인 조상 (최상위 컨테이너) */
+function getTopLevelAncestorOnPage(node: SceneNode): SceneNode {
+  let n: BaseNode | null = node
+  while (n.parent && n.parent.type !== 'PAGE') {
+    n = n.parent
+  }
+  return n as SceneNode
+}
+
+/**
+ * 복제본을 붙일 부모: 중첩 구조면 최상위(페이지 직속) 조상 안에 넣고,
+ * 선택이 이미 페이지 직속이면 페이지에 둔다(자기 안에 중첩 방지).
+ */
+function getCloneParent(selection: SceneNode): ChildrenMixin {
+  const top = getTopLevelAncestorOnPage(selection)
+  if (top === selection && selection.parent?.type === 'PAGE') {
+    return figma.currentPage
+  }
+  return top as ChildrenMixin
+}
+
+/** cloneParent 좌표계에서 선택 노드의 배치 사각형 (width/height는 바운딩 박스 기준) */
+function getPlacementRectInParent(selection: SceneNode, cloneParent: ChildrenMixin): {
+  x: number
+  y: number
+  width: number
+  height: number
+} {
+  if (cloneParent === figma.currentPage) {
+    return { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
+  }
+  const selBox = selection.absoluteBoundingBox
+  const parBox = 'absoluteBoundingBox' in cloneParent ? cloneParent.absoluteBoundingBox : null
+  if (!selBox || !parBox) {
+    return { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
+  }
+  return {
+    x: selBox.x - parBox.x,
+    y: selBox.y - parBox.y,
+    width: selBox.width,
+    height: selBox.height,
+  }
+}
+
 figma.on('selectionchange', sendSelection)
 setTimeout(sendSelection, 100)
 
@@ -414,27 +458,29 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       const layout = msg.generateLayout === 'right' ? 'right' : 'below'
       const gap = 20
       const spacing = 16
+      const cloneParent = getCloneParent(selection)
+      const rel = getPlacementRectInParent(selection, cloneParent)
       const generated: SceneNode[] = []
 
       if (layout === 'right') {
-        let currentX = selection.x + selection.width + gap
+        let currentX = rel.x + rel.width + gap
         for (const row of msg.keywordRows) {
           const clone = selection.clone()
           clone.x = currentX
-          clone.y = selection.y
+          clone.y = rel.y
           currentX += clone.width + spacing
-          figma.currentPage.appendChild(clone)
+          cloneParent.appendChild(clone)
           applyRowToSelectionClone(clone, row)
           generated.push(clone)
         }
       } else {
-        let currentY = selection.y + selection.height + gap
+        let currentY = rel.y + rel.height + gap
         for (const row of msg.keywordRows) {
           const clone = selection.clone()
-          clone.x = selection.x
+          clone.x = rel.x
           clone.y = currentY
           currentY += clone.height + spacing
-          figma.currentPage.appendChild(clone)
+          cloneParent.appendChild(clone)
           applyRowToSelectionClone(clone, row)
           generated.push(clone)
         }
