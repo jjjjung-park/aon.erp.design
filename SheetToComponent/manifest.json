@@ -2,7 +2,7 @@
   "name": "SheetToComponent",
   "id": "SheetToComponent-local",
   "api": "1.0.0",
-  "main": "plugin-dist/code.js",
+  "main": "dist/code.js",
   "ui": "dist/index.html",
   "editorType": ["figma"],
   "networkAccess": {

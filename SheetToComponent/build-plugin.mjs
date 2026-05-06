@@ -7,6 +7,7 @@ const root = path.dirname(fileURLToPath(import.meta.url))
 process.chdir(root)
 
 const htmlPath = path.join('dist', 'index.html')
+const outPath = path.join('dist', 'code.js')
 
 function readHtml() {
   if (!fs.existsSync(htmlPath)) {
@@ -16,13 +17,13 @@ function readHtml() {
   return fs.readFileSync(htmlPath, 'utf8')
 }
 
-fs.mkdirSync('plugin-dist', { recursive: true })
+fs.mkdirSync('dist', { recursive: true })
 
 esbuild
   .build({
     entryPoints: ['src/plugin/code.ts'],
     bundle: true,
-    outfile: 'plugin-dist/code.js',
+    outfile: outPath,
     target: 'es6',
     define: { __html__: JSON.stringify(readHtml()) },
   })

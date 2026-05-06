@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite build --watch --mode development",
-    "dev:ui": "vite build --watch --mode development",
+    "dev": "npm run build",
+    "dev:ui": "vite build --mode development",
     "dev:plugin": "node build-plugin.mjs",
     "build": "npm run build:ui && npm run build:plugin",
     "build:ui": "vite build",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "@figma/plugin-typings": "^1.101.0",
     "@tailwindcss/vite": "^4.1.4",
+    "@types/node": "^25.6.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "esbuild": "^0.25.3",
     "tailwindcss": "^4.1.4",
