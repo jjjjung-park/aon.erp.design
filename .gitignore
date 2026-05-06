@@ -10,6 +10,7 @@ pnpm-debug.log*
 
 ## Builds
 dist/
+!SheetToComponent/dist/
 build/
 coverage/
 
