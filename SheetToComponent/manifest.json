@@ -1,5 +1,5 @@
 {
-  "name": "SheetToComponent",
+  "name": "시트 컴포넌트 생성기",
   "id": "SheetToComponent-local",
   "api": "1.0.0",
   "main": "dist/code.js",

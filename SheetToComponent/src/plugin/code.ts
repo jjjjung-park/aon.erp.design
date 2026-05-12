@@ -12,11 +12,36 @@ type SheetRow = {
   description: string
 }
 
+/** setPluginData로 저장 — 플러그인이 마지막으로 적용한 시트 행 */
+type LastAppliedRowPayload = {
+  v: 1
+  tabTitle: string
+  rowNumber: number
+  name: string
+  /** 적용 시 setProperties에 실제로 넣은 프로퍼티만 */
+  appliedProps: ('label' | 'value' | 'description')[]
+  snapshot: { label: string; value: string; description: string }
+}
+
+type InstanceApplyTracking = {
+  instanceId: string
+  instanceName: string
+  tabTitle: string
+  rowNumber: number
+  rowName: string
+  /** 시트의 label 열 값 (적용 시점 스냅샷) */
+  sheetLabel: string
+  appliedProps: ('label' | 'value' | 'description')[]
+  driftedProps: ('label' | 'value' | 'description')[]
+}
+
 type SelectionInfo = {
   nodeId: string
   name: string
   kind: 'INSTANCE' | 'COMPONENT' | 'CONTAINER' | 'UNSUPPORTED'
   textProperties: { name: string }[]
+  /** 플러그인 적용 기록이 있는 하위 인스턴스 (없으면 생략 또는 빈 배열) */
+  applyTracking?: { instances: InstanceApplyTracking[] }
 }
 
 type UiToPluginMessage =
@@ -57,6 +82,9 @@ const STORAGE_KEYS = {
   apiKey: 'SheetToComponent.apiKey',
   recentUrls: 'SheetToComponent.recentUrls',
 } as const
+
+/** InstanceNode.setPluginData — 마지막 적용 행 JSON */
+const PLUGIN_DATA_KEY_LAST_ROW = 'SheetToComponent.lastAppliedRowV1'
 
 async function readSettings(): Promise<Settings> {
   const apiKey = (await figma.clientStorage.getAsync(STORAGE_KEYS.apiKey)) as string | undefined
@@ -178,7 +206,7 @@ function rowMatchesKeyword(row: SheetRow, keyword: string): boolean {
 
 function extractTextPropNames(targets: (InstanceNode | ComponentNode)[]): { name: string }[] {
   const out: { name: string }[] = []
-  const seen = new Set<string>()
+  const seenBase = new Set<string>()
 
   for (const t of targets) {
     const props = t.type === 'INSTANCE' ? t.componentProperties : t.componentPropertyDefinitions
@@ -186,12 +214,29 @@ function extractTextPropNames(targets: (InstanceNode | ComponentNode)[]): { name
     for (const propName of Object.keys(props)) {
       const def: any = (props as any)[propName]
       if (!def || def.type !== 'TEXT') continue
-      const key = propName
-      if (seen.has(key)) continue
-      seen.add(key)
+      const base = normalizePropKeyBase(propName)
+      if (seenBase.has(base)) continue
+      seenBase.add(base)
       out.push({ name: propName.split('#')[0] })
     }
   }
+  return out
+}
+
+/** 프레임 등 중간 컨테이너를 통과해 서브트리의 모든 Instance/Component 수집 */
+function collectInstanceOrComponentDescendants(root: SceneNode): (InstanceNode | ComponentNode)[] {
+  const out: (InstanceNode | ComponentNode)[] = []
+  function visit(n: BaseNode) {
+    if (n.type === 'INSTANCE' || n.type === 'COMPONENT') {
+      out.push(n as InstanceNode | ComponentNode)
+    }
+    if ('children' in n) {
+      for (const child of (n as ChildrenMixin).children) {
+        visit(child)
+      }
+    }
+  }
+  visit(root)
   return out
 }
 
@@ -199,15 +244,7 @@ function getSelectionInfo(): SelectionInfo | null {
   const selection = figma.currentPage.selection[0]
   if (!selection) return null
 
-  const targets: (InstanceNode | ComponentNode)[] = []
-
-  if (selection.type === 'INSTANCE' || selection.type === 'COMPONENT') {
-    targets.push(selection)
-  } else if ('children' in selection) {
-    for (const child of (selection as ChildrenMixin).children) {
-      if (child.type === 'INSTANCE' || child.type === 'COMPONENT') targets.push(child)
-    }
-  }
+  const targets = collectInstanceOrComponentDescendants(selection)
 
   const kind: SelectionInfo['kind'] =
     selection.type === 'INSTANCE'
@@ -223,6 +260,7 @@ function getSelectionInfo(): SelectionInfo | null {
     name: selection.name,
     kind,
     textProperties: extractTextPropNames(targets),
+    applyTracking: buildApplyTracking(selection),
   }
 }
 
@@ -243,21 +281,79 @@ function resolveKeyByBaseName(
   return Object.keys(componentProperties).find((k) => normalizePropKeyBase(k) === want)
 }
 
-function hasAnyMatchingSheetPropsInInstance(inst: InstanceNode): boolean {
-  if (!inst.componentProperties) return false
+function readLastAppliedPayload(inst: InstanceNode): LastAppliedRowPayload | null {
+  try {
+    const raw = inst.getPluginData(PLUGIN_DATA_KEY_LAST_ROW)
+    if (!raw || !String(raw).trim()) return null
+    const o = JSON.parse(raw) as LastAppliedRowPayload
+    if (o?.v !== 1 || !o.snapshot || !Array.isArray(o.appliedProps)) return null
+    return o
+  } catch {
+    return null
+  }
+}
+
+function getInstanceTextPropCurrent(
+  inst: InstanceNode,
+  baseName: 'label' | 'value' | 'description',
+): string {
+  const props = inst.componentProperties
+  if (!props) return ''
+  const key = resolveKeyByBaseName(props, baseName)
+  if (!key) return ''
+  const p = props[key]
+  if (p && p.type === 'TEXT') return String(p.value ?? '')
+  return ''
+}
+
+function computeDriftedProps(
+  inst: InstanceNode,
+  payload: LastAppliedRowPayload,
+): ('label' | 'value' | 'description')[] {
+  const drift: ('label' | 'value' | 'description')[] = []
+  for (const base of payload.appliedProps) {
+    if (getInstanceTextPropCurrent(inst, base) !== payload.snapshot[base]) drift.push(base)
+  }
+  return drift
+}
+
+function buildApplyTracking(selection: SceneNode): { instances: InstanceApplyTracking[] } {
+  const instances: InstanceApplyTracking[] = []
+  for (const t of collectInstanceOrComponentDescendants(selection)) {
+    if (t.type !== 'INSTANCE') continue
+    const payload = readLastAppliedPayload(t)
+    if (!payload) continue
+    instances.push({
+      instanceId: t.id,
+      instanceName: t.name,
+      tabTitle: payload.tabTitle,
+      rowNumber: payload.rowNumber,
+      rowName: payload.name,
+      sheetLabel: payload.snapshot.label,
+      appliedProps: payload.appliedProps,
+      driftedProps: computeDriftedProps(t, payload),
+    })
+  }
+  return { instances }
+}
+
+function hasAnyMatchingSheetPropsInTarget(t: InstanceNode | ComponentNode): boolean {
+  const props =
+    t.type === 'INSTANCE'
+      ? t.componentProperties
+      : (t as ComponentNode).componentPropertyDefinitions
+  if (!props) return false
+  const cp = props as ComponentProperties
   return (
-    !!resolveKeyByBaseName(inst.componentProperties, 'label') ||
-    !!resolveKeyByBaseName(inst.componentProperties, 'value') ||
-    !!resolveKeyByBaseName(inst.componentProperties, 'description')
+    !!resolveKeyByBaseName(cp, 'label') ||
+    !!resolveKeyByBaseName(cp, 'value') ||
+    !!resolveKeyByBaseName(cp, 'description')
   )
 }
 
 function selectionHasAnyMatchingSheetProps(selection: SceneNode): boolean {
-  if (selection.type === 'INSTANCE') return hasAnyMatchingSheetPropsInInstance(selection)
-  if ('children' in selection) {
-    for (const child of (selection as ChildrenMixin).children) {
-      if (child.type === 'INSTANCE' && hasAnyMatchingSheetPropsInInstance(child)) return true
-    }
+  for (const t of collectInstanceOrComponentDescendants(selection)) {
+    if (hasAnyMatchingSheetPropsInTarget(t)) return true
   }
   return false
 }
@@ -268,30 +364,49 @@ function applyRowToInstance(
 ) {
   if (!inst.componentProperties) return
   const updates: Record<string, string> = {}
+  const appliedProps: ('label' | 'value' | 'description')[] = []
 
   const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
   const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
   const descKey = resolveKeyByBaseName(inst.componentProperties, 'description')
 
-  if (labelKey) updates[labelKey] = row.label
-  if (valueKey) updates[valueKey] = row.value
-  if (descKey) updates[descKey] = row.description
+  if (labelKey) {
+    updates[labelKey] = row.label
+    appliedProps.push('label')
+  }
+  if (valueKey) {
+    updates[valueKey] = row.value
+    appliedProps.push('value')
+  }
+  if (descKey) {
+    updates[descKey] = row.description
+    appliedProps.push('description')
+  }
 
-  if (Object.keys(updates).length > 0) inst.setProperties(updates)
+  if (Object.keys(updates).length > 0) {
+    inst.setProperties(updates)
+    const payload: LastAppliedRowPayload = {
+      v: 1,
+      tabTitle: row.tabTitle,
+      rowNumber: row.rowNumber,
+      name: row.name,
+      appliedProps,
+      snapshot: {
+        label: row.label,
+        value: row.value,
+        description: row.description,
+      },
+    }
+    inst.setPluginData(PLUGIN_DATA_KEY_LAST_ROW, JSON.stringify(payload))
+  }
 }
 
 function applyRowToSelectionClone(
   clone: SceneNode,
   row: SheetRow,
 ) {
-  if (clone.type === 'INSTANCE') {
-    applyRowToInstance(clone, row)
-    return
-  }
-  if ('children' in clone) {
-    for (const child of (clone as ChildrenMixin).children) {
-      if (child.type === 'INSTANCE') applyRowToInstance(child, row)
-    }
+  for (const t of collectInstanceOrComponentDescendants(clone)) {
+    if (t.type === 'INSTANCE') applyRowToInstance(t, row)
   }
 }
 

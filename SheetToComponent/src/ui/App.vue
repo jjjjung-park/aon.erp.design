@@ -148,6 +148,37 @@
             <div class="text-[11px] text-blue-600 mt-0.5">
               {{ selection.kind }} / TEXT 프로퍼티 {{ selection.textProperties.length }}개
             </div>
+            <div
+              v-if="applyInstances.length > 0"
+              class="mt-2 pt-2 border-t border-blue-200/80 space-y-1.5"
+            >
+              <div class="text-[11px] font-semibold text-blue-900">플러그인 적용 기록</div>
+              <p class="text-[10px] text-blue-700/90 leading-relaxed">
+                이 플러그인으로 값을 넣은 인스턴스 {{ applyInstances.length }}개 · 마지막 적용 시점의 시트 행이 노드에 저장됩니다.
+              </p>
+              <ul class="max-h-28 overflow-y-auto space-y-1 text-[10px] text-blue-800">
+                <li
+                  v-for="a in applyInstances.slice(0, 8)"
+                  :key="a.instanceId"
+                  class="leading-snug pl-1 border-l-2 border-blue-300"
+                >
+                  <span class="font-medium">{{ a.instanceName }}</span>
+                  · {{ a.tabTitle }} {{ a.rowNumber }}행 · name {{ a.rowName || '—' }}
+                  <span v-if="a.sheetLabel" class="text-blue-600"> · 시트 label「{{ a.sheetLabel }}」</span>
+                </li>
+              </ul>
+              <p v-if="applyInstances.length > 8" class="text-[10px] text-blue-600">
+                외 {{ applyInstances.length - 8 }}개…
+              </p>
+            </div>
+            <div
+              v-if="hasApplyDrift"
+              class="mt-2 p-2 rounded-md bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-relaxed"
+            >
+              <span class="font-semibold">적용 이후 피그마에서 값이 바뀌었습니다.</span>
+              변경된 항목의 시트 label:
+              <span class="font-medium">{{ driftedSheetLabels.join(', ') }}</span>
+            </div>
           </template>
           <div v-else class="text-[12px] text-gray-500">
             인스턴스(또는 인스턴스를 포함한 레이어)를 선택해주세요.
@@ -211,11 +242,23 @@ type SheetRow = {
   description: string
 }
 
+type InstanceApplyTracking = {
+  instanceId: string
+  instanceName: string
+  tabTitle: string
+  rowNumber: number
+  rowName: string
+  sheetLabel: string
+  appliedProps: ('label' | 'value' | 'description')[]
+  driftedProps: ('label' | 'value' | 'description')[]
+}
+
 type SelectionInfo = {
   nodeId: string
   name: string
   kind: 'INSTANCE' | 'COMPONENT' | 'CONTAINER' | 'UNSUPPORTED'
   textProperties: { name: string }[]
+  applyTracking?: { instances: InstanceApplyTracking[] }
 }
 
 const sheetUrl = ref('')
@@ -431,6 +474,23 @@ const showNoMatchingPropsWarning = computed(() => {
   if (!selection.value) return false
   return !hasAnyMatchingProps.value
 })
+
+const applyInstances = computed(() => selection.value?.applyTracking?.instances ?? [])
+
+const driftedSheetLabels = computed(() => {
+  const list = applyInstances.value.filter((i) => i.driftedProps.length > 0)
+  const labels: string[] = []
+  const seen = new Set<string>()
+  for (const i of list) {
+    const lab = String(i.sheetLabel ?? '').trim() || String(i.rowName ?? '').trim() || '(이름 없음)'
+    if (seen.has(lab)) continue
+    seen.add(lab)
+    labels.push(lab)
+  }
+  return labels
+})
+
+const hasApplyDrift = computed(() => driftedSheetLabels.value.length > 0)
 
 const canGenerate = computed(() => {
   if (!selection.value) return false
