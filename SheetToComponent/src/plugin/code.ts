@@ -12,36 +12,13 @@ type SheetRow = {
   description: string
 }
 
-/** setPluginData로 저장 — 플러그인이 마지막으로 적용한 시트 행 */
-type LastAppliedRowPayload = {
-  v: 1
-  tabTitle: string
-  rowNumber: number
-  name: string
-  /** 적용 시 setProperties에 실제로 넣은 프로퍼티만 */
-  appliedProps: ('label' | 'value' | 'description')[]
-  snapshot: { label: string; value: string; description: string }
-}
-
-type InstanceApplyTracking = {
-  instanceId: string
-  instanceName: string
-  tabTitle: string
-  rowNumber: number
-  rowName: string
-  /** 시트의 label 열 값 (적용 시점 스냅샷) */
-  sheetLabel: string
-  appliedProps: ('label' | 'value' | 'description')[]
-  driftedProps: ('label' | 'value' | 'description')[]
-}
-
 type SelectionInfo = {
   nodeId: string
   name: string
   kind: 'INSTANCE' | 'COMPONENT' | 'CONTAINER' | 'UNSUPPORTED'
   textProperties: { name: string }[]
-  /** 플러그인 적용 기록이 있는 하위 인스턴스 (없으면 생략 또는 빈 배열) */
-  applyTracking?: { instances: InstanceApplyTracking[] }
+  /** 서브트리(깊이 무관)에서 label/value/description TEXT 매핑 가능 여부 */
+  hasMappableSheetProps: boolean
 }
 
 type UiToPluginMessage =
@@ -56,42 +33,100 @@ type UiToPluginMessage =
       url: string
       apiKey: string
       keywordRows: SheetRow[]
+      /** 매칭 직후 스냅샷으로 저장할 현재 UI의 전체 시트 행 */
+      snapshotRows: SheetRow[]
       tabScope?: string
       /** 복제 인스턴스 나열: 아래로 | 오른쪽으로 (미지정 시 아래) */
       generateLayout?: 'below' | 'right'
     }
+  | { type: 'sheet-diff-request'; url: string; currentRows: SheetRow[] }
+  | { type: 'sync-value-changes'; valueChangedItems: SheetDiffItem[]; labelChangedItems?: SheetLabelChangedItem[] }
   | { type: 'close' }
+
+type RecentSheet = { url: string; title: string }
+
+/** label 기준 diff 한 줄 (UI 표시용) */
+type SheetDiffItem = {
+  label: string
+  tabTitle: string
+  rowNumber: number
+  name: string
+  value: string
+  previousValue?: string
+}
+
+/** 동일 행(tabTitle + rowNumber)에서 label 텍스트 자체가 바뀐 경우 */
+type SheetLabelChangedItem = {
+  oldLabel: string
+  newLabel: string
+  tabTitle: string
+  rowNumber: number
+  value: string
+}
 
 type PluginToUiMessage =
   | { type: 'selection'; selection: SelectionInfo | null }
-  | { type: 'settings'; apiKey: string; recentUrls: string[] }
-  | { type: 'tabs'; tabs: { sheetId: number; title: string }[] }
-  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[] }
+  | { type: 'settings'; apiKey: string; recentSheets: RecentSheet[] }
+  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[] }
+  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[] }
   | { type: 'search-results'; keyword: string; rows: SheetRow[] }
-  | { type: 'done'; created: number }
+  | {
+      type: 'sheet-diff'
+      hasSnapshot: boolean
+      sameSpreadsheet: boolean
+      added: SheetDiffItem[]
+      deleted: SheetDiffItem[]
+      valueChanged: SheetDiffItem[]
+      labelChanged: SheetLabelChangedItem[]
+    }
+  | { type: 'done'; created: number; appliedInPlace?: number }
+  | { type: 'sync-done'; updated: number }
   | { type: 'error'; message: string }
 
 // ── Settings (clientStorage) ────────────────────────────────────────────────────
 
 type Settings = {
   apiKey: string
-  recentUrls: string[]
+  recentSheets: RecentSheet[]
 }
 
 const STORAGE_KEYS = {
   apiKey: 'SheetToComponent.apiKey',
-  recentUrls: 'SheetToComponent.recentUrls',
+  recentSheets: 'SheetToComponent.recentSheets',
+  /** 구버전 string[] — 읽기만 하고 마이그레이션 후 저장 시 제거 */
+  recentUrlsLegacy: 'SheetToComponent.recentUrls',
 } as const
 
-/** InstanceNode.setPluginData — 마지막 적용 행 JSON */
-const PLUGIN_DATA_KEY_LAST_ROW = 'SheetToComponent.lastAppliedRowV1'
+function fallbackSheetTitle(url: string): string {
+  const id = parseSpreadsheetId(url)
+  if (id) return `스프레드시트 (${id.slice(0, 8)}…)`
+  const u = url.trim()
+  return u.length > 36 ? `${u.slice(0, 20)}…${u.slice(-12)}` : u || '시트'
+}
 
 async function readSettings(): Promise<Settings> {
   const apiKey = (await figma.clientStorage.getAsync(STORAGE_KEYS.apiKey)) as string | undefined
-  const recentUrls = (await figma.clientStorage.getAsync(STORAGE_KEYS.recentUrls)) as string[] | undefined
+  const rawSheets = (await figma.clientStorage.getAsync(STORAGE_KEYS.recentSheets)) as unknown
+  const legacyUrls = (await figma.clientStorage.getAsync(STORAGE_KEYS.recentUrlsLegacy)) as string[] | undefined
+
+  let recentSheets: RecentSheet[] = []
+  if (Array.isArray(rawSheets)) {
+    for (const x of rawSheets) {
+      if (!x || typeof (x as RecentSheet).url !== 'string') continue
+      const url = String((x as RecentSheet).url).trim()
+      if (!url) continue
+      const t = typeof (x as RecentSheet).title === 'string' ? String((x as RecentSheet).title).trim() : ''
+      recentSheets.push({ url, title: t || fallbackSheetTitle(url) })
+    }
+  } else if (Array.isArray(legacyUrls)) {
+    recentSheets = legacyUrls
+      .filter((u): u is string => typeof u === 'string' && u.trim().length > 0)
+      .map((url) => ({ url: url.trim(), title: fallbackSheetTitle(url.trim()) }))
+  }
+
   return {
     apiKey: typeof apiKey === 'string' ? apiKey : '',
-    recentUrls: Array.isArray(recentUrls) ? recentUrls.filter((u) => typeof u === 'string') : [],
+    recentSheets: recentSheets.slice(0, 10),
   }
 }
 
@@ -99,20 +134,284 @@ async function writeSettings(patch: Partial<Settings>): Promise<void> {
   const current = await readSettings()
   const next: Settings = {
     apiKey: patch.apiKey ?? current.apiKey,
-    recentUrls: patch.recentUrls ?? current.recentUrls,
+    recentSheets: patch.recentSheets ?? current.recentSheets,
   }
   await figma.clientStorage.setAsync(STORAGE_KEYS.apiKey, next.apiKey)
-  await figma.clientStorage.setAsync(STORAGE_KEYS.recentUrls, next.recentUrls)
+  await figma.clientStorage.setAsync(STORAGE_KEYS.recentSheets, next.recentSheets)
+  await figma.clientStorage.setAsync(STORAGE_KEYS.recentUrlsLegacy, [])
 }
 
-function addRecentUrl(recentUrls: string[], url: string): string[] {
+function addRecentSheet(list: RecentSheet[], url: string, title: string): RecentSheet[] {
   const u = url.trim()
-  if (!u) return recentUrls
-  const deduped = [u, ...recentUrls.filter((x) => x !== u)]
+  if (!u) return list
+  const t = title.trim() || fallbackSheetTitle(u)
+  const deduped = [{ url: u, title: t }, ...list.filter((x) => x.url.trim() !== u)]
   return deduped.slice(0, 10)
 }
 
+async function fetchSpreadsheetTitle(spreadsheetId: string, apiKey: string): Promise<string> {
+  const url =
+    `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}` +
+    `?fields=properties(title)&key=${encodeURIComponent(apiKey)}`
+  const res = await fetch(url)
+  if (!res.ok) return ''
+  const data: any = await res.json()
+  return String(data?.properties?.title ?? '').trim()
+}
+
+async function upsertRecentSheet(prev: RecentSheet[], sheetUrl: string, apiKey: string): Promise<RecentSheet[]> {
+  const id = parseSpreadsheetId(sheetUrl)
+  if (!id) return prev
+  let title = ''
+  try {
+    title = await fetchSpreadsheetTitle(id, apiKey)
+  } catch {
+    title = ''
+  }
+  if (!title) {
+    title = prev.find((x) => x.url.trim() === sheetUrl.trim())?.title ?? fallbackSheetTitle(sheetUrl)
+  }
+  return addRecentSheet(prev, sheetUrl, title)
+}
+
+async function postSettingsToUi(): Promise<void> {
+  figma.ui.postMessage({ type: 'settings', ...(await readSettings()) } satisfies PluginToUiMessage)
+}
+
+// ── Sheet snapshot (매칭 시점 시트 → 선택 루트 노드 pluginData) ─────────────────
+
+const SHEET_SNAPSHOT_PLUGIN_KEY = 'SheetToComponent.sheetMatchSnapshotV1'
+const CLONE_SOURCE_PLUGIN_KEY = 'SheetToComponent.cloneSourceId'
+
+type PersistedSheetSnapshotV1 = {
+  v: 1
+  spreadsheetId: string
+  capturedAt: string
+  rows: SheetRow[]
+}
+
+type PersistedSheetSnapshotV2 = {
+  v: 2
+  spreadsheetId: string
+  capturedAt: string
+  rows: SheetRow[]
+  /** label key → 연결된 Figma node ID 목록 (복제/in-place 모두) */
+  labelToNodeIds: Record<string, string[]>
+}
+
+type NormalizedSheetSnapshot = {
+  spreadsheetId: string
+  capturedAt: string
+  rows: SheetRow[]
+  labelToNodeIds: Record<string, string[]>
+}
+
+function labelKeyForDiff(rawLabel: string): string {
+  const t = String(rawLabel ?? '').trim()
+  return t.length === 0 ? '\0empty' : t
+}
+
+function labelDisplayFromKey(key: string): string {
+  return key === '\0empty' ? '(빈 label)' : key
+}
+
+/** 동일 label 문자열이 여러 행이면 마지막 행이 대표 */
+function indexRowsByLabelKey(rows: SheetRow[]): Map<string, SheetRow> {
+  const m = new Map<string, SheetRow>()
+  for (const r of rows) {
+    m.set(labelKeyForDiff(r.label), r)
+  }
+  return m
+}
+
+function rowToDiffItem(row: SheetRow, previousValue?: string): SheetDiffItem {
+  const key = labelKeyForDiff(row.label)
+  return {
+    label: labelDisplayFromKey(key),
+    tabTitle: row.tabTitle,
+    rowNumber: row.rowNumber,
+    name: row.name,
+    value: row.value,
+    ...(previousValue !== undefined ? { previousValue } : {}),
+  }
+}
+
+function computeSheetLabelDiff(prevRows: SheetRow[], currRows: SheetRow[]): {
+  added: SheetDiffItem[]
+  deleted: SheetDiffItem[]
+  valueChanged: SheetDiffItem[]
+} {
+  const P = indexRowsByLabelKey(prevRows)
+  const C = indexRowsByLabelKey(currRows)
+  const added: SheetDiffItem[] = []
+  const deleted: SheetDiffItem[] = []
+  const valueChanged: SheetDiffItem[] = []
+
+  for (const [key, row] of C) {
+    if (!P.has(key)) {
+      added.push(rowToDiffItem(row))
+    } else {
+      const pRow = P.get(key)!
+      if (String(pRow.value ?? '').trim() !== String(row.value ?? '').trim()) {
+        valueChanged.push(rowToDiffItem(row, pRow.value))
+      }
+    }
+  }
+  for (const [key, row] of P) {
+    if (!C.has(key)) {
+      deleted.push(rowToDiffItem(row))
+    }
+  }
+  return { added, deleted, valueChanged }
+}
+
+/**
+ * 동일 tabTitle + rowNumber를 기준으로 label 텍스트 자체가 바뀐 항목을 반환.
+ * (delete+add로 처리되던 label 변경을 rename으로 감지)
+ */
+function computeLabelChanges(prevRows: SheetRow[], currRows: SheetRow[]): SheetLabelChangedItem[] {
+  const prevIndex = new Map<string, SheetRow>()
+  for (const r of prevRows) {
+    prevIndex.set(`${r.tabTitle}::${r.rowNumber}`, r)
+  }
+  const result: SheetLabelChangedItem[] = []
+  for (const curr of currRows) {
+    const prev = prevIndex.get(`${curr.tabTitle}::${curr.rowNumber}`)
+    if (prev && prev.label.trim() !== curr.label.trim()) {
+      result.push({
+        oldLabel: prev.label.trim(),
+        newLabel: curr.label.trim(),
+        tabTitle: curr.tabTitle,
+        rowNumber: curr.rowNumber,
+        value: curr.value,
+      })
+    }
+  }
+  return result
+}
+
+function readSheetSnapshotFromNode(root: SceneNode): NormalizedSheetSnapshot | null {
+  if (!('getPluginData' in root) || typeof (root as { getPluginData?: (k: string) => string }).getPluginData !== 'function') {
+    return null
+  }
+  const raw = (root as { getPluginData: (k: string) => string }).getPluginData(SHEET_SNAPSHOT_PLUGIN_KEY)
+  if (!raw || !raw.trim()) return null
+  try {
+    const data = JSON.parse(raw) as PersistedSheetSnapshotV1 | PersistedSheetSnapshotV2
+    if (!data || typeof data.spreadsheetId !== 'string' || !Array.isArray(data.rows)) return null
+    if (data.v !== 1 && data.v !== 2) return null
+    return {
+      spreadsheetId: data.spreadsheetId,
+      capturedAt: data.capturedAt,
+      rows: data.rows,
+      labelToNodeIds: data.v === 2 ? data.labelToNodeIds : {},
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * 선택된 노드에서 스냅샷을 찾는 순서:
+ * 1. 노드 자신
+ * 2. 조상(ancestor) 탐색 — in-place 적용 케이스에서 인스턴스가 컨테이너 안에 있을 때
+ * 3. cloneSourceId 참조 — 생성된 클론에서 원본 템플릿으로 역추적
+ */
+function findSnapshotNode(node: SceneNode): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
+  const direct = readSheetSnapshotFromNode(node)
+  if (direct) return { node, snapshot: direct }
+
+  let parent: BaseNode | null = node.parent
+  while (parent && parent.type !== 'PAGE' && parent.type !== 'DOCUMENT') {
+    const parentSnap = readSheetSnapshotFromNode(parent as SceneNode)
+    if (parentSnap) return { node: parent as SceneNode, snapshot: parentSnap }
+    parent = parent.parent
+  }
+
+  if ('getPluginData' in node && typeof (node as { getPluginData?: unknown }).getPluginData === 'function') {
+    const sourceId = (node as { getPluginData: (k: string) => string }).getPluginData(CLONE_SOURCE_PLUGIN_KEY)
+    if (sourceId) {
+      const sourceNode = figma.getNodeById(sourceId)
+      if (sourceNode && !sourceNode.removed && sourceNode.type !== 'DOCUMENT' && sourceNode.type !== 'PAGE') {
+        const sourceSnap = readSheetSnapshotFromNode(sourceNode as SceneNode)
+        if (sourceSnap) return { node: sourceNode as SceneNode, snapshot: sourceSnap }
+      }
+    }
+  }
+
+  return null
+}
+
+function writeSheetSnapshotOnSelection(
+  root: SceneNode,
+  spreadsheetId: string,
+  rows: SheetRow[],
+  labelToNodeIds: Record<string, string[]> = {},
+): void {
+  if (!('setPluginData' in root) || typeof (root as { setPluginData?: (k: string, v: string) => void }).setPluginData !== 'function') {
+    return
+  }
+  const payload: PersistedSheetSnapshotV2 = {
+    v: 2,
+    spreadsheetId,
+    capturedAt: new Date().toISOString(),
+    rows: rows.map((r) => ({ ...r })),
+    labelToNodeIds,
+  }
+  try {
+    ;(root as { setPluginData: (k: string, v: string) => void }).setPluginData(
+      SHEET_SNAPSHOT_PLUGIN_KEY,
+      JSON.stringify(payload),
+    )
+  } catch {
+    // 용량·직렬화 실패 시 무시
+  }
+}
+
+function postSheetDiffToUi(
+  hasSnapshot: boolean,
+  sameSpreadsheet: boolean,
+  prevRows: SheetRow[],
+  currRows: SheetRow[],
+): void {
+  const labelChanged = hasSnapshot && sameSpreadsheet ? computeLabelChanges(prevRows, currRows) : []
+  const changedOldLabels = new Set(labelChanged.map((it) => it.oldLabel))
+  const changedNewLabels = new Set(labelChanged.map((it) => it.newLabel))
+
+  const { added, deleted, valueChanged } =
+    hasSnapshot && sameSpreadsheet ? computeSheetLabelDiff(prevRows, currRows) : { added: [], deleted: [], valueChanged: [] }
+
+  figma.ui.postMessage({
+    type: 'sheet-diff',
+    hasSnapshot,
+    sameSpreadsheet,
+    // labelChanged로 이미 감지된 항목은 added/deleted에서 제거해 중복 표시 방지
+    added: added.filter((it) => !changedNewLabels.has(it.label)),
+    deleted: deleted.filter((it) => !changedOldLabels.has(it.label)),
+    valueChanged,
+    labelChanged,
+  } satisfies PluginToUiMessage)
+}
+
 // ── Google Sheets helpers ──────────────────────────────────────────────────────
+// 시트 1행 헤더: name/type/label/value/description 열 이름은 대소문자·앞뒤 공백·BOM만 정규화 후 매칭 (Label, VALUE 등 동일 처리)
+
+function normalizeSheetHeaderCell(v: unknown): string {
+  return String(v ?? '')
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .toLowerCase()
+}
+
+/** 헤더 행에서 허용 이름(대소문자 무시) 중 첫 일치 열 */
+function findSheetColumnIndex(headerRow: unknown[], ...allowedNames: string[]): number {
+  const allowed = new Set(allowedNames.map((s) => s.trim().toLowerCase()))
+  for (let i = 0; i < headerRow.length; i++) {
+    const key = normalizeSheetHeaderCell(headerRow[i])
+    if (allowed.has(key)) return i
+  }
+  return -1
+}
 
 function parseSpreadsheetId(url: string): string | null {
   const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)
@@ -138,15 +437,17 @@ async function fetchSheetTabs(spreadsheetId: string, apiKey: string): Promise<Sh
 
 function parseRowsFromValues(values: string[][], tabTitle: string): Omit<SheetRow, 'tabTitle' | 'rowNumber'>[] {
   if (!values.length) return []
-  const headers = values[0].map((v) => String(v ?? '').trim().toLowerCase())
-  const nameIndex = headers.indexOf('name')
-  const typeIndex = headers.indexOf('type')
-  const labelIndex = headers.indexOf('label')
-  const valueIndex = headers.indexOf('value')
-  const descIndex = headers.indexOf('description')
+  const headerRow = values[0]
+  const nameIndex = findSheetColumnIndex(headerRow, 'name')
+  const typeIndex = findSheetColumnIndex(headerRow, 'type')
+  const labelIndex = findSheetColumnIndex(headerRow, 'label')
+  const valueIndex = findSheetColumnIndex(headerRow, 'value')
+  const descIndex = findSheetColumnIndex(headerRow, 'description')
 
   if (nameIndex < 0 || typeIndex < 0 || labelIndex < 0 || valueIndex < 0) {
-    throw new Error('첫 번째 행에서 name, type, label, value 헤더를 찾지 못했습니다.')
+    throw new Error(
+      '첫 번째 행에서 name, type, label, value 헤더를 찾지 못했습니다. (열 이름은 대소문자 구분 없음)',
+    )
   }
 
   return values
@@ -186,23 +487,140 @@ async function fetchSheetRowsByTabTitle(
   }))
 }
 
+/** 모든 탭의 행을 순서대로 이어 붙임 (개별 탭 오류 시 해당 탭만 건너뜀) */
+async function fetchAllTabRows(spreadsheetId: string, apiKey: string, tabs: SheetTab[]): Promise<SheetRow[]> {
+  const out: SheetRow[] = []
+  for (const t of tabs) {
+    try {
+      const tabRows = await fetchSheetRowsByTabTitle(spreadsheetId, apiKey, t.title)
+      out.push(...tabRows)
+    } catch {
+      // 탭 이름 특수문자·권한 등으로 실패한 시트는 생략
+    }
+  }
+  return out
+}
+
+/** 선택된 시트 행들 중, label 열 값이 2회 이상 나온 고유 문자열(표시용) */
+function getDuplicatedSheetLabels(rows: SheetRow[]): string[] {
+  const counts = new Map<string, number>()
+  for (const r of rows) {
+    const raw = String(r.label ?? '').trim()
+    const key = raw.length === 0 ? '\0empty' : raw
+    counts.set(key, (counts.get(key) ?? 0) + 1)
+  }
+  const out: string[] = []
+  for (const [key, c] of counts) {
+    if (c < 2) continue
+    out.push(key === '\0empty' ? '(빈 label)' : key)
+  }
+  return out
+}
+
+function hasDuplicateSheetLabels(rows: SheetRow[]): boolean {
+  return getDuplicatedSheetLabels(rows).length > 0
+}
+
 function rowMatchesKeyword(row: SheetRow, keyword: string): boolean {
   const k = keyword.trim().toLowerCase()
   if (!k) return false
-  const hay = [
-    row.name,
-    row.type,
-    row.label,
-    row.value,
-    row.description,
-    row.tabTitle,
-  ]
-    .join(' ')
-    .toLowerCase()
+  const hay = [row.label, row.value].join(' ').toLowerCase()
   return hay.includes(k)
 }
 
 // ── Selection helpers ──────────────────────────────────────────────────────────
+// 컴포넌트 TEXT 프로퍼티: 베이스 이름이 label / value / description 이면 대소문자 무시로 매칭 (Label, Description 등)
+
+function normalizePropKeyBase(s: string): string {
+  return String(s ?? '').split('#')[0].trim().toLowerCase()
+}
+
+// propKey: "Name#nodeId" 형식 또는 단순 이름 → 실제 키 (베이스 이름 대소문자 무시)
+function resolveKey(componentProperties: ComponentProperties, propName: string): string | undefined {
+  const want = normalizePropKeyBase(propName)
+  return Object.keys(componentProperties).find((k) => normalizePropKeyBase(k) === want)
+}
+
+function resolveKeyByBaseName(
+  componentProperties: ComponentProperties,
+  baseName: 'label' | 'value' | 'description',
+): string | undefined {
+  const want = baseName.toLowerCase()
+  return Object.keys(componentProperties).find((k) => normalizePropKeyBase(k) === want)
+}
+
+function propBindingIsText(
+  props: ComponentProperties | ComponentPropertyDefinitions,
+  key: string,
+): boolean {
+  const entry = (props as Record<string, { type?: string }>)[key]
+  return entry?.type === 'TEXT'
+}
+
+/** label / value / description 중 TEXT로 시트 매핑 가능한 항목이 있는지 (깊이 무관 수집과 함께 사용) */
+function hasMappableTextSheetPropsInTarget(t: InstanceNode | ComponentNode): boolean {
+  const props =
+    t.type === 'INSTANCE'
+      ? t.componentProperties
+      : (t as ComponentNode).componentPropertyDefinitions
+  if (!props) return false
+  const cp = props as ComponentProperties
+  for (const base of ['label', 'value', 'description'] as const) {
+    const key = resolveKeyByBaseName(cp, base)
+    if (key && propBindingIsText(props, key)) return true
+  }
+  return false
+}
+
+/** 프레임 등 중간 컨테이너를 통과해 서브트리의 모든 Instance/Component 수집 (DFS + findAll 누락 보정) */
+function collectInstanceOrComponentDescendants(root: SceneNode): (InstanceNode | ComponentNode)[] {
+  const dfsOut: (InstanceNode | ComponentNode)[] = []
+  function visitDfs(n: BaseNode) {
+    if (n.removed) return
+    if (n.type === 'INSTANCE' || n.type === 'COMPONENT') {
+      dfsOut.push(n as InstanceNode | ComponentNode)
+    }
+    if ('children' in n) {
+      for (const child of (n as ChildrenMixin).children) {
+        visitDfs(child)
+      }
+    }
+  }
+  visitDfs(root)
+
+  const rootWithFind = root as SceneNode & { findAll?: (cb: (n: SceneNode) => boolean) => SceneNode[] }
+  if (typeof rootWithFind.findAll !== 'function') return dfsOut
+
+  try {
+    const found = rootWithFind.findAll((n) => n.type === 'INSTANCE' || n.type === 'COMPONENT')
+    const seen = new Set(dfsOut.map((x) => x.id))
+    const merged = [...dfsOut]
+    for (const n of found) {
+      if (n.removed) continue
+      if (n.type !== 'INSTANCE' && n.type !== 'COMPONENT') continue
+      if (seen.has(n.id)) continue
+      seen.add(n.id)
+      merged.push(n as InstanceNode | ComponentNode)
+    }
+    return merged
+  } catch {
+    return dfsOut
+  }
+}
+
+function selectionHasAnyMatchingSheetProps(selection: SceneNode): boolean {
+  for (const t of collectInstanceOrComponentDescendants(selection)) {
+    if (hasMappableTextSheetPropsInTarget(t)) return true
+  }
+  return false
+}
+
+/** 시트 행을 넣을 수 있는 인스턴스만, 서브트리 순서(수집 순서)대로 */
+function collectApplicableInstancesInOrder(root: SceneNode): InstanceNode[] {
+  return collectInstanceOrComponentDescendants(root).filter(
+    (t): t is InstanceNode => t.type === 'INSTANCE' && hasMappableTextSheetPropsInTarget(t),
+  )
+}
 
 function extractTextPropNames(targets: (InstanceNode | ComponentNode)[]): { name: string }[] {
   const out: { name: string }[] = []
@@ -223,28 +641,12 @@ function extractTextPropNames(targets: (InstanceNode | ComponentNode)[]): { name
   return out
 }
 
-/** 프레임 등 중간 컨테이너를 통과해 서브트리의 모든 Instance/Component 수집 */
-function collectInstanceOrComponentDescendants(root: SceneNode): (InstanceNode | ComponentNode)[] {
-  const out: (InstanceNode | ComponentNode)[] = []
-  function visit(n: BaseNode) {
-    if (n.type === 'INSTANCE' || n.type === 'COMPONENT') {
-      out.push(n as InstanceNode | ComponentNode)
-    }
-    if ('children' in n) {
-      for (const child of (n as ChildrenMixin).children) {
-        visit(child)
-      }
-    }
-  }
-  visit(root)
-  return out
-}
-
 function getSelectionInfo(): SelectionInfo | null {
   const selection = figma.currentPage.selection[0]
   if (!selection) return null
 
   const targets = collectInstanceOrComponentDescendants(selection)
+  const hasMappableSheetProps = targets.some((t) => hasMappableTextSheetPropsInTarget(t))
 
   const kind: SelectionInfo['kind'] =
     selection.type === 'INSTANCE'
@@ -260,102 +662,8 @@ function getSelectionInfo(): SelectionInfo | null {
     name: selection.name,
     kind,
     textProperties: extractTextPropNames(targets),
-    applyTracking: buildApplyTracking(selection),
+    hasMappableSheetProps,
   }
-}
-
-// propKey: "Name#nodeId" 형식 또는 단순 이름 → 실제 키 찾아서 setProperties에 사용
-function resolveKey(componentProperties: ComponentProperties, propName: string): string | undefined {
-  return Object.keys(componentProperties).find((k) => k === propName || k.startsWith(`${propName}#`))
-}
-
-function normalizePropKeyBase(s: string): string {
-  return String(s ?? '').split('#')[0].trim().toLowerCase()
-}
-
-function resolveKeyByBaseName(
-  componentProperties: ComponentProperties,
-  baseName: 'label' | 'value' | 'description',
-): string | undefined {
-  const want = baseName.toLowerCase()
-  return Object.keys(componentProperties).find((k) => normalizePropKeyBase(k) === want)
-}
-
-function readLastAppliedPayload(inst: InstanceNode): LastAppliedRowPayload | null {
-  try {
-    const raw = inst.getPluginData(PLUGIN_DATA_KEY_LAST_ROW)
-    if (!raw || !String(raw).trim()) return null
-    const o = JSON.parse(raw) as LastAppliedRowPayload
-    if (o?.v !== 1 || !o.snapshot || !Array.isArray(o.appliedProps)) return null
-    return o
-  } catch {
-    return null
-  }
-}
-
-function getInstanceTextPropCurrent(
-  inst: InstanceNode,
-  baseName: 'label' | 'value' | 'description',
-): string {
-  const props = inst.componentProperties
-  if (!props) return ''
-  const key = resolveKeyByBaseName(props, baseName)
-  if (!key) return ''
-  const p = props[key]
-  if (p && p.type === 'TEXT') return String(p.value ?? '')
-  return ''
-}
-
-function computeDriftedProps(
-  inst: InstanceNode,
-  payload: LastAppliedRowPayload,
-): ('label' | 'value' | 'description')[] {
-  const drift: ('label' | 'value' | 'description')[] = []
-  for (const base of payload.appliedProps) {
-    if (getInstanceTextPropCurrent(inst, base) !== payload.snapshot[base]) drift.push(base)
-  }
-  return drift
-}
-
-function buildApplyTracking(selection: SceneNode): { instances: InstanceApplyTracking[] } {
-  const instances: InstanceApplyTracking[] = []
-  for (const t of collectInstanceOrComponentDescendants(selection)) {
-    if (t.type !== 'INSTANCE') continue
-    const payload = readLastAppliedPayload(t)
-    if (!payload) continue
-    instances.push({
-      instanceId: t.id,
-      instanceName: t.name,
-      tabTitle: payload.tabTitle,
-      rowNumber: payload.rowNumber,
-      rowName: payload.name,
-      sheetLabel: payload.snapshot.label,
-      appliedProps: payload.appliedProps,
-      driftedProps: computeDriftedProps(t, payload),
-    })
-  }
-  return { instances }
-}
-
-function hasAnyMatchingSheetPropsInTarget(t: InstanceNode | ComponentNode): boolean {
-  const props =
-    t.type === 'INSTANCE'
-      ? t.componentProperties
-      : (t as ComponentNode).componentPropertyDefinitions
-  if (!props) return false
-  const cp = props as ComponentProperties
-  return (
-    !!resolveKeyByBaseName(cp, 'label') ||
-    !!resolveKeyByBaseName(cp, 'value') ||
-    !!resolveKeyByBaseName(cp, 'description')
-  )
-}
-
-function selectionHasAnyMatchingSheetProps(selection: SceneNode): boolean {
-  for (const t of collectInstanceOrComponentDescendants(selection)) {
-    if (hasAnyMatchingSheetPropsInTarget(t)) return true
-  }
-  return false
 }
 
 function applyRowToInstance(
@@ -364,40 +672,23 @@ function applyRowToInstance(
 ) {
   if (!inst.componentProperties) return
   const updates: Record<string, string> = {}
-  const appliedProps: ('label' | 'value' | 'description')[] = []
 
   const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
   const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
   const descKey = resolveKeyByBaseName(inst.componentProperties, 'description')
 
-  if (labelKey) {
+  if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
     updates[labelKey] = row.label
-    appliedProps.push('label')
   }
-  if (valueKey) {
+  if (valueKey && propBindingIsText(inst.componentProperties, valueKey)) {
     updates[valueKey] = row.value
-    appliedProps.push('value')
   }
-  if (descKey) {
+  if (descKey && propBindingIsText(inst.componentProperties, descKey)) {
     updates[descKey] = row.description
-    appliedProps.push('description')
   }
 
   if (Object.keys(updates).length > 0) {
     inst.setProperties(updates)
-    const payload: LastAppliedRowPayload = {
-      v: 1,
-      tabTitle: row.tabTitle,
-      rowNumber: row.rowNumber,
-      name: row.name,
-      appliedProps,
-      snapshot: {
-        label: row.label,
-        value: row.value,
-        description: row.description,
-      },
-    }
-    inst.setPluginData(PLUGIN_DATA_KEY_LAST_ROW, JSON.stringify(payload))
   }
 }
 
@@ -408,6 +699,170 @@ function applyRowToSelectionClone(
   for (const t of collectInstanceOrComponentDescendants(clone)) {
     if (t.type === 'INSTANCE') applyRowToInstance(t, row)
   }
+}
+
+/** 현재 페이지에서 label 프로퍼티 값이 일치하는 인스턴스를 전부 수집 */
+function findInstancesByLabelOnPage(page: PageNode, labelValue: string): InstanceNode[] {
+  const target = String(labelValue ?? '').trim()
+  const results: InstanceNode[] = []
+
+  function visit(node: BaseNode) {
+    if ((node as { removed?: boolean }).removed) return
+    if (node.type === 'INSTANCE') {
+      const inst = node as InstanceNode
+      if (inst.componentProperties) {
+        const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
+        if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
+          const current = String((inst.componentProperties[labelKey] as { value: unknown }).value ?? '').trim()
+          if (current === target) results.push(inst)
+        }
+      }
+    }
+    if ('children' in node) {
+      for (const child of (node as ChildrenMixin).children) visit(child)
+    }
+  }
+
+  for (const child of page.children) visit(child)
+  return results
+}
+
+/** value 프로퍼티만 업데이트 (label·description은 건드리지 않음) */
+function applyValueToInstance(inst: InstanceNode, newValue: string): void {
+  if (!inst.componentProperties) return
+  const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
+  if (valueKey && propBindingIsText(inst.componentProperties, valueKey)) {
+    inst.setProperties({ [valueKey]: newValue })
+  }
+}
+
+/**
+ * 페이지에서 label 프로퍼티가 일치하는 인스턴스를 찾아 value를 업데이트.
+ * - label + value가 같은 인스턴스에 있는 경우 → 직접 업데이트
+ * - label만 있는 인스턴스인 경우 → 부모 컨테이너 안에서 value 프로퍼티를 가진 형제 인스턴스를 찾아 업데이트
+ * @returns 실제로 업데이트된 인스턴스 수
+ */
+function syncValueByLabelOnPage(page: PageNode, labelValue: string, newValue: string): number {
+  const target = String(labelValue ?? '').trim()
+  if (!target) return 0
+
+  let updated = 0
+  const processed = new Set<string>()
+
+  function visit(node: BaseNode) {
+    if ((node as { removed?: boolean }).removed) return
+    if (node.type === 'INSTANCE') {
+      const inst = node as InstanceNode
+      if (inst.componentProperties && !processed.has(inst.id)) {
+        const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
+        if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
+          const current = String((inst.componentProperties[labelKey] as { value: unknown }).value ?? '').trim()
+          if (current === target) {
+            processed.add(inst.id)
+            const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
+            if (valueKey && propBindingIsText(inst.componentProperties, valueKey)) {
+              // label + value가 같은 인스턴스에 있는 구조
+              inst.setProperties({ [valueKey]: newValue })
+              updated++
+            } else {
+              // label과 value가 분리된 구조 → 부모에서 value 인스턴스 탐색
+              const parent = inst.parent
+              if (parent && parent.type !== 'PAGE' && parent.type !== 'DOCUMENT') {
+                const parentId = (parent as { id: string }).id
+                if (!processed.has(parentId)) {
+                  processed.add(parentId)
+                  for (const sibling of collectInstanceOrComponentDescendants(parent as SceneNode)) {
+                    if (sibling.type !== 'INSTANCE' || sibling.id === inst.id) continue
+                    const vKey = resolveKeyByBaseName(sibling.componentProperties, 'value')
+                    if (vKey && propBindingIsText(sibling.componentProperties, vKey)) {
+                      sibling.setProperties({ [vKey]: newValue })
+                      updated++
+                    }
+                  }
+                }
+              }
+            }
+            return // 매칭된 인스턴스 내부는 더 탐색하지 않음
+          }
+        }
+      }
+    }
+    if ('children' in node) {
+      for (const child of (node as ChildrenMixin).children) visit(child)
+    }
+  }
+
+  for (const child of page.children) visit(child)
+  return updated
+}
+
+/** 페이지에서 label 프로퍼티 값이 oldLabel인 인스턴스를 찾아 newLabel로 교체 */
+function syncLabelOnPage(page: PageNode, oldLabel: string, newLabel: string): number {
+  const target = String(oldLabel ?? '').trim()
+  const replacement = String(newLabel ?? '').trim()
+  if (!target || !replacement || target === replacement) return 0
+
+  let updated = 0
+  const processed = new Set<string>()
+
+  function visit(node: BaseNode) {
+    if ((node as { removed?: boolean }).removed) return
+    if (node.type === 'INSTANCE') {
+      const inst = node as InstanceNode
+      if (inst.componentProperties && !processed.has(inst.id)) {
+        const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
+        if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
+          const current = String((inst.componentProperties[labelKey] as { value: unknown }).value ?? '').trim()
+          if (current === target) {
+            processed.add(inst.id)
+            inst.setProperties({ [labelKey]: replacement })
+            updated++
+            return
+          }
+        }
+      }
+    }
+    if ('children' in node) {
+      for (const child of (node as ChildrenMixin).children) visit(child)
+    }
+  }
+
+  for (const child of page.children) visit(child)
+  return updated
+}
+
+/**
+ * 페이지 스냅샷과 현재 시트 행을 비교해 label이 바뀐 항목 목록을 반환.
+ * 스냅샷이 없거나 다른 스프레드시트이면 빈 배열.
+ */
+function detectLabelChangesFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelChangedItem[] {
+  const pageSnap = findAnySnapshotOnPage(figma.currentPage)
+  if (!pageSnap || pageSnap.snapshot.spreadsheetId !== spreadsheetId) return []
+  return computeLabelChanges(pageSnap.snapshot.rows, currentRows)
+}
+
+/**
+ * 선택 없이도 스냅샷을 찾을 수 있도록 페이지 전체를 순회해 첫 번째 스냅샷 노드를 반환.
+ * 선택 기반 findSnapshotNode 가 null 일 때 폴백으로 사용.
+ */
+function findAnySnapshotOnPage(page: PageNode): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
+  function visit(node: BaseNode): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
+    if ((node as { removed?: boolean }).removed) return null
+    const snap = readSheetSnapshotFromNode(node as SceneNode)
+    if (snap) return { node: node as SceneNode, snapshot: snap }
+    if ('children' in node) {
+      for (const child of (node as ChildrenMixin).children) {
+        const result = visit(child)
+        if (result) return result
+      }
+    }
+    return null
+  }
+  for (const child of page.children) {
+    const result = visit(child)
+    if (result) return result
+  }
+  return null
 }
 
 function sendSelection() {
@@ -484,8 +939,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
     }
 
     if (msg.type === 'clear-recent-urls') {
-      await writeSettings({ recentUrls: [] })
-      figma.ui.postMessage({ type: 'settings', ...(await readSettings()) } satisfies PluginToUiMessage)
+      await writeSettings({ recentSheets: [] })
+      await postSettingsToUi()
       return
     }
 
@@ -494,14 +949,19 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       if (!spreadsheetId) throw new Error('유효한 구글 시트 URL을 입력해주세요.')
       if (!msg.apiKey.trim()) throw new Error('Google API Key를 입력해주세요.')
 
+      const tabs = await fetchSheetTabs(spreadsheetId, msg.apiKey)
+      const rows = await fetchAllTabRows(spreadsheetId, msg.apiKey, tabs)
+
       const prev = await readSettings()
+      const recentSheets = await upsertRecentSheet(prev.recentSheets, msg.url, msg.apiKey)
       await writeSettings({
         apiKey: msg.apiKey,
-        recentUrls: addRecentUrl(prev.recentUrls, msg.url),
+        recentSheets,
       })
 
-      const tabs = await fetchSheetTabs(spreadsheetId, msg.apiKey)
-      figma.ui.postMessage({ type: 'tabs', tabs } satisfies PluginToUiMessage)
+      const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged } satisfies PluginToUiMessage)
+      await postSettingsToUi()
       return
     }
 
@@ -512,13 +972,16 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       if (!msg.tabTitle.trim()) throw new Error('탭을 선택해주세요.')
 
       const prev = await readSettings()
+      const recentSheets = await upsertRecentSheet(prev.recentSheets, msg.url, msg.apiKey)
       await writeSettings({
         apiKey: msg.apiKey,
-        recentUrls: addRecentUrl(prev.recentUrls, msg.url),
+        recentSheets,
       })
 
       const rows = await fetchSheetRowsByTabTitle(spreadsheetId, msg.apiKey, msg.tabTitle.trim())
-      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows } satisfies PluginToUiMessage)
+      const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged } satisfies PluginToUiMessage)
+      await postSettingsToUi()
       return
     }
 
@@ -530,9 +993,10 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       if (!keyword) throw new Error('검색 키워드를 입력해주세요.')
 
       const prev = await readSettings()
+      const recentSheets = await upsertRecentSheet(prev.recentSheets, msg.url, msg.apiKey)
       await writeSettings({
         apiKey: msg.apiKey,
-        recentUrls: addRecentUrl(prev.recentUrls, msg.url),
+        recentSheets,
       })
 
       let tabs: SheetTab[] = []
@@ -551,6 +1015,24 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       }
 
       figma.ui.postMessage({ type: 'search-results', keyword, rows } satisfies PluginToUiMessage)
+      await postSettingsToUi()
+      return
+    }
+
+    if (msg.type === 'sheet-diff-request') {
+      const sel = figma.currentPage.selection[0]
+      const sheetId = parseSpreadsheetId(msg.url)
+      if (!sel || !sheetId || !Array.isArray(msg.currentRows)) {
+        postSheetDiffToUi(false, false, [], [])
+        return
+      }
+      const found = findSnapshotNode(sel)
+      if (!found) {
+        postSheetDiffToUi(false, false, [], msg.currentRows)
+        return
+      }
+      const same = found.snapshot.spreadsheetId === sheetId
+      postSheetDiffToUi(true, same, found.snapshot.rows, msg.currentRows)
       return
     }
 
@@ -560,22 +1042,58 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       if (!Array.isArray(msg.keywordRows) || msg.keywordRows.length === 0) {
         throw new Error('연결할 키워드를 선택해주세요.')
       }
+      if (!Array.isArray(msg.snapshotRows)) {
+        throw new Error('시트 목록 스냅샷이 없습니다. 시트를 다시 불러온 뒤 시도해주세요.')
+      }
       if (!selectionHasAnyMatchingSheetProps(selection)) {
         throw new Error('일치하는 프로퍼티가 없습니다')
       }
 
+      const spreadsheetId = parseSpreadsheetId(msg.url)
+
       const prev = await readSettings()
+      const recentSheets = await upsertRecentSheet(prev.recentSheets, msg.url, msg.apiKey)
       await writeSettings({
         apiKey: msg.apiKey,
-        recentUrls: addRecentUrl(prev.recentUrls, msg.url),
+        recentSheets,
       })
 
+      if (hasDuplicateSheetLabels(msg.keywordRows)) {
+        const targets = collectApplicableInstancesInOrder(selection)
+        if (msg.keywordRows.length > targets.length) {
+          throw new Error(
+            `중복 label 적용 시 새 복제 없이 기존 인스턴스에만 값을 넣습니다. 매핑 가능한 인스턴스는 ${targets.length}개인데 선택한 행은 ${msg.keywordRows.length}개입니다.`,
+          )
+        }
+        const inPlaceLabelToNodeIds: Record<string, string[]> = {}
+        for (let i = 0; i < msg.keywordRows.length; i += 1) {
+          applyRowToInstance(targets[i], msg.keywordRows[i])
+          const key = labelKeyForDiff(msg.keywordRows[i].label)
+          inPlaceLabelToNodeIds[key] = [...(inPlaceLabelToNodeIds[key] ?? []), targets[i].id]
+        }
+        const applied = targets.slice(0, msg.keywordRows.length)
+        if (spreadsheetId) {
+          writeSheetSnapshotOnSelection(selection, spreadsheetId, msg.snapshotRows, inPlaceLabelToNodeIds)
+        }
+        figma.currentPage.selection = applied
+        figma.viewport.scrollAndZoomIntoView(applied)
+        figma.notify(`✅ ${applied.length}개 기존 인스턴스에 연결 (중복 label — 복제 없음)`)
+        figma.ui.postMessage({
+          type: 'done',
+          created: 0,
+          appliedInPlace: applied.length,
+        } satisfies PluginToUiMessage)
+        await postSettingsToUi()
+        return
+      }
+
+      const generated: SceneNode[] = []
+      const cloneLabelToNodeIds: Record<string, string[]> = {}
       const layout = msg.generateLayout === 'right' ? 'right' : 'below'
       const gap = 20
       const spacing = 16
       const cloneParent = getCloneParent(selection)
       const rel = getPlacementRectInParent(selection, cloneParent)
-      const generated: SceneNode[] = []
 
       if (layout === 'right') {
         let currentX = rel.x + rel.width + gap
@@ -587,6 +1105,9 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
           cloneParent.appendChild(clone)
           applyRowToSelectionClone(clone, row)
           generated.push(clone)
+          const key = labelKeyForDiff(row.label)
+          cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
+          if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
         }
       } else {
         let currentY = rel.y + rel.height + gap
@@ -598,15 +1119,113 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
           cloneParent.appendChild(clone)
           applyRowToSelectionClone(clone, row)
           generated.push(clone)
+          const key = labelKeyForDiff(row.label)
+          cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
+          if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
         }
+      }
+
+      if (spreadsheetId) {
+        writeSheetSnapshotOnSelection(selection, spreadsheetId, msg.snapshotRows, cloneLabelToNodeIds)
       }
 
       figma.currentPage.selection = generated
       figma.viewport.scrollAndZoomIntoView(generated)
-      figma.notify(`✅ ${generated.length}개 생성 및 연결 완료!`)
-      figma.ui.postMessage({ type: 'done', created: generated.length } satisfies PluginToUiMessage)
+      const created = msg.keywordRows.length
+      figma.notify(`✅ ${created}개 생성 및 연결 완료!`)
+      figma.ui.postMessage({ type: 'done', created, appliedInPlace: 0 } satisfies PluginToUiMessage)
+      await postSettingsToUi()
       return
     }
+    if (msg.type === 'sync-value-changes') {
+      const hasValueChanges = Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0
+      const hasLabelChanges = Array.isArray(msg.labelChangedItems) && msg.labelChangedItems.length > 0
+      if (!hasValueChanges && !hasLabelChanges) {
+        throw new Error('동기화할 변경 항목이 없습니다.')
+      }
+
+      let updated = 0
+
+      // diff 패널에서 온 label 변경 동기화 (oldLabel이 명시된 경우)
+      for (const labelItem of (msg.labelChangedItems ?? [])) {
+        updated += syncLabelOnPage(figma.currentPage, labelItem.oldLabel, labelItem.newLabel)
+      }
+
+      // label 변경 동기화 — 스냅샷과 tabTitle+rowNumber 기준 비교 후 label이 바뀐 행만 처리
+      if (Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0) {
+        const sel = figma.currentPage.selection[0]
+        const found =
+          (sel ? findSnapshotNode(sel) : null) ??
+          findAnySnapshotOnPage(figma.currentPage)
+
+        if (found) {
+          // tabTitle+rowNumber 키로 스냅샷 색인
+          const snapByKey = new Map<string, SheetRow>()
+          for (const r of found.snapshot.rows) {
+            snapByKey.set(`${r.tabTitle}::${r.rowNumber}`, r)
+          }
+          for (const item of msg.valueChangedItems) {
+            const snapRow = snapByKey.get(`${item.tabTitle}::${item.rowNumber}`)
+            const labelChanged = snapRow && snapRow.label.trim() !== item.label.trim()
+            if (labelChanged) {
+              // Figma에는 아직 OLD label → oldLabel로 인스턴스 찾아 newLabel로 교체
+              updated += syncLabelOnPage(figma.currentPage, snapRow!.label.trim(), item.label.trim())
+            }
+            // label이 동일하면 value 변경 여부와 무관하게 건너뜀
+          }
+        }
+        // 스냅샷 없으면 label 변경 기준을 알 수 없으므로 아무것도 하지 않음
+      }
+
+      // 스냅샷 갱신 (best-effort) — 동기화된 label 변경만 반영
+      {
+        const sel2 = figma.currentPage.selection[0]
+        const found =
+          (sel2 ? findSnapshotNode(sel2) : null) ??
+          findAnySnapshotOnPage(figma.currentPage)
+        if (found) {
+          let updatedRows = found.snapshot.rows.map((r) => ({ ...r }))
+          let updatedLabelToNodeIds = { ...found.snapshot.labelToNodeIds }
+
+          // footer 버튼에서 온 label 변경 — tabTitle+rowNumber 기준
+          if (Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0) {
+            const snapByKey = new Map<string, number>()
+            updatedRows.forEach((r, i) => snapByKey.set(`${r.tabTitle}::${r.rowNumber}`, i))
+            for (const item of msg.valueChangedItems) {
+              const idx = snapByKey.get(`${item.tabTitle}::${item.rowNumber}`)
+              if (idx !== undefined && updatedRows[idx].label.trim() !== item.label.trim()) {
+                const oldKey = labelKeyForDiff(updatedRows[idx].label)
+                const newKey = labelKeyForDiff(item.label)
+                updatedRows[idx] = { ...updatedRows[idx], label: item.label }
+                if (oldKey !== newKey && updatedLabelToNodeIds[oldKey] !== undefined) {
+                  updatedLabelToNodeIds[newKey] = updatedLabelToNodeIds[oldKey]
+                  delete updatedLabelToNodeIds[oldKey]
+                }
+              }
+            }
+          }
+
+          // diff 패널에서 온 label 변경 (oldLabel이 명시된 경우)
+          for (const item of (msg.labelChangedItems ?? [])) {
+            const idx = updatedRows.findIndex((r) => r.tabTitle === item.tabTitle && r.rowNumber === item.rowNumber)
+            if (idx >= 0) updatedRows[idx] = { ...updatedRows[idx], label: item.newLabel }
+            const oldKey = labelKeyForDiff(item.oldLabel)
+            const newKey = labelKeyForDiff(item.newLabel)
+            if (updatedLabelToNodeIds[oldKey] !== undefined) {
+              updatedLabelToNodeIds[newKey] = updatedLabelToNodeIds[oldKey]
+              delete updatedLabelToNodeIds[oldKey]
+            }
+          }
+
+          writeSheetSnapshotOnSelection(found.node, found.snapshot.spreadsheetId, updatedRows, updatedLabelToNodeIds)
+        }
+      }
+
+      figma.notify(updated > 0 ? `✅ ${updated}개 인스턴스 동기화 완료` : '동기화할 인스턴스를 찾지 못했습니다.')
+      figma.ui.postMessage({ type: 'sync-done', updated } satisfies PluginToUiMessage)
+      return
+    }
+
   } catch (error) {
     const message = error instanceof Error ? error.message : '알 수 없는 에러가 발생했습니다.'
     figma.notify(message, { error: true })

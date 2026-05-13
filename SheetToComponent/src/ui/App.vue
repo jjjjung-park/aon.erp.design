@@ -4,17 +4,20 @@
       <span class="font-semibold text-gray-900">SheetToComponent</span>
       <button
         class="text-[12px] px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
-        @click="refreshSelection"
-        title="선택 새로고침"
+        @click="resetUi"
+        title="시트·검색·행 선택 등 작업 영역을 비웁니다. API 키·최근 URL은 유지됩니다."
       >
-        선택 새로고침
+        초기화
       </button>
     </header>
 
     <main class="flex-1 overflow-y-auto p-4 space-y-4">
       <!-- 1) Sheet -->
       <section class="space-y-2">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">1) 구글 시트</div>
+        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">1) 시트 호출</div>
+        <p class="text-[10px] text-gray-500 leading-relaxed">
+          시트 호출 시 탭 목록과 함께 전체 탭의 label/value 행을 한 번에 불러옵니다. 탭 범위에서 특정 탭만 고르면 해당 탭만 다시 조회합니다.
+        </p>
         <div class="flex items-center gap-2">
           <select
             v-model="urlChoice"
@@ -22,19 +25,30 @@
             @change="applyUrlChoice"
           >
             <option value="manual">직접입력</option>
-            <option v-for="u in recentUrls" :key="u" :value="u">
-              {{ displayUrl(u) }}
+            <option v-for="s in recentSheets" :key="s.url" :value="s.url">
+              {{ s.title }}
             </option>
           </select>
           <button
+            type="button"
+            class="shrink-0 px-3 py-2 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
+            :disabled="isLoadingTabs || !sheetUrl.trim() || !apiKey.trim()"
+            @click="loadTabs"
+          >
+            {{ invokeButtonLabel }}
+          </button>
+          <button
+            type="button"
             class="px-3 py-2 text-xs rounded-md bg-white border border-gray-300 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
-            :disabled="isLoadingTabs || isSearching || isGenerating || recentUrls.length === 0"
+            :disabled="isLoadingTabs || isSearching || isGenerating || recentSheets.length === 0"
             @click="clearRecentUrls"
-            title="최근 URL 목록 비우기"
+            title="최근 시트 목록 비우기"
           >
             목록 비우기
           </button>
         </div>
+
+       
 
         <input
           v-if="urlChoice === 'manual'"
@@ -43,33 +57,30 @@
           placeholder="https://docs.google.com/spreadsheets/d/..."
           class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+         <label v-if="apiKey.trim()" class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer w-fit">
+          <input v-model="changeApiKey" type="checkbox" class="shrink-0" />
+          API 키 변경
+        </label>
         <input
+          v-if="showApiKeyInput"
           v-model="apiKey"
           type="password"
           placeholder="Google API Key (AIza...)"
           class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
-        <div class="flex items-end gap-2">
-          <button
-            class="px-3 py-2 text-xs rounded-md bg-white border border-gray-300 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
-            :disabled="isLoadingTabs || !sheetUrl.trim() || !apiKey.trim()"
-            @click="loadTabs"
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-medium text-gray-700">탭 범위</label>
+          <select
+            v-model="tabScope"
+            class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+            :disabled="tabs.length === 0"
+            @change="onTabScopeChange"
           >
-            {{ isLoadingTabs ? '탭 불러오는 중...' : '탭 불러오기' }}
-          </button>
-          <div class="flex-1">
-            <label class="text-xs font-medium text-gray-700 block mb-1">탭 범위</label>
-            <select
-              v-model="tabScope"
-              class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-              :disabled="tabs.length === 0"
-              @change="onTabScopeChange"
-            >
-              <option value="">전체 탭</option>
-              <option v-for="t in tabs" :key="t.sheetId" :value="t.title">{{ t.title }}</option>
-            </select>
-          </div>
+            <option value="">전체 탭</option>
+            <option v-for="t in tabs" :key="t.sheetId" :value="t.title">{{ t.title }}</option>
+          </select>
+          <p class="text-[10px] text-gray-500">특정 탭만 선택하면 그 탭 행만 다시 불러옵니다. 전체 탭으로 돌리면 시트 호출 때 모아 둔 전체 행 목록을 다시 보여 줍니다.</p>
         </div>
       </section>
 
@@ -82,10 +93,11 @@
             type="text"
             placeholder="name/type/label/value/description에서 검색"
             class="flex-1 text-xs px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            @keydown.enter.prevent="onKeywordEnter"
           />
           <button
             class="px-3 py-2 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-            :disabled="isSearching || !sheetUrl.trim() || !apiKey.trim() || !keyword.trim()"
+            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope)"
             @click="search"
           >
             {{ isSearching ? '검색 중...' : '검색' }}
@@ -98,6 +110,13 @@
               결과 {{ rows.length }}개 / 선택 {{ selectedRowIds.size }}개
             </div>
             <div class="flex items-center gap-2">
+              <button
+                v-if="detectedLabelChanges.length > 0"
+                class="text-[11px] px-2 py-1 rounded border border-orange-400 text-orange-700 bg-orange-50 hover:bg-orange-100"
+                @click="selectChangedLabels"
+              >
+                수정건 선택
+              </button>
               <button
                 class="text-[11px] px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
                 @click="selectAll"
@@ -117,7 +136,10 @@
             <label
               v-for="r in rows"
               :key="rowId(r)"
-              class="flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50"
+              :class="[
+                'flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50',
+                labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`) ? 'bg-orange-50' : ''
+              ]"
             >
               <input
                 type="checkbox"
@@ -125,10 +147,14 @@
                 :checked="selectedRowIds.has(rowId(r))"
                 @change="toggleRow(r)"
               />
-              <div class="min-w-0">
-                <div class="text-[12px] font-semibold text-gray-800 truncate">
-                  {{ r.label || r.name || '(no label)' }}
-                  <span class="text-[11px] text-gray-400 font-normal">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 truncate">
+                  <span class="text-[12px] font-semibold text-gray-800 truncate">{{ r.label || r.name || '(no label)' }}</span>
+                  <span class="text-[11px] text-gray-400 font-normal shrink-0">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
+                  <span
+                    v-if="labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
+                    class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-orange-500 text-white leading-none"
+                  >label 변경</span>
                 </div>
                 <div class="text-[11px] text-gray-500 truncate">value: {{ r.value }}</div>
                 <div v-if="r.description" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
@@ -148,37 +174,12 @@
             <div class="text-[11px] text-blue-600 mt-0.5">
               {{ selection.kind }} / TEXT 프로퍼티 {{ selection.textProperties.length }}개
             </div>
-            <div
-              v-if="applyInstances.length > 0"
-              class="mt-2 pt-2 border-t border-blue-200/80 space-y-1.5"
+            <p
+              v-if="duplicatedSheetLabels.length > 0"
+              class="mt-2 text-[11px] text-amber-800 leading-relaxed"
             >
-              <div class="text-[11px] font-semibold text-blue-900">플러그인 적용 기록</div>
-              <p class="text-[10px] text-blue-700/90 leading-relaxed">
-                이 플러그인으로 값을 넣은 인스턴스 {{ applyInstances.length }}개 · 마지막 적용 시점의 시트 행이 노드에 저장됩니다.
-              </p>
-              <ul class="max-h-28 overflow-y-auto space-y-1 text-[10px] text-blue-800">
-                <li
-                  v-for="a in applyInstances.slice(0, 8)"
-                  :key="a.instanceId"
-                  class="leading-snug pl-1 border-l-2 border-blue-300"
-                >
-                  <span class="font-medium">{{ a.instanceName }}</span>
-                  · {{ a.tabTitle }} {{ a.rowNumber }}행 · name {{ a.rowName || '—' }}
-                  <span v-if="a.sheetLabel" class="text-blue-600"> · 시트 label「{{ a.sheetLabel }}」</span>
-                </li>
-              </ul>
-              <p v-if="applyInstances.length > 8" class="text-[10px] text-blue-600">
-                외 {{ applyInstances.length - 8 }}개…
-              </p>
-            </div>
-            <div
-              v-if="hasApplyDrift"
-              class="mt-2 p-2 rounded-md bg-amber-50 border border-amber-200 text-[11px] text-amber-900 leading-relaxed"
-            >
-              <span class="font-semibold">적용 이후 피그마에서 값이 바뀌었습니다.</span>
-              변경된 항목의 시트 label:
-              <span class="font-medium">{{ driftedSheetLabels.join(', ') }}</span>
-            </div>
+              중복된 label명이 있습니다 : {{ duplicatedSheetLabels.join(', ') }}
+            </p>
           </template>
           <div v-else class="text-[12px] text-gray-500">
             인스턴스(또는 인스턴스를 포함한 레이어)를 선택해주세요.
@@ -195,16 +196,6 @@
           </div>
         </div>
 
-        <div class="pt-2">
-          <label class="text-xs font-medium text-gray-700 block mb-1">복제 배치</label>
-          <select
-            v-model="generateLayout"
-            class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="below">아래로 (세로)</option>
-            <option value="right">오른쪽으로 (가로)</option>
-          </select>
-        </div>
       </section>
 
       <p v-if="statusMessage" class="text-xs text-gray-500">{{ statusMessage }}</p>
@@ -218,19 +209,35 @@
       >
         일치하는 프로퍼티가 없습니다
       </p>
-      <button
-        class="w-full py-2.5 rounded-lg font-semibold text-[13px] transition-colors bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-        :disabled="!canGenerate || isGenerating"
-        @click="connectAndGenerate"
-      >
-        {{ isGenerating ? '생성/연결 중...' : `${selectedRowIds.size}개 생성 및 연결` }}
-      </button>
+      <div class="flex gap-2">
+        <button
+          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
+          :disabled="!canGenerate || isGenerating"
+          @click="connectAndGenerate"
+        >
+          {{
+            isGenerating
+              ? '생성/연결 중...'
+              : hasDuplicateLabelsInSelection
+                ? `${selectedRowIds.size}개 기존 인스턴스에 연결`
+                : `${selectedRowIds.size}개 생성 및 연결`
+          }}
+        </button>
+        <button
+          v-if="canSync || isSyncing"
+          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+          :disabled="isSyncing"
+          @click="syncSelectedRows"
+        >
+          {{ isSyncing ? '동기화 중...' : `⚡ ${selectedRowIds.size}개 동기화` }}
+        </button>
+      </div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 type SheetRow = {
   tabTitle: string
@@ -242,43 +249,78 @@ type SheetRow = {
   description: string
 }
 
-type InstanceApplyTracking = {
-  instanceId: string
-  instanceName: string
-  tabTitle: string
-  rowNumber: number
-  rowName: string
-  sheetLabel: string
-  appliedProps: ('label' | 'value' | 'description')[]
-  driftedProps: ('label' | 'value' | 'description')[]
-}
-
 type SelectionInfo = {
   nodeId: string
   name: string
   kind: 'INSTANCE' | 'COMPONENT' | 'CONTAINER' | 'UNSUPPORTED'
   textProperties: { name: string }[]
-  applyTracking?: { instances: InstanceApplyTracking[] }
+  hasMappableSheetProps: boolean
 }
+
+type SheetDiffItem = {
+  label: string
+  tabTitle: string
+  rowNumber: number
+  name: string
+  value: string
+  previousValue?: string
+}
+
+type SheetLabelChangedItem = {
+  oldLabel: string
+  newLabel: string
+  tabTitle: string
+  rowNumber: number
+  value: string
+}
+
+type SheetDiffPayload = {
+  hasSnapshot: boolean
+  sameSpreadsheet: boolean
+  added: SheetDiffItem[]
+  deleted: SheetDiffItem[]
+  valueChanged: SheetDiffItem[]
+  labelChanged: SheetLabelChangedItem[]
+}
+
+type RecentSheet = { url: string; title: string }
 
 const sheetUrl = ref('')
 const apiKey = ref('')
-const recentUrls = ref<string[]>([])
+const changeApiKey = ref(false)
+/** 저장된 API 키가 없거나 "API 키 변경" 체크 시 입력칸 표시 */
+const showApiKeyInput = computed(() => !apiKey.value.trim() || changeApiKey.value)
+const recentSheets = ref<RecentSheet[]>([])
 const urlChoice = ref<'manual' | string>('manual')
+/** 시트 호출(탭 목록)에 성공한 URL — 버튼 문구 전환용 */
+const lastSuccessfulInvokeUrl = ref('')
 const tabs = ref<{ sheetId: number; title: string }[]>([])
 const tabScope = ref('') // '' = 전체 탭
 
 const keyword = ref('')
 const rows = ref<SheetRow[]>([])
+/** 시트 호출(list-tabs)로 불러온 전체 탭 병합 행 — 탭 범위「전체 탭」 복귀 시 복원 */
+const cachedAllTabRows = ref<SheetRow[]>([])
 const selectedRowIds = ref<Set<string>>(new Set())
 
 const selection = ref<SelectionInfo | null>(null)
-const generateLayout = ref<'below' | 'right'>('below')
+
+const sheetDiff = ref<SheetDiffPayload | null>(null)
+const diffAcknowledged = ref(false)
+let sheetDiffDebounce: ReturnType<typeof setTimeout> | null = null
+
+/** 시트 호출 시 스냅샷 대비 label이 바뀐 항목 전체 (oldLabel 포함) */
+const detectedLabelChanges = ref<SheetLabelChangedItem[]>([])
+/** 시트 호출 시 스냅샷 대비 label이 바뀐 행의 "tabTitle::rowNumber" 키 집합 (UI 표시용) */
+const labelChangedSet = computed(() =>
+  new Set(detectedLabelChanges.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
+)
 
 const isLoadingTabs = ref(false)
 const isSearching = ref(false)
 const isGenerating = ref(false)
 const isLoadingTabRows = ref(false)
+const isSyncing = ref(false)
 const statusMessage = ref('')
 const errorMessage = ref('')
 
@@ -378,27 +420,115 @@ function rowId(r: SheetRow) {
   return `${r.tabTitle}::${r.rowNumber}::${r.name}::${r.label}`
 }
 
-function displayUrl(url: string) {
-  const u = String(url ?? '')
-  const max = 42
-  if (u.length <= max) return u
-  const head = u.slice(0, 20)
-  const tail = u.slice(-16)
-  return `${head}…${tail}`
+function plainSheetRows(list: SheetRow[]): SheetRow[] {
+  return list.map((r) => ({
+    tabTitle: r.tabTitle,
+    rowNumber: r.rowNumber,
+    name: r.name,
+    type: r.type,
+    label: r.label,
+    value: r.value,
+    description: r.description,
+  }))
+}
+
+function scheduleSheetDiffRequest() {
+  if (sheetDiffDebounce) clearTimeout(sheetDiffDebounce)
+  sheetDiffDebounce = setTimeout(() => {
+    sheetDiffDebounce = null
+    if (!sheetUrl.value.trim()) {
+      sheetDiff.value = null
+      diffAcknowledged.value = false
+      return
+    }
+    if (!selection.value || rows.value.length === 0) {
+      sheetDiff.value = null
+      diffAcknowledged.value = false
+      return
+    }
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: 'sheet-diff-request',
+          url: sheetUrl.value,
+          currentRows: plainSheetRows(rows.value),
+        },
+      },
+      '*',
+    )
+  }, 120)
 }
 
 function refreshSelection() {
   parent.postMessage({ pluginMessage: { type: 'get-selection' } }, '*')
 }
 
-function applyUrlChoice() {
-  if (urlChoice.value === 'manual') return
-  sheetUrl.value = urlChoice.value
+/** 시트 입력·탭·검색·결과·선택 행·메시지 초기화. API 키·최근 URL은 유지 후 현재 피그마 선택만 다시 동기화 */
+function resetUi() {
+  urlChoice.value = 'manual'
+  sheetUrl.value = ''
+  changeApiKey.value = false
   tabs.value = []
   tabScope.value = ''
+  keyword.value = ''
+  rows.value = []
+  cachedAllTabRows.value = []
+  selectedRowIds.value = new Set()
+  lastSuccessfulInvokeUrl.value = ''
+  errorMessage.value = ''
+  statusMessage.value = '작업 영역을 초기화했습니다.'
+  isLoadingTabs.value = false
+  isLoadingTabRows.value = false
+  isSearching.value = false
+  isGenerating.value = false
+  sheetDiff.value = null
+  diffAcknowledged.value = false
+  detectedLabelChanges.value = []
+  refreshSelection()
+}
+
+/** 시트(URL) 컨텍스트가 바뀌면 탭·목록·검색어 초기화 */
+function clearSheetDerivedUi() {
+  tabs.value = []
+  tabScope.value = ''
+  rows.value = []
+  cachedAllTabRows.value = []
+  selectedRowIds.value = new Set()
+  keyword.value = ''
+  lastSuccessfulInvokeUrl.value = ''
   statusMessage.value = ''
   errorMessage.value = ''
+  sheetDiff.value = null
+  diffAcknowledged.value = false
+  detectedLabelChanges.value = []
 }
+
+function applyUrlChoice() {
+  if (urlChoice.value === 'manual') {
+    clearSheetDerivedUi()
+    return
+  }
+  sheetUrl.value = urlChoice.value
+  clearSheetDerivedUi()
+}
+
+let sheetUrlDebounce: ReturnType<typeof setTimeout> | null = null
+watch(sheetUrl, (_val, prev) => {
+  if (urlChoice.value !== 'manual') return
+  if (prev === undefined) return
+  if (sheetUrlDebounce) clearTimeout(sheetUrlDebounce)
+  sheetUrlDebounce = setTimeout(() => {
+    sheetUrlDebounce = null
+    clearSheetDerivedUi()
+  }, 450)
+})
+
+const invokeButtonLabel = computed(() => {
+  if (isLoadingTabs.value) return '호출 중...'
+  const u = sheetUrl.value.trim()
+  if (u && lastSuccessfulInvokeUrl.value === u && tabs.value.length > 0) return '시트 호출'
+  return '호출하기'
+})
 
 function clearRecentUrls() {
   parent.postMessage({ pluginMessage: { type: 'clear-recent-urls' } }, '*')
@@ -407,16 +537,28 @@ function clearRecentUrls() {
 function loadTabs() {
   errorMessage.value = ''
   statusMessage.value = ''
+  lastSuccessfulInvokeUrl.value = ''
+  tabs.value = []
+  tabScope.value = ''
+  rows.value = []
+  cachedAllTabRows.value = []
+  selectedRowIds.value = new Set()
   isLoadingTabs.value = true
   parent.postMessage({ pluginMessage: { type: 'list-tabs', url: sheetUrl.value, apiKey: apiKey.value } }, '*')
 }
 
 function onTabScopeChange() {
-  // 특정 탭을 선택하면 키워드 없이도 해당 탭 전체 행을 노출
-  if (!tabScope.value) return
   if (!sheetUrl.value.trim() || !apiKey.value.trim()) return
   errorMessage.value = ''
   statusMessage.value = ''
+  if (!tabScope.value) {
+    rows.value = cachedAllTabRows.value.length ? [...cachedAllTabRows.value] : []
+    selectedRowIds.value = new Set()
+    statusMessage.value = cachedAllTabRows.value.length
+      ? `전체 탭 ${cachedAllTabRows.value.length}개 행`
+      : '시트 호출 후 전체 탭 목록이 여기에 표시됩니다.'
+    return
+  }
   isLoadingTabRows.value = true
   parent.postMessage({
     pluginMessage: {
@@ -431,6 +573,29 @@ function onTabScopeChange() {
 function search() {
   errorMessage.value = ''
   statusMessage.value = ''
+
+  // 키워드가 비어 있으면 전체 결과로 복원
+  if (!keyword.value.trim()) {
+    selectedRowIds.value = new Set()
+    if (tabScope.value) {
+      // 특정 탭 선택 중이면 해당 탭 재호출
+      isLoadingTabRows.value = true
+      parent.postMessage({
+        pluginMessage: {
+          type: 'load-tab-rows',
+          url: sheetUrl.value,
+          apiKey: apiKey.value,
+          tabTitle: tabScope.value,
+        },
+      }, '*')
+    } else if (cachedAllTabRows.value.length > 0) {
+      // 전체 탭 캐시가 있으면 바로 복원
+      rows.value = [...cachedAllTabRows.value]
+      statusMessage.value = `전체 ${cachedAllTabRows.value.length}개 행`
+    }
+    return
+  }
+
   isSearching.value = true
   parent.postMessage({
     pluginMessage: {
@@ -443,12 +608,25 @@ function search() {
   }, '*')
 }
 
+function onKeywordEnter() {
+  if (isSearching.value || isLoadingTabRows.value || !sheetUrl.value.trim() || !apiKey.value.trim()) return
+  // 키워드가 있으면 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
+  if (keyword.value.trim() || cachedAllTabRows.value.length > 0 || tabScope.value) search()
+}
+
 function toggleRow(r: SheetRow) {
   const id = rowId(r)
   const next = new Set(selectedRowIds.value)
   if (next.has(id)) next.delete(id)
   else next.add(id)
   selectedRowIds.value = next
+}
+
+function selectChangedLabels() {
+  const changedKeys = labelChangedSet.value
+  selectedRowIds.value = new Set(
+    rows.value.filter((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`)).map(rowId)
+  )
 }
 
 function selectAll() {
@@ -464,33 +642,55 @@ const selectedRows = computed(() => {
   return rows.value.filter((r) => ids.has(rowId(r)))
 })
 
-const hasAnyMatchingProps = computed(() => {
-  const props = selection.value?.textProperties ?? []
-  const set = new Set(props.map(p => String(p.name ?? '').trim().toLowerCase()))
-  return set.has('label') || set.has('value') || set.has('description')
+const diffChangeCount = computed(() => {
+  const d = sheetDiff.value
+  if (!d) return 0
+  return d.added.length + d.deleted.length + d.valueChanged.length + d.labelChanged.length
 })
+
+/** 같은 스프레드시트 스냅샷이 있고 label/value 변경이 있을 때만 확인 필수 */
+const diffRequiresAck = computed(() => {
+  const d = sheetDiff.value
+  if (!d || !d.hasSnapshot || !d.sameSpreadsheet) return false
+  return diffChangeCount.value > 0
+})
+
+/**
+ * 동기화 버튼 활성 조건:
+ * 1. label 변경이 감지된 행이 존재
+ * 2. 선택된 행 중 label이 변경된 행이 1개 이상 포함
+ */
+const canSync = computed(() => {
+  if (detectedLabelChanges.value.length === 0) return false
+  const changedKeys = labelChangedSet.value
+  return selectedRows.value.some((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`))
+})
+
+/** 플러그인과 동일: 선택 서브트리 전체에서 TEXT label/value/description 매핑 가능 여부 */
+const hasAnyMatchingProps = computed(() => selection.value?.hasMappableSheetProps === true)
 
 const showNoMatchingPropsWarning = computed(() => {
   if (!selection.value) return false
   return !hasAnyMatchingProps.value
 })
 
-const applyInstances = computed(() => selection.value?.applyTracking?.instances ?? [])
-
-const driftedSheetLabels = computed(() => {
-  const list = applyInstances.value.filter((i) => i.driftedProps.length > 0)
-  const labels: string[] = []
-  const seen = new Set<string>()
-  for (const i of list) {
-    const lab = String(i.sheetLabel ?? '').trim() || String(i.rowName ?? '').trim() || '(이름 없음)'
-    if (seen.has(lab)) continue
-    seen.add(lab)
-    labels.push(lab)
+/** 시트 label 열 값이 선택 행에서 2회 이상 등장한 고유값 */
+const duplicatedSheetLabels = computed(() => {
+  const counts = new Map<string, number>()
+  for (const r of selectedRows.value) {
+    const raw = String(r.label ?? '').trim()
+    const key = raw.length === 0 ? '\0empty' : raw
+    counts.set(key, (counts.get(key) ?? 0) + 1)
   }
-  return labels
+  const out: string[] = []
+  for (const [key, c] of counts) {
+    if (c < 2) continue
+    out.push(key === '\0empty' ? '(빈 label)' : key)
+  }
+  return out
 })
 
-const hasApplyDrift = computed(() => driftedSheetLabels.value.length > 0)
+const hasDuplicateLabelsInSelection = computed(() => duplicatedSheetLabels.value.length > 0)
 
 const canGenerate = computed(() => {
   if (!selection.value) return false
@@ -498,6 +698,62 @@ const canGenerate = computed(() => {
   if (!hasAnyMatchingProps.value) return false
   return true
 })
+
+function syncSelectedRows() {
+  if (selectedRowIds.value.size === 0) return
+
+  // 선택된 행 중 label이 바뀐 항목만 추출 (tabTitle+rowNumber 기준으로 매칭)
+  const selectedKeys = new Set(
+    selectedRows.value.map((r) => `${r.tabTitle}::${r.rowNumber}`)
+  )
+  const labelChangedItems = detectedLabelChanges.value
+    .filter((it) => selectedKeys.has(`${it.tabTitle}::${it.rowNumber}`))
+    .map((it) => ({
+      oldLabel: it.oldLabel,
+      newLabel: it.newLabel,
+      tabTitle: it.tabTitle,
+      rowNumber: it.rowNumber,
+      value: it.value,
+    }))
+
+  if (labelChangedItems.length === 0) {
+    statusMessage.value = '선택한 행 중 변경된 label이 없습니다.'
+    return
+  }
+
+  isSyncing.value = true
+  errorMessage.value = ''
+  statusMessage.value = ''
+  parent.postMessage({
+    pluginMessage: { type: 'sync-value-changes', valueChangedItems: [], labelChangedItems },
+  }, '*')
+}
+
+function syncValueChanges() {
+  const diff = sheetDiff.value
+  if (!diff) return
+  const hasChanges = diff.valueChanged.length > 0 || diff.labelChanged.length > 0
+  if (!hasChanges) return
+  isSyncing.value = true
+  errorMessage.value = ''
+  statusMessage.value = ''
+  const valueChangedItems = diff.valueChanged.map((it) => ({
+    label: it.label,
+    tabTitle: it.tabTitle,
+    rowNumber: it.rowNumber,
+    name: it.name,
+    value: it.value,
+    previousValue: it.previousValue,
+  }))
+  const labelChangedItems = diff.labelChanged.map((it) => ({
+    oldLabel: it.oldLabel,
+    newLabel: it.newLabel,
+    tabTitle: it.tabTitle,
+    rowNumber: it.rowNumber,
+    value: it.value,
+  }))
+  parent.postMessage({ pluginMessage: { type: 'sync-value-changes', valueChangedItems, labelChangedItems } }, '*')
+}
 
 function connectAndGenerate() {
   errorMessage.value = ''
@@ -521,11 +777,13 @@ function connectAndGenerate() {
       url: sheetUrl.value,
       apiKey: apiKey.value,
       keywordRows,
+      snapshotRows: plainSheetRows(rows.value),
       tabScope: tabScope.value || undefined,
-      generateLayout: generateLayout.value,
     },
   }, '*')
 }
+
+watch([rows, selection, sheetUrl], () => scheduleSheetDiffRequest(), { deep: true })
 
 onMounted(() => {
   refreshSelection()
@@ -536,8 +794,7 @@ onMounted(() => {
 
     if (msg.type === 'settings') {
       apiKey.value = typeof msg.apiKey === 'string' ? msg.apiKey : ''
-      recentUrls.value = Array.isArray(msg.recentUrls) ? msg.recentUrls : []
-      urlChoice.value = 'manual'
+      recentSheets.value = Array.isArray(msg.recentSheets) ? msg.recentSheets : []
       return
     }
 
@@ -545,13 +802,44 @@ onMounted(() => {
       selection.value = msg.selection ?? null
       // 선택이 바뀌면 자동 매칭(이름 유사도 기반)
       autoMatchMapping()
+      scheduleSheetDiffRequest()
+      return
+    }
+
+    if (msg.type === 'sheet-diff') {
+      sheetDiff.value = {
+        hasSnapshot: msg.hasSnapshot === true,
+        sameSpreadsheet: msg.sameSpreadsheet === true,
+        added: Array.isArray(msg.added) ? msg.added : [],
+        deleted: Array.isArray(msg.deleted) ? msg.deleted : [],
+        valueChanged: Array.isArray(msg.valueChanged) ? msg.valueChanged : [],
+        labelChanged: Array.isArray(msg.labelChanged) ? msg.labelChanged : [],
+      }
+      diffAcknowledged.value = false
       return
     }
 
     if (msg.type === 'tabs') {
       isLoadingTabs.value = false
       tabs.value = Array.isArray(msg.tabs) ? msg.tabs : []
-      statusMessage.value = tabs.value.length ? `탭 ${tabs.value.length}개를 불러왔습니다.` : '탭을 찾지 못했습니다.'
+      const merged = Array.isArray(msg.rows) ? msg.rows : []
+      cachedAllTabRows.value = merged
+      rows.value = [...merged]
+      selectedRowIds.value = new Set()
+      lastSuccessfulInvokeUrl.value = sheetUrl.value.trim()
+      const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
+      detectedLabelChanges.value = changed
+      if (tabs.value.length === 0) {
+        statusMessage.value = '탭을 찾지 못했습니다.'
+      } else if (merged.length === 0) {
+        statusMessage.value = `탭 ${tabs.value.length}개를 불러왔습니다. (행 데이터 없음 또는 일부 탭만 읽음)`
+      } else {
+        const changedCount = labelChangedSet.value.size
+        statusMessage.value = changedCount > 0
+          ? `탭 ${tabs.value.length}개 · ${merged.length}개 행 불러옴 · ⚠️ label 변경 ${changedCount}건 감지`
+          : `탭 ${tabs.value.length}개 · 전체 ${merged.length}개 행(label/value 등)을 불러왔습니다.`
+      }
+      scheduleSheetDiffRequest()
       return
     }
 
@@ -559,9 +847,14 @@ onMounted(() => {
       isLoadingTabRows.value = false
       rows.value = Array.isArray(msg.rows) ? msg.rows : []
       selectedRowIds.value = new Set()
+      const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
+      detectedLabelChanges.value = changed
+      const changedCount = changed.length
       statusMessage.value = rows.value.length
-        ? `${msg.tabTitle} 탭에서 ${rows.value.length}개 항목을 불러왔습니다.`
+        ? `${msg.tabTitle} 탭에서 ${rows.value.length}개 항목을 불러왔습니다.` +
+          (changedCount > 0 ? ` · ⚠️ label 변경 ${changedCount}건 감지` : '')
         : `${msg.tabTitle} 탭에 항목이 없습니다.`
+      scheduleSheetDiffRequest()
       return
     }
 
@@ -570,12 +863,30 @@ onMounted(() => {
       rows.value = Array.isArray(msg.rows) ? msg.rows : []
       selectedRowIds.value = new Set()
       statusMessage.value = rows.value.length ? `검색 결과 ${rows.value.length}개` : '검색 결과가 없습니다.'
+      scheduleSheetDiffRequest()
+      return
+    }
+
+    if (msg.type === 'sync-done') {
+      isSyncing.value = false
+      const count = typeof msg.updated === 'number' ? msg.updated : 0
+      statusMessage.value = count > 0 ? `${count}개 인스턴스 동기화 완료` : '동기화할 인스턴스를 찾지 못했습니다.'
+      scheduleSheetDiffRequest()
       return
     }
 
     if (msg.type === 'done') {
       isGenerating.value = false
-      statusMessage.value = `${msg.created ?? 0}개 생성 및 연결 완료`
+      const applied = typeof msg.appliedInPlace === 'number' ? msg.appliedInPlace : 0
+      const created = typeof msg.created === 'number' ? msg.created : 0
+      if (applied > 0 && created > 0) {
+        statusMessage.value = `${applied}개 기존 인스턴스 갱신 · ${created}개 복제 생성 및 연결 완료`
+      } else if (applied > 0 && created === 0) {
+        statusMessage.value = `${applied}개 기존 인스턴스에 연결 완료 (복제 없음)`
+      } else {
+        statusMessage.value = `${created}개 생성 및 연결 완료`
+      }
+      scheduleSheetDiffRequest()
       return
     }
 
@@ -584,6 +895,7 @@ onMounted(() => {
       isLoadingTabRows.value = false
       isSearching.value = false
       isGenerating.value = false
+      isSyncing.value = false
       errorMessage.value = msg.message ?? '에러가 발생했습니다.'
     }
   }
