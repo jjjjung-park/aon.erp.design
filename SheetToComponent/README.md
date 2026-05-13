@@ -113,16 +113,6 @@ Google Sheets API v4를 사용합니다. [Google Cloud Console](https://console.
 
 ---
 
-## 기술 스택
-
-- Figma Plugin API
-- Vue 3 + TypeScript
-- Tailwind CSS v4
-- Vite + esbuild
-- Google Sheets API v4
-
----
-
 ## Google Sheets API Key 발급 방법
 
 ### 1. Google Cloud Console 프로젝트 생성
