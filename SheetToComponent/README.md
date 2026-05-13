@@ -120,3 +120,35 @@ Google Sheets API v4를 사용합니다. [Google Cloud Console](https://console.
 - Tailwind CSS v4
 - Vite + esbuild
 - Google Sheets API v4
+
+---
+
+## Google Sheets API Key 발급 방법
+
+### 1. Google Cloud Console 프로젝트 생성
+
+1. [Google Cloud Console](https://console.cloud.google.com/) 접속
+2. 상단 프로젝트 선택 드롭다운 → **새 프로젝트** 클릭
+3. 프로젝트 이름 입력 후 **만들기**
+
+### 2. Google Sheets API 활성화
+
+1. 좌측 메뉴 **API 및 서비스 → 라이브러리** 이동
+2. 검색창에 `Google Sheets API` 입력 후 선택
+3. **사용 설정** 클릭
+
+### 3. API 키 발급
+
+1. 좌측 메뉴 **API 및 서비스 → 사용자 인증 정보** 이동
+2. 상단 **+ 사용자 인증 정보 만들기 → API 키** 클릭
+3. 생성된 키(`AIza...` 형식)를 복사
+
+### 4. API 키 제한 설정 (권장)
+
+발급된 키 클릭 → **API 제한** 탭에서 `Google Sheets API`만 허용하도록 설정하면 보안이 강화됩니다.
+
+### 5. 스프레드시트 공개 설정
+
+플러그인은 API 키 인증만 사용하므로 대상 시트가 **링크가 있는 모든 사용자 — 뷰어** 이상으로 공유되어 있어야 합니다.
+
+> 📎 공식 문서: [Google Sheets API 시작하기](https://developers.google.com/sheets/api/guides/concepts?hl=ko)
