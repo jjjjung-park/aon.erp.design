@@ -40,7 +40,7 @@ type UiToPluginMessage =
       generateLayout?: 'below' | 'right'
     }
   | { type: 'sheet-diff-request'; url: string; currentRows: SheetRow[] }
-  | { type: 'sync-value-changes'; valueChangedItems: SheetDiffItem[]; labelChangedItems?: SheetLabelChangedItem[] }
+  | { type: 'sync-value-changes'; valueChangedItems: SheetDiffItem[]; labelChangedItems?: SheetLabelChangedItem[]; url?: string }
   | { type: 'close' }
 
 type RecentSheet = { url: string; title: string }
@@ -557,11 +557,23 @@ function propBindingIsText(
   return entry?.type === 'TEXT'
 }
 
+/**
+ * 컴포넌트 원본에 오류가 있는 인스턴스(broken component)의 경우
+ * `componentProperties` 접근 시 Figma가 에러를 throw할 수 있으므로 안전하게 래핑.
+ */
+function safeComponentProperties(inst: InstanceNode): ComponentProperties | null {
+  try {
+    return inst.componentProperties ?? null
+  } catch {
+    return null
+  }
+}
+
 /** label / value / description 중 TEXT로 시트 매핑 가능한 항목이 있는지 (깊이 무관 수집과 함께 사용) */
 function hasMappableTextSheetPropsInTarget(t: InstanceNode | ComponentNode): boolean {
   const props =
     t.type === 'INSTANCE'
-      ? t.componentProperties
+      ? safeComponentProperties(t as InstanceNode)
       : (t as ComponentNode).componentPropertyDefinitions
   if (!props) return false
   const cp = props as ComponentProperties
@@ -627,7 +639,7 @@ function extractTextPropNames(targets: (InstanceNode | ComponentNode)[]): { name
   const seenBase = new Set<string>()
 
   for (const t of targets) {
-    const props = t.type === 'INSTANCE' ? t.componentProperties : t.componentPropertyDefinitions
+    const props = t.type === 'INSTANCE' ? safeComponentProperties(t as InstanceNode) : t.componentPropertyDefinitions
     if (!props) continue
     for (const propName of Object.keys(props)) {
       const def: any = (props as any)[propName]
@@ -670,20 +682,21 @@ function applyRowToInstance(
   inst: InstanceNode,
   row: SheetRow,
 ) {
-  if (!inst.componentProperties) return
+  const props = safeComponentProperties(inst)
+  if (!props) return
   const updates: Record<string, string> = {}
 
-  const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
-  const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
-  const descKey = resolveKeyByBaseName(inst.componentProperties, 'description')
+  const labelKey = resolveKeyByBaseName(props, 'label')
+  const valueKey = resolveKeyByBaseName(props, 'value')
+  const descKey = resolveKeyByBaseName(props, 'description')
 
-  if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
+  if (labelKey && propBindingIsText(props, labelKey)) {
     updates[labelKey] = row.label
   }
-  if (valueKey && propBindingIsText(inst.componentProperties, valueKey)) {
+  if (valueKey && propBindingIsText(props, valueKey)) {
     updates[valueKey] = row.value
   }
-  if (descKey && propBindingIsText(inst.componentProperties, descKey)) {
+  if (descKey && propBindingIsText(props, descKey)) {
     updates[descKey] = row.description
   }
 
@@ -710,10 +723,11 @@ function findInstancesByLabelOnPage(page: PageNode, labelValue: string): Instanc
     if ((node as { removed?: boolean }).removed) return
     if (node.type === 'INSTANCE') {
       const inst = node as InstanceNode
-      if (inst.componentProperties) {
-        const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
-        if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
-          const current = String((inst.componentProperties[labelKey] as { value: unknown }).value ?? '').trim()
+      const props = safeComponentProperties(inst)
+      if (props) {
+        const labelKey = resolveKeyByBaseName(props, 'label')
+        if (labelKey && propBindingIsText(props, labelKey)) {
+          const current = String((props[labelKey] as { value: unknown }).value ?? '').trim()
           if (current === target) results.push(inst)
         }
       }
@@ -729,9 +743,10 @@ function findInstancesByLabelOnPage(page: PageNode, labelValue: string): Instanc
 
 /** value 프로퍼티만 업데이트 (label·description은 건드리지 않음) */
 function applyValueToInstance(inst: InstanceNode, newValue: string): void {
-  if (!inst.componentProperties) return
-  const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
-  if (valueKey && propBindingIsText(inst.componentProperties, valueKey)) {
+  const props = safeComponentProperties(inst)
+  if (!props) return
+  const valueKey = resolveKeyByBaseName(props, 'value')
+  if (valueKey && propBindingIsText(props, valueKey)) {
     inst.setProperties({ [valueKey]: newValue })
   }
 }
@@ -753,14 +768,15 @@ function syncValueByLabelOnPage(page: PageNode, labelValue: string, newValue: st
     if ((node as { removed?: boolean }).removed) return
     if (node.type === 'INSTANCE') {
       const inst = node as InstanceNode
-      if (inst.componentProperties && !processed.has(inst.id)) {
-        const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
-        if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
-          const current = String((inst.componentProperties[labelKey] as { value: unknown }).value ?? '').trim()
+      const props = safeComponentProperties(inst)
+      if (props && !processed.has(inst.id)) {
+        const labelKey = resolveKeyByBaseName(props, 'label')
+        if (labelKey && propBindingIsText(props, labelKey)) {
+          const current = String((props[labelKey] as { value: unknown }).value ?? '').trim()
           if (current === target) {
             processed.add(inst.id)
-            const valueKey = resolveKeyByBaseName(inst.componentProperties, 'value')
-            if (valueKey && propBindingIsText(inst.componentProperties, valueKey)) {
+            const valueKey = resolveKeyByBaseName(props, 'value')
+            if (valueKey && propBindingIsText(props, valueKey)) {
               // label + value가 같은 인스턴스에 있는 구조
               inst.setProperties({ [valueKey]: newValue })
               updated++
@@ -773,8 +789,10 @@ function syncValueByLabelOnPage(page: PageNode, labelValue: string, newValue: st
                   processed.add(parentId)
                   for (const sibling of collectInstanceOrComponentDescendants(parent as SceneNode)) {
                     if (sibling.type !== 'INSTANCE' || sibling.id === inst.id) continue
-                    const vKey = resolveKeyByBaseName(sibling.componentProperties, 'value')
-                    if (vKey && propBindingIsText(sibling.componentProperties, vKey)) {
+                    const siblingProps = safeComponentProperties(sibling as InstanceNode)
+                    if (!siblingProps) continue
+                    const vKey = resolveKeyByBaseName(siblingProps, 'value')
+                    if (vKey && propBindingIsText(siblingProps, vKey)) {
                       sibling.setProperties({ [vKey]: newValue })
                       updated++
                     }
@@ -809,10 +827,11 @@ function syncLabelOnPage(page: PageNode, oldLabel: string, newLabel: string): nu
     if ((node as { removed?: boolean }).removed) return
     if (node.type === 'INSTANCE') {
       const inst = node as InstanceNode
-      if (inst.componentProperties && !processed.has(inst.id)) {
-        const labelKey = resolveKeyByBaseName(inst.componentProperties, 'label')
-        if (labelKey && propBindingIsText(inst.componentProperties, labelKey)) {
-          const current = String((inst.componentProperties[labelKey] as { value: unknown }).value ?? '').trim()
+      const props = safeComponentProperties(inst)
+      if (props && !processed.has(inst.id)) {
+        const labelKey = resolveKeyByBaseName(props, 'label')
+        if (labelKey && propBindingIsText(props, labelKey)) {
+          const current = String((props[labelKey] as { value: unknown }).value ?? '').trim()
           if (current === target) {
             processed.add(inst.id)
             inst.setProperties({ [labelKey]: replacement })
@@ -834,22 +853,36 @@ function syncLabelOnPage(page: PageNode, oldLabel: string, newLabel: string): nu
 /**
  * 페이지 스냅샷과 현재 시트 행을 비교해 label이 바뀐 항목 목록을 반환.
  * 스냅샷이 없거나 다른 스프레드시트이면 빈 배열.
+ *
+ * spreadsheetId를 findAnySnapshotOnPage에 전달해,
+ * 다른 시트로 연결된 스냅샷이 먼저 발견되더라도 올바른 스냅샷을 찾습니다.
  */
 function detectLabelChangesFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelChangedItem[] {
-  const pageSnap = findAnySnapshotOnPage(figma.currentPage)
-  if (!pageSnap || pageSnap.snapshot.spreadsheetId !== spreadsheetId) return []
+  const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
+  if (!pageSnap) return []
   return computeLabelChanges(pageSnap.snapshot.rows, currentRows)
 }
 
 /**
  * 선택 없이도 스냅샷을 찾을 수 있도록 페이지 전체를 순회해 첫 번째 스냅샷 노드를 반환.
  * 선택 기반 findSnapshotNode 가 null 일 때 폴백으로 사용.
+ *
+ * @param spreadsheetId - 지정하면 해당 ID와 일치하는 스냅샷만 반환 (DFS 첫 번째 스냅샷이
+ *   다른 시트에 연결된 경우 오탐 방지). 생략하면 첫 번째 스냅샷 반환.
  */
-function findAnySnapshotOnPage(page: PageNode): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
+function findAnySnapshotOnPage(
+  page: PageNode,
+  spreadsheetId?: string,
+): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
   function visit(node: BaseNode): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
     if ((node as { removed?: boolean }).removed) return null
     const snap = readSheetSnapshotFromNode(node as SceneNode)
-    if (snap) return { node: node as SceneNode, snapshot: snap }
+    if (snap) {
+      // spreadsheetId 필터가 있으면 일치하는 경우만 반환, 없으면 첫 번째 스냅샷 반환
+      if (!spreadsheetId || snap.spreadsheetId === spreadsheetId) {
+        return { node: node as SceneNode, snapshot: snap }
+      }
+    }
     if ('children' in node) {
       for (const child of (node as ChildrenMixin).children) {
         const result = visit(child)
@@ -1148,15 +1181,38 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       // diff 패널에서 온 label 변경 동기화 (oldLabel이 명시된 경우)
       for (const labelItem of (msg.labelChangedItems ?? [])) {
-        updated += syncLabelOnPage(figma.currentPage, labelItem.oldLabel, labelItem.newLabel)
+        const cnt = syncLabelOnPage(figma.currentPage, labelItem.oldLabel, labelItem.newLabel)
+        updated += cnt
+
+        // ── 디버그: 찾지 못했을 때 실제 label 값 샘플 출력 ──────────────
+        if (cnt === 0) {
+          const samples: string[] = []
+          function dbgVisit(node: BaseNode) {
+            if ((node as { removed?: boolean }).removed) return
+            if (node.type === 'INSTANCE') {
+              const p = safeComponentProperties(node as InstanceNode)
+              if (p) {
+                const lk = resolveKeyByBaseName(p, 'label')
+                if (lk) samples.push(String((p[lk] as { value: unknown }).value ?? ''))
+              }
+            }
+            if ('children' in node && samples.length < 10) {
+              for (const c of (node as ChildrenMixin).children) dbgVisit(c)
+            }
+          }
+          for (const c of figma.currentPage.children) { if (samples.length < 10) dbgVisit(c) }
+          figma.notify(
+            `[디버그] 찾는 label: "${labelItem.oldLabel}" / 페이지 label 샘플(${samples.length}): ${samples.slice(0, 5).join(' | ') || '없음'}`,
+            { timeout: 10000 },
+          )
+        }
+        // ────────────────────────────────────────────────────────────────
       }
 
       // label 변경 동기화 — 스냅샷과 tabTitle+rowNumber 기준 비교 후 label이 바뀐 행만 처리
       if (Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0) {
-        const sel = figma.currentPage.selection[0]
-        const found =
-          (sel ? findSnapshotNode(sel) : null) ??
-          findAnySnapshotOnPage(figma.currentPage)
+        const syncSpreadsheetIdForValue = msg.url ? parseSpreadsheetId(msg.url) ?? undefined : undefined
+        const found = findAnySnapshotOnPage(figma.currentPage, syncSpreadsheetIdForValue)
 
         if (found) {
           // tabTitle+rowNumber 키로 스냅샷 색인
@@ -1179,10 +1235,10 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       // 스냅샷 갱신 (best-effort) — 동기화된 label 변경만 반영
       {
-        const sel2 = figma.currentPage.selection[0]
-        const found =
-          (sel2 ? findSnapshotNode(sel2) : null) ??
-          findAnySnapshotOnPage(figma.currentPage)
+        // findSnapshotNode(sel)은 spreadsheetId를 검증하지 않아 다른 시트 스냅샷을 반환할 수 있음.
+        // spreadsheetId 필터를 적용한 findAnySnapshotOnPage로 항상 올바른 노드를 찾음.
+        const syncSpreadsheetId = msg.url ? parseSpreadsheetId(msg.url) ?? undefined : undefined
+        const found = findAnySnapshotOnPage(figma.currentPage, syncSpreadsheetId)
         if (found) {
           let updatedRows = found.snapshot.rows.map((r) => ({ ...r }))
           let updatedLabelToNodeIds = { ...found.snapshot.labelToNodeIds }

@@ -725,7 +725,7 @@ function syncSelectedRows() {
   errorMessage.value = ''
   statusMessage.value = ''
   parent.postMessage({
-    pluginMessage: { type: 'sync-value-changes', valueChangedItems: [], labelChangedItems },
+    pluginMessage: { type: 'sync-value-changes', valueChangedItems: [], labelChangedItems, url: sheetUrl.value },
   }, '*')
 }
 
