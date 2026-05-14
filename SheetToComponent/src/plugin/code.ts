@@ -530,11 +530,11 @@ async function fetchSheetRowsByTabTitle(
   const rowData: any[] = data?.sheets?.[0]?.data?.[0]?.rowData ?? []
   if (rowData.length === 0) return []
 
-  // 셀 값 → string 변환
+  // 셀 값 → string 변환 (NFC 정규화로 한글 분리 방지)
   function cellStr(cell: any): string {
     const v = cell?.userEnteredValue
     if (!v) return ''
-    if ('stringValue' in v) return String(v.stringValue ?? '')
+    if ('stringValue' in v) return String(v.stringValue ?? '').normalize('NFC')
     if ('numberValue' in v) return String(v.numberValue ?? '')
     if ('boolValue' in v) return String(v.boolValue ?? '')
     return ''
@@ -622,9 +622,9 @@ function hasDuplicateSheetLabels(rows: SheetRow[]): boolean {
 }
 
 function rowMatchesKeyword(row: SheetRow, keyword: string): boolean {
-  const keywords = keyword.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean)
+  const keywords = keyword.split(',').map((k) => k.trim().toLowerCase().normalize('NFC')).filter((k) => k.length >= 2)
   if (keywords.length === 0) return false
-  const hay = [row.label, row.value].join(' ').toLowerCase()
+  const hay = [row.label, row.value].join(' ').toLowerCase().normalize('NFC')
   return keywords.some((k) => hay.includes(k))
 }
 

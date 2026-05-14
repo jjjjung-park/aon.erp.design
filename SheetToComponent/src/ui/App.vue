@@ -91,13 +91,13 @@
           <input
             v-model="keyword"
             type="text"
-            placeholder="name/type/label/value/description에서 검색"
+            placeholder="두 글자 이상 입력"
             class="flex-1 text-xs px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             @keydown.enter.prevent="onKeywordEnter"
           />
           <button
             class="px-3 py-2 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope)"
+            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope) || keyword.trim().length < 2"
             @click="search"
           >
             {{ isSearching ? '검색 중...' : '검색' }}
@@ -545,11 +545,11 @@ function rowId(r: SheetRow) {
 /** 텍스트를 키워드 기준으로 분할 — 매칭 부분과 비매칭 부분 교대로 반환 */
 /** 텍스트를 키워드(들) 기준으로 분할 — 쉼표로 구분된 복수 키워드 지원, 매칭 부분과 비매칭 부분 교대로 반환 */
 function splitByKeyword(text: string, kw: string): { text: string; match: boolean }[] {
-  const keywords = kw.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean)
+  const keywords = kw.split(',').map((k) => k.trim().toLowerCase().normalize('NFC')).filter((k) => k.length >= 2)
   if (keywords.length === 0) return [{ text, match: false }]
 
   // 모든 키워드의 매칭 구간 수집
-  const lower = text.toLowerCase()
+  const lower = text.toLowerCase().normalize('NFC')
   const ranges: { start: number; end: number }[] = []
   for (const k of keywords) {
     let idx = 0
@@ -742,7 +742,7 @@ function search() {
   statusMessage.value = ''
 
   // 유효한 키워드가 없으면 (빈 입력 또는 쉼표만 입력) 전체 결과로 복원
-  const validKeywords = keyword.value.split(',').map((k) => k.trim()).filter(Boolean)
+  const validKeywords = keyword.value.split(',').map((k) => k.trim()).filter((k) => k.length >= 2)
   if (validKeywords.length === 0) {
     selectedRowIds.value = new Set()
     if (tabScope.value) {
@@ -778,8 +778,10 @@ function search() {
 
 function onKeywordEnter() {
   if (isSearching.value || isLoadingTabRows.value || !sheetUrl.value.trim() || !apiKey.value.trim()) return
-  // 키워드가 있으면 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
-  if (keyword.value.trim() || cachedAllTabRows.value.length > 0 || tabScope.value) search()
+  // 키워드가 있으면 2글자 이상일 때만 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
+  const kw = keyword.value.trim()
+  if (kw && kw.length < 2) return
+  if (kw || cachedAllTabRows.value.length > 0 || tabScope.value) search()
 }
 
 
