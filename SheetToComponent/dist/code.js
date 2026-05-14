@@ -207,7 +207,7 @@
       }
       function computeNewLabels(prevRows, currRows) {
         const prevKeys = new Set(prevRows.map((r) => `${r.tabTitle}::${r.rowNumber}`));
-        return currRows.filter((r) => !prevKeys.has(`${r.tabTitle}::${r.rowNumber}`)).map((r) => ({ tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label, value: r.value }));
+        return currRows.filter((r) => !r.strikethrough && !prevKeys.has(`${r.tabTitle}::${r.rowNumber}`)).map((r) => ({ tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label, value: r.value }));
       }
       function detectNewLabelsFromPage(spreadsheetId, currentRows) {
         const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId);
