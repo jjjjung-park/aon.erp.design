@@ -93,11 +93,11 @@
             type="text"
             placeholder="두 글자 이상 입력"
             class="flex-1 text-xs px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            @keydown.enter.prevent="onKeywordEnter"
+            @keyup.enter="onKeywordEnter"
           />
           <button
             class="px-3 py-2 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope) || keyword.trim().length < 2"
+            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope) || (!!keyword.trim() && !keyword.trim().split(',').some(k => k.trim().length >= 2))"
             @click="search"
           >
             {{ isSearching ? '검색 중...' : '검색' }}
@@ -195,22 +195,6 @@
                 <div v-if="r.description && !r.strikethrough" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
               </div>
             </label>
-            <!-- 삭제된 행: 체크박스 비활성 + [삭제됨] 뱃지 -->
-            <div
-              v-for="r in deletedRows"
-              :key="`deleted::${r.tabTitle}::${r.rowNumber}`"
-              class="flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 bg-gray-50 opacity-60"
-            >
-              <input type="checkbox" class="mt-1" disabled />
-              <div class="min-w-0 flex-1">
-                <div class="flex items-center gap-1.5 truncate">
-                  <span class="text-[12px] font-semibold text-gray-400 truncate line-through">{{ r.label || '(no label)' }}</span>
-                  <span class="text-[11px] text-gray-400 font-normal shrink-0">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
-                  <span class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-gray-400 text-white leading-none">삭제됨</span>
-                </div>
-                <div class="text-[11px] text-gray-400 truncate">value: {{ r.value }}</div>
-              </div>
-            </div>
           </div>
 
           <!-- 선택된 항목 label 태그 목록 -->
@@ -359,12 +343,6 @@ type SheetLabelNewItem = {
   value: string
 }
 
-type SheetLabelDeletedItem = {
-  tabTitle: string
-  rowNumber: number
-  label: string
-  value: string
-}
 
 type SheetDiffPayload = {
   hasSnapshot: boolean
@@ -415,28 +393,14 @@ const labelAddedSet = computed(() =>
   new Set(detectedNewLabels.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
 )
 
-/** 시트에서 삭제된 행 (스냅샷에는 있지만 현재 시트에 없음) */
-const detectedDeletedLabels = ref<SheetLabelDeletedItem[]>([])
-/** 삭제된 행의 "tabTitle::rowNumber" 키 집합 — 물리적 삭제 + 취소선 행 모두 포함 */
+/** 취소선 행의 "tabTitle::rowNumber" 키 집합 */
 const labelDeletedSet = computed(() => {
-  const keys = new Set(detectedDeletedLabels.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
+  const keys = new Set<string>()
   for (const r of rows.value) {
     if (r.strikethrough) keys.add(`${r.tabTitle}::${r.rowNumber}`)
   }
   return keys
 })
-/** 삭제된 행을 SheetRow 형태로 변환 (목록에 표시용) */
-const deletedRows = computed<SheetRow[]>(() =>
-  detectedDeletedLabels.value.map((it) => ({
-    tabTitle: it.tabTitle,
-    rowNumber: it.rowNumber,
-    name: '',
-    type: 'STRING',
-    label: it.label,
-    value: it.value,
-    description: '',
-  }))
-)
 
 const isLoadingTabs = ref(false)
 const isSearching = ref(false)
@@ -738,6 +702,9 @@ function onTabScopeChange() {
 }
 
 function search() {
+  // 한글 IME 조합 중인 경우 포커스 해제로 커밋 처리
+  ;(document.activeElement as HTMLElement | null)?.blur()
+
   errorMessage.value = ''
   statusMessage.value = ''
 
@@ -780,7 +747,7 @@ function onKeywordEnter() {
   if (isSearching.value || isLoadingTabRows.value || !sheetUrl.value.trim() || !apiKey.value.trim()) return
   // 키워드가 있으면 2글자 이상일 때만 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
   const kw = keyword.value.trim()
-  if (kw && kw.length < 2) return
+  if (kw && !kw.split(',').some(k => k.trim().length >= 2)) return
   if (kw || cachedAllTabRows.value.length > 0 || tabScope.value) search()
 }
 
@@ -1014,7 +981,6 @@ onMounted(() => {
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
       detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
-      detectedDeletedLabels.value = Array.isArray(msg.labelDeleted) ? msg.labelDeleted : []
       if (tabs.value.length === 0) {
         statusMessage.value = '탭을 찾지 못했습니다.'
       } else if (merged.length === 0) {
@@ -1022,7 +988,7 @@ onMounted(() => {
       } else {
         const changedCount = labelChangedSet.value.size
         const addedCount = labelAddedSet.value.size
-        const deletedCount = labelDeletedSet.value.size // 물리적 삭제 + 취소선 포함
+        const deletedCount = merged.filter((r) => r.strikethrough).length
         const notices = [
           changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
           addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
@@ -1043,10 +1009,9 @@ onMounted(() => {
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
       detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
-      detectedDeletedLabels.value = Array.isArray(msg.labelDeleted) ? msg.labelDeleted : []
       const changedCount = changed.length
       const addedCount = detectedNewLabels.value.length
-      const deletedCount = detectedDeletedLabels.value.length
+      const deletedCount = rows.value.filter((r) => r.strikethrough).length
       const notices = [
         changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
         addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',

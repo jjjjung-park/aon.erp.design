@@ -75,18 +75,11 @@ type SheetLabelNewItem = {
 }
 
 /** 스냅샷에는 있지만 현재 시트에서 삭제된 행 */
-type SheetLabelDeletedItem = {
-  tabTitle: string
-  rowNumber: number
-  label: string
-  value: string
-}
-
 type PluginToUiMessage =
   | { type: 'selection'; selection: SelectionInfo | null }
   | { type: 'settings'; apiKey: string; recentSheets: RecentSheet[] }
-  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[]; labelDeleted: SheetLabelDeletedItem[] }
-  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[]; labelDeleted: SheetLabelDeletedItem[] }
+  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
+  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
   | { type: 'search-results'; keyword: string; rows: SheetRow[] }
   | {
       type: 'sheet-diff'
@@ -322,19 +315,7 @@ function detectNewLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[])
   return computeNewLabels(pageSnap.snapshot.rows, currentRows)
 }
 
-/** 스냅샷에는 있지만 현재 시트에서 삭제된 행(tabTitle::rowNumber 기준)을 반환 */
-function computeDeletedLabels(prevRows: SheetRow[], currRows: SheetRow[]): SheetLabelDeletedItem[] {
-  const currKeys = new Set(currRows.map((r) => `${r.tabTitle}::${r.rowNumber}`))
-  return prevRows
-    .filter((r) => !currKeys.has(`${r.tabTitle}::${r.rowNumber}`))
-    .map((r) => ({ tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label, value: r.value }))
-}
 
-function detectDeletedLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelDeletedItem[] {
-  const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
-  if (!pageSnap) return []
-  return computeDeletedLabels(pageSnap.snapshot.rows, currentRows)
-}
 
 function readSheetSnapshotFromNode(root: SceneNode): NormalizedSheetSnapshot | null {
   if (!('getPluginData' in root) || typeof (root as { getPluginData?: (k: string) => string }).getPluginData !== 'function') {
@@ -1088,8 +1069,7 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
       const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
-      const labelDeleted = detectDeletedLabelsFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded, labelDeleted } satisfies PluginToUiMessage)
+      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }
@@ -1110,8 +1090,7 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       const rows = await fetchSheetRowsByTabTitle(spreadsheetId, msg.apiKey, msg.tabTitle.trim())
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
       const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
-      const labelDeleted = detectDeletedLabelsFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded, labelDeleted } satisfies PluginToUiMessage)
+      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }
