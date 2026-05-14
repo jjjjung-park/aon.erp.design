@@ -455,18 +455,47 @@ function rowId(r: SheetRow) {
 }
 
 /** 텍스트를 키워드 기준으로 분할 — 매칭 부분과 비매칭 부분 교대로 반환 */
+/** 텍스트를 키워드(들) 기준으로 분할 — 쉼표로 구분된 복수 키워드 지원, 매칭 부분과 비매칭 부분 교대로 반환 */
 function splitByKeyword(text: string, kw: string): { text: string; match: boolean }[] {
-  const k = kw.trim().toLowerCase()
-  if (!k) return [{ text, match: false }]
-  const result: { text: string; match: boolean }[] = []
-  let rest = text
-  while (rest.length > 0) {
-    const idx = rest.toLowerCase().indexOf(k)
-    if (idx === -1) { result.push({ text: rest, match: false }); break }
-    if (idx > 0) result.push({ text: rest.slice(0, idx), match: false })
-    result.push({ text: rest.slice(idx, idx + k.length), match: true })
-    rest = rest.slice(idx + k.length)
+  const keywords = kw.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean)
+  if (keywords.length === 0) return [{ text, match: false }]
+
+  // 모든 키워드의 매칭 구간 수집
+  const lower = text.toLowerCase()
+  const ranges: { start: number; end: number }[] = []
+  for (const k of keywords) {
+    let idx = 0
+    while (idx < lower.length) {
+      const found = lower.indexOf(k, idx)
+      if (found === -1) break
+      ranges.push({ start: found, end: found + k.length })
+      idx = found + k.length
+    }
   }
+
+  if (ranges.length === 0) return [{ text, match: false }]
+
+  // 범위 정렬 및 병합 (겹치는 구간 합치기)
+  ranges.sort((a, b) => a.start - b.start)
+  const merged: { start: number; end: number }[] = []
+  for (const r of ranges) {
+    if (merged.length === 0 || r.start >= merged[merged.length - 1].end) {
+      merged.push({ ...r })
+    } else {
+      merged[merged.length - 1].end = Math.max(merged[merged.length - 1].end, r.end)
+    }
+  }
+
+  // 텍스트 분할
+  const result: { text: string; match: boolean }[] = []
+  let pos = 0
+  for (const { start, end } of merged) {
+    if (pos < start) result.push({ text: text.slice(pos, start), match: false })
+    result.push({ text: text.slice(start, end), match: true })
+    pos = end
+  }
+  if (pos < text.length) result.push({ text: text.slice(pos), match: false })
+
   return result
 }
 
@@ -624,8 +653,9 @@ function search() {
   errorMessage.value = ''
   statusMessage.value = ''
 
-  // 키워드가 비어 있으면 전체 결과로 복원
-  if (!keyword.value.trim()) {
+  // 유효한 키워드가 없으면 (빈 입력 또는 쉼표만 입력) 전체 결과로 복원
+  const validKeywords = keyword.value.split(',').map((k) => k.trim()).filter(Boolean)
+  if (validKeywords.length === 0) {
     selectedRowIds.value = new Set()
     if (tabScope.value) {
       // 특정 탭 선택 중이면 해당 탭 재호출
@@ -663,6 +693,7 @@ function onKeywordEnter() {
   // 키워드가 있으면 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
   if (keyword.value.trim() || cachedAllTabRows.value.length > 0 || tabScope.value) search()
 }
+
 
 function toggleRow(r: SheetRow) {
   const id = rowId(r)

@@ -522,10 +522,10 @@ function hasDuplicateSheetLabels(rows: SheetRow[]): boolean {
 }
 
 function rowMatchesKeyword(row: SheetRow, keyword: string): boolean {
-  const k = keyword.trim().toLowerCase()
-  if (!k) return false
+  const keywords = keyword.split(',').map((k) => k.trim().toLowerCase()).filter(Boolean)
+  if (keywords.length === 0) return false
   const hay = [row.label, row.value].join(' ').toLowerCase()
-  return hay.includes(k)
+  return keywords.some((k) => hay.includes(k))
 }
 
 // ── Selection helpers ──────────────────────────────────────────────────────────
