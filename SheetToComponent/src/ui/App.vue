@@ -255,21 +255,31 @@
         일치하는 프로퍼티가 없습니다
       </p>
       <div class="flex gap-2">
+        <!-- 생성 버튼: 수정 항목만 선택된 경우가 아닐 때 표시 -->
+        <div v-if="!hasOnlyChangedSelected || isGenerating" class="relative flex-1 group">
+          <button
+            class="w-full py-2.5 rounded-lg font-semibold text-[13px] transition-colors bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
+            :disabled="!canGenerate || isGenerating"
+            @click="connectAndGenerate"
+          >
+            {{
+              isGenerating
+                ? '생성/연결 중...'
+                : hasDuplicateLabelsInSelection
+                  ? `${selectedRowIds.size}개 기존 인스턴스에 연결`
+                  : `${selectedRowIds.size}개 생성 및 연결`
+            }}
+          </button>
+          <div
+            v-if="!canGenerate && !isGenerating && selectedRows.length > 0"
+            class="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[11px] text-white z-10"
+          >
+            인스턴스/프레임을 선택해 주세요
+          </div>
+        </div>
+        <!-- 동기화 버튼: 수정 항목만 선택된 경우에만 표시 -->
         <button
-          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-          :disabled="!canGenerate || isGenerating"
-          @click="connectAndGenerate"
-        >
-          {{
-            isGenerating
-              ? '생성/연결 중...'
-              : hasDuplicateLabelsInSelection
-                ? `${selectedRowIds.size}개 기존 인스턴스에 연결`
-                : `${selectedRowIds.size}개 생성 및 연결`
-          }}
-        </button>
-        <button
-          v-if="canSync || isSyncing"
+          v-if="hasOnlyChangedSelected || isSyncing"
           class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
           :disabled="isSyncing"
           @click="syncSelectedRows"
@@ -769,15 +779,20 @@ const diffRequiresAck = computed(() => {
 })
 
 /**
- * 동기화 버튼 활성 조건:
- * 1. label 변경이 감지된 행이 존재
- * 2. 선택된 행 중 label이 변경된 행이 1개 이상 포함
+ * 선택된 행이 수정 항목(label 변경)만으로 구성되는지 여부.
+ * true이면 동기화 버튼만 표시, false이면 생성 버튼만 표시.
  */
-const canSync = computed(() => {
-  if (detectedLabelChanges.value.length === 0) return false
+const hasOnlyChangedSelected = computed(() => {
+  if (selectedRows.value.length === 0) return false
   const changedKeys = labelChangedSet.value
-  return selectedRows.value.some((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`))
+  return selectedRows.value.every((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`))
 })
+
+/**
+ * 동기화 버튼 활성 조건:
+ * 선택된 행이 수정 항목만으로 구성됨
+ */
+const canSync = computed(() => hasOnlyChangedSelected.value)
 
 /** 플러그인과 동일: 선택 서브트리 전체에서 TEXT label/value/description 매핑 가능 여부 */
 const hasAnyMatchingProps = computed(() => selection.value?.hasMappableSheetProps === true)
@@ -806,6 +821,7 @@ const duplicatedSheetLabels = computed(() => {
 const hasDuplicateLabelsInSelection = computed(() => duplicatedSheetLabels.value.length > 0)
 
 const canGenerate = computed(() => {
+  if (hasOnlyChangedSelected.value) return false
   if (!selection.value) return false
   if (selectedRows.value.length === 0) return false
   if (!hasAnyMatchingProps.value) return false
