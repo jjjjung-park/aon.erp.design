@@ -64,11 +64,19 @@ type SheetLabelChangedItem = {
   value: string
 }
 
+/** 스냅샷에 없던 신규 행 */
+type SheetLabelNewItem = {
+  tabTitle: string
+  rowNumber: number
+  label: string
+  value: string
+}
+
 type PluginToUiMessage =
   | { type: 'selection'; selection: SelectionInfo | null }
   | { type: 'settings'; apiKey: string; recentSheets: RecentSheet[] }
-  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[] }
-  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[] }
+  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
+  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
   | { type: 'search-results'; keyword: string; rows: SheetRow[] }
   | {
       type: 'sheet-diff'
@@ -288,6 +296,20 @@ function computeLabelChanges(prevRows: SheetRow[], currRows: SheetRow[]): SheetL
     }
   }
   return result
+}
+
+/** 스냅샷에 없던 신규 행(tabTitle::rowNumber 기준)을 반환 */
+function computeNewLabels(prevRows: SheetRow[], currRows: SheetRow[]): SheetLabelNewItem[] {
+  const prevKeys = new Set(prevRows.map((r) => `${r.tabTitle}::${r.rowNumber}`))
+  return currRows
+    .filter((r) => !prevKeys.has(`${r.tabTitle}::${r.rowNumber}`))
+    .map((r) => ({ tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label, value: r.value }))
+}
+
+function detectNewLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelNewItem[] {
+  const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
+  if (!pageSnap) return []
+  return computeNewLabels(pageSnap.snapshot.rows, currentRows)
 }
 
 function readSheetSnapshotFromNode(root: SceneNode): NormalizedSheetSnapshot | null {
@@ -987,7 +1009,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       })
 
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged } satisfies PluginToUiMessage)
+      const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }
@@ -1007,7 +1030,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       const rows = await fetchSheetRowsByTabTitle(spreadsheetId, msg.apiKey, msg.tabTitle.trim())
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged } satisfies PluginToUiMessage)
+      const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }

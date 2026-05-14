@@ -118,6 +118,13 @@
                 수정건 선택
               </button>
               <button
+                v-if="detectedNewLabels.length > 0"
+                class="text-[11px] px-2 py-1 rounded border border-blue-400 text-blue-700 bg-blue-50 hover:bg-blue-100"
+                @click="selectNewLabels"
+              >
+                신규 선택
+              </button>
+              <button
                 class="text-[11px] px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
                 @click="selectAll"
               >
@@ -164,6 +171,10 @@
                     v-if="labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
                     class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-orange-500 text-white leading-none"
                   >label 변경</span>
+                  <span
+                    v-if="labelAddedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
+                    class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-blue-500 text-white leading-none"
+                  >신규</span>
                 </div>
                 <div class="text-[11px] text-gray-500 truncate">value:
                   <template v-if="keyword.trim()">
@@ -308,6 +319,13 @@ type SheetLabelChangedItem = {
   value: string
 }
 
+type SheetLabelNewItem = {
+  tabTitle: string
+  rowNumber: number
+  label: string
+  value: string
+}
+
 type SheetDiffPayload = {
   hasSnapshot: boolean
   sameSpreadsheet: boolean
@@ -348,6 +366,13 @@ const detectedLabelChanges = ref<SheetLabelChangedItem[]>([])
 /** 시트 호출 시 스냅샷 대비 label이 바뀐 행의 "tabTitle::rowNumber" 키 집합 (UI 표시용) */
 const labelChangedSet = computed(() =>
   new Set(detectedLabelChanges.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
+)
+
+/** 시트 호출 시 스냅샷에 없던 신규 행 */
+const detectedNewLabels = ref<SheetLabelNewItem[]>([])
+/** 신규 행의 "tabTitle::rowNumber" 키 집합 (UI 표시용) */
+const labelAddedSet = computed(() =>
+  new Set(detectedNewLabels.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
 )
 
 const isLoadingTabs = ref(false)
@@ -710,6 +735,13 @@ function selectChangedLabels() {
   )
 }
 
+function selectNewLabels() {
+  const addedKeys = labelAddedSet.value
+  selectedRowIds.value = new Set(
+    rows.value.filter((r) => addedKeys.has(`${r.tabTitle}::${r.rowNumber}`)).map(rowId)
+  )
+}
+
 function selectAll() {
   selectedRowIds.value = new Set(rows.value.map(rowId))
 }
@@ -910,14 +942,20 @@ onMounted(() => {
       lastSuccessfulInvokeUrl.value = sheetUrl.value.trim()
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
+      detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
       if (tabs.value.length === 0) {
         statusMessage.value = '탭을 찾지 못했습니다.'
       } else if (merged.length === 0) {
         statusMessage.value = `탭 ${tabs.value.length}개를 불러왔습니다. (행 데이터 없음 또는 일부 탭만 읽음)`
       } else {
         const changedCount = labelChangedSet.value.size
-        statusMessage.value = changedCount > 0
-          ? `탭 ${tabs.value.length}개 · ${merged.length}개 행 불러옴 · ⚠️ label 변경 ${changedCount}건 감지`
+        const addedCount = labelAddedSet.value.size
+        const notices = [
+          changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
+          addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
+        ].filter(Boolean).join(' · ')
+        statusMessage.value = notices
+          ? `탭 ${tabs.value.length}개 · ${merged.length}개 행 불러옴 · ${notices}`
           : `탭 ${tabs.value.length}개 · 전체 ${merged.length}개 행(label/value 등)을 불러왔습니다.`
       }
       scheduleSheetDiffRequest()
@@ -930,10 +968,16 @@ onMounted(() => {
       selectedRowIds.value = new Set()
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
+      detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
       const changedCount = changed.length
+      const addedCount = detectedNewLabels.value.length
+      const notices = [
+        changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
+        addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
+      ].filter(Boolean).join(' · ')
       statusMessage.value = rows.value.length
         ? `${msg.tabTitle} 탭에서 ${rows.value.length}개 항목을 불러왔습니다.` +
-          (changedCount > 0 ? ` · ⚠️ label 변경 ${changedCount}건 감지` : '')
+          (notices ? ` · ${notices}` : '')
         : `${msg.tabTitle} 탭에 항목이 없습니다.`
       scheduleSheetDiffRequest()
       return
