@@ -280,7 +280,7 @@
         <!-- 동기화 버튼: 수정 항목만 선택된 경우에만 표시 -->
         <button
           v-if="hasOnlyChangedSelected || isSyncing"
-          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors border-1 border-gray-900 bg-white text-gray-900 hover:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:bg-white"
           :disabled="isSyncing"
           @click="syncSelectedRows"
         >
