@@ -14,7 +14,7 @@
     <main class="flex-1 overflow-y-auto p-4 space-y-4">
       <!-- 1) Sheet -->
       <section class="space-y-2">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">1) 시트 호출</div>
+        <div class="text-[13px] font-bold text-gray-900">1) 시트 호출 <span class="text-red-500">*</span></div>
         <p class="text-[10px] text-gray-500 leading-relaxed">
           시트 호출 시 탭 목록과 함께 전체 탭의 label/value 행을 한 번에 불러옵니다. 탭 범위에서 특정 탭만 고르면 해당 탭만 다시 조회합니다.
         </p>
@@ -70,7 +70,7 @@
         />
 
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-medium text-gray-700">탭 범위</label>
+          <label class="text-[11px] font-medium text-gray-400">탭 범위</label>
           <select
             v-model="tabScope"
             class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
@@ -86,7 +86,7 @@
 
       <!-- 2) Keyword search -->
       <section class="space-y-2 pt-3 border-t border-gray-100">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">2) 키워드 검색</div>
+        <div class="text-[13px] font-bold text-gray-900">2) 키워드 검색</div>
         <div class="flex gap-2">
           <input
             v-model="keyword"
@@ -233,7 +233,7 @@
 
       <!-- 3) Selection + property mapping -->
       <section class="space-y-2 pt-3 border-t border-gray-100">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">3) 연결 대상(선택)</div>
+        <div class="text-[13px] font-bold text-gray-900">3) 연결 대상 <span class="text-red-500">*</span></div>
         <div class="p-3 rounded-lg border"
           :class="selection ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'">
           <template v-if="selection">
@@ -252,13 +252,13 @@
             인스턴스(또는 인스턴스를 포함한 레이어)를 선택해주세요.
           </div>
         </div>
-        <div class="text-[12px] text-gray-600">
-          <div class="font-semibold text-gray-700 mb-1">자동 연결 규칙</div>
+        <div class="text-[12px] text-gray-600 border-1 border-sky-200 bg-sky-50 rounded-lg p-3">
+          <div class="text-[11px] font-medium text-gray-400 mb-1">자동 연결 규칙</div>
           <div class="text-[11px] text-gray-500 leading-5">
-            선택한 컨테이너/인스턴스 내부 인스턴스의 TEXT 프로퍼티 중
-            <code class="text-[10px] bg-gray-100 px-1 rounded">label</code>,
-            <code class="text-[10px] bg-gray-100 px-1 rounded">value</code>,
-            <code class="text-[10px] bg-gray-100 px-1 rounded">description</code>
+            선택한 레이어의 TEXT 프로퍼티 중
+            <code class="text-[10px] bg-sky-200/50 px-1 rounded">label</code>,
+            <code class="text-[10px] bg-sky-200/50 px-1 rounded">value</code>,
+            <code class="text-[10px] bg-sky-200/50 px-1 rounded">description</code>
             이 존재하면 각각 시트의 값으로 자동 연결합니다. (2개 이상 있어도 각각 연결)
           </div>
         </div>
@@ -294,9 +294,9 @@
           </button>
           <div
             v-if="!canGenerate && !isGenerating && selectedRows.length > 0"
-            class="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-[11px] text-white z-10"
+            class="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 w-max max-w-[200px] text-center rounded bg-gray-800 px-2 py-1 text-[11px] text-white z-10"
           >
-            인스턴스/프레임을 선택해 주세요
+            인스턴스 또는 인스턴스를 포함한 레이어를 선택해 주세요
           </div>
         </div>
         <!-- 동기화 버튼: 수정 항목만 선택된 경우에만 표시 -->
