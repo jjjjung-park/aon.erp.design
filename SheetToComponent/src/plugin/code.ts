@@ -10,6 +10,8 @@ type SheetRow = {
   label: string
   value: string
   description: string
+  /** 구글 시트에서 취소선(strikethrough) 처리된 행 — 삭제 예정으로 감지 */
+  strikethrough?: boolean
 }
 
 type SelectionInfo = {
@@ -72,11 +74,19 @@ type SheetLabelNewItem = {
   value: string
 }
 
+/** 스냅샷에는 있지만 현재 시트에서 삭제된 행 */
+type SheetLabelDeletedItem = {
+  tabTitle: string
+  rowNumber: number
+  label: string
+  value: string
+}
+
 type PluginToUiMessage =
   | { type: 'selection'; selection: SelectionInfo | null }
   | { type: 'settings'; apiKey: string; recentSheets: RecentSheet[] }
-  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
-  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
+  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[]; labelDeleted: SheetLabelDeletedItem[] }
+  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[]; labelDeleted: SheetLabelDeletedItem[] }
   | { type: 'search-results'; keyword: string; rows: SheetRow[] }
   | {
       type: 'sheet-diff'
@@ -312,6 +322,20 @@ function detectNewLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[])
   return computeNewLabels(pageSnap.snapshot.rows, currentRows)
 }
 
+/** 스냅샷에는 있지만 현재 시트에서 삭제된 행(tabTitle::rowNumber 기준)을 반환 */
+function computeDeletedLabels(prevRows: SheetRow[], currRows: SheetRow[]): SheetLabelDeletedItem[] {
+  const currKeys = new Set(currRows.map((r) => `${r.tabTitle}::${r.rowNumber}`))
+  return prevRows
+    .filter((r) => !currKeys.has(`${r.tabTitle}::${r.rowNumber}`))
+    .map((r) => ({ tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label, value: r.value }))
+}
+
+function detectDeletedLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelDeletedItem[] {
+  const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
+  if (!pageSnap) return []
+  return computeDeletedLabels(pageSnap.snapshot.rows, currentRows)
+}
+
 function readSheetSnapshotFromNode(root: SceneNode): NormalizedSheetSnapshot | null {
   if (!('getPluginData' in root) || typeof (root as { getPluginData?: (k: string) => string }).getPluginData !== 'function') {
     return null
@@ -489,24 +513,78 @@ async function fetchSheetRowsByTabTitle(
   apiKey: string,
   tabTitle: string,
 ): Promise<SheetRow[]> {
-  // description까지 포함하도록 A:E (최소)로 읽기
+  // includeGridData=true로 셀 값과 취소선 서식을 함께 가져옴
   const range = `${tabTitle}!A:E`
+  const fields = 'sheets.data.rowData.values(userEnteredValue,userEnteredFormat.textFormat.strikethrough)'
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}` +
-    `/values/${encodeURIComponent(range)}` +
-    `?valueRenderOption=UNFORMATTED_VALUE&key=${encodeURIComponent(apiKey)}`
+    `?includeGridData=true` +
+    `&ranges=${encodeURIComponent(range)}` +
+    `&fields=${encodeURIComponent(fields)}` +
+    `&key=${encodeURIComponent(apiKey)}`
 
   const res = await fetch(url)
   if (!res.ok) throw new Error('시트 데이터를 가져오지 못했습니다. URL/탭 이름/권한을 확인해주세요.')
   const data: any = await res.json()
-  const values: unknown[][] = Array.isArray(data?.values) ? data.values : []
-  const str = values.map((r) => r.map((v) => String(v ?? '')))
-  const parsed = parseRowsFromValues(str, tabTitle)
-  return parsed.map((r, idx) => ({
-    tabTitle,
-    rowNumber: idx + 2,
-    ...r,
-  }))
+
+  const rowData: any[] = data?.sheets?.[0]?.data?.[0]?.rowData ?? []
+  if (rowData.length === 0) return []
+
+  // 셀 값 → string 변환
+  function cellStr(cell: any): string {
+    const v = cell?.userEnteredValue
+    if (!v) return ''
+    if ('stringValue' in v) return String(v.stringValue ?? '')
+    if ('numberValue' in v) return String(v.numberValue ?? '')
+    if ('boolValue' in v) return String(v.boolValue ?? '')
+    return ''
+  }
+
+  // 헤더 행 파싱 (열 인덱스 찾기)
+  const headerCells: any[] = rowData[0]?.values ?? []
+  const headerRow = headerCells.map(cellStr)
+  const nameIndex = findSheetColumnIndex(headerRow, 'name')
+  const typeIndex = findSheetColumnIndex(headerRow, 'type')
+  const labelIndex = findSheetColumnIndex(headerRow, 'label')
+  const valueIndex = findSheetColumnIndex(headerRow, 'value')
+  const descIndex = findSheetColumnIndex(headerRow, 'description')
+
+  if (nameIndex < 0 || typeIndex < 0 || labelIndex < 0 || valueIndex < 0) {
+    throw new Error('첫 번째 행에서 name, type, label, value 헤더를 찾지 못했습니다. (열 이름은 대소문자 구분 없음)')
+  }
+
+  // 데이터 행 파싱
+  const result: SheetRow[] = []
+  let rowCount = 0
+  for (let i = 1; i < rowData.length; i++) {
+    const cells: any[] = rowData[i]?.values ?? []
+    const name = cellStr(cells[nameIndex]).trim()
+    const type = cellStr(cells[typeIndex]).trim()
+    const label = cellStr(cells[labelIndex]).trim()
+    const value = cellStr(cells[valueIndex]).trim()
+    const description = descIndex >= 0 ? cellStr(cells[descIndex]).trim() : ''
+
+    if (!name && !label) continue // 빈 행 건너뜀
+
+    // 행의 임의 셀에 취소선이 있으면 삭제 예정 행으로 표시
+    const strikethrough = cells.some((cell: any) =>
+      cell?.userEnteredFormat?.textFormat?.strikethrough === true
+    )
+
+    rowCount++
+    result.push({
+      tabTitle,
+      rowNumber: rowCount + 1, // 기존 방식과 동일: 헤더=1행, 첫 데이터=2행
+      name,
+      type,
+      label,
+      value,
+      description,
+      strikethrough,
+    })
+  }
+
+  return result
 }
 
 /** 모든 탭의 행을 순서대로 이어 붙임 (개별 탭 오류 시 해당 탭만 건너뜀) */
@@ -1010,7 +1088,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
       const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
+      const labelDeleted = detectDeletedLabelsFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded, labelDeleted } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }
@@ -1031,7 +1110,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       const rows = await fetchSheetRowsByTabTitle(spreadsheetId, msg.apiKey, msg.tabTitle.trim())
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
       const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
+      const labelDeleted = detectDeletedLabelsFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded, labelDeleted } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }

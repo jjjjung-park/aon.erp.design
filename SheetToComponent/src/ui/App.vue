@@ -144,20 +144,22 @@
               v-for="r in rows"
               :key="rowId(r)"
               :class="[
-                'flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50',
-                labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`) ? 'bg-orange-50' : ''
+                'flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0',
+                r.strikethrough ? 'bg-gray-50 opacity-60 cursor-default' : 'hover:bg-gray-50',
+                !r.strikethrough && labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`) ? 'bg-orange-50' : ''
               ]"
             >
               <input
                 type="checkbox"
                 class="mt-1"
                 :checked="selectedRowIds.has(rowId(r))"
-                @change="toggleRow(r)"
+                :disabled="r.strikethrough"
+                @change="!r.strikethrough && toggleRow(r)"
               />
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5 truncate">
-                  <span class="text-[12px] font-semibold text-gray-800 truncate">
-                    <template v-if="keyword.trim()">
+                  <span :class="['text-[12px] font-semibold truncate', r.strikethrough ? 'text-gray-400 line-through' : 'text-gray-800']">
+                    <template v-if="keyword.trim() && !r.strikethrough">
                       <span
                         v-for="(part, pi) in splitByKeyword(r.label || r.name || '(no label)', keyword)"
                         :key="pi"
@@ -168,16 +170,20 @@
                   </span>
                   <span class="text-[11px] text-gray-400 font-normal shrink-0">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
                   <span
-                    v-if="labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
+                    v-if="!r.strikethrough && labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
                     class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-orange-500 text-white leading-none"
                   >label 변경</span>
                   <span
-                    v-if="labelAddedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
+                    v-if="!r.strikethrough && labelAddedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
                     class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-blue-500 text-white leading-none"
                   >신규</span>
+                  <span
+                    v-if="r.strikethrough"
+                    class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-gray-400 text-white leading-none"
+                  >삭제됨</span>
                 </div>
-                <div class="text-[11px] text-gray-500 truncate">value:
-                  <template v-if="keyword.trim()">
+                <div :class="['text-[11px] truncate', r.strikethrough ? 'text-gray-400' : 'text-gray-500']">value:
+                  <template v-if="keyword.trim() && !r.strikethrough">
                     <span
                       v-for="(part, pi) in splitByKeyword(r.value, keyword)"
                       :key="pi"
@@ -186,9 +192,25 @@
                   </template>
                   <template v-else>{{ r.value }}</template>
                 </div>
-                <div v-if="r.description" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
+                <div v-if="r.description && !r.strikethrough" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
               </div>
             </label>
+            <!-- 삭제된 행: 체크박스 비활성 + [삭제됨] 뱃지 -->
+            <div
+              v-for="r in deletedRows"
+              :key="`deleted::${r.tabTitle}::${r.rowNumber}`"
+              class="flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 bg-gray-50 opacity-60"
+            >
+              <input type="checkbox" class="mt-1" disabled />
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 truncate">
+                  <span class="text-[12px] font-semibold text-gray-400 truncate line-through">{{ r.label || '(no label)' }}</span>
+                  <span class="text-[11px] text-gray-400 font-normal shrink-0">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
+                  <span class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-gray-400 text-white leading-none">삭제됨</span>
+                </div>
+                <div class="text-[11px] text-gray-400 truncate">value: {{ r.value }}</div>
+              </div>
+            </div>
           </div>
 
           <!-- 선택된 항목 label 태그 목록 -->
@@ -302,6 +324,7 @@ type SheetRow = {
   label: string
   value: string
   description: string
+  strikethrough?: boolean
 }
 
 type SelectionInfo = {
@@ -330,6 +353,13 @@ type SheetLabelChangedItem = {
 }
 
 type SheetLabelNewItem = {
+  tabTitle: string
+  rowNumber: number
+  label: string
+  value: string
+}
+
+type SheetLabelDeletedItem = {
   tabTitle: string
   rowNumber: number
   label: string
@@ -383,6 +413,29 @@ const detectedNewLabels = ref<SheetLabelNewItem[]>([])
 /** 신규 행의 "tabTitle::rowNumber" 키 집합 (UI 표시용) */
 const labelAddedSet = computed(() =>
   new Set(detectedNewLabels.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
+)
+
+/** 시트에서 삭제된 행 (스냅샷에는 있지만 현재 시트에 없음) */
+const detectedDeletedLabels = ref<SheetLabelDeletedItem[]>([])
+/** 삭제된 행의 "tabTitle::rowNumber" 키 집합 — 물리적 삭제 + 취소선 행 모두 포함 */
+const labelDeletedSet = computed(() => {
+  const keys = new Set(detectedDeletedLabels.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
+  for (const r of rows.value) {
+    if (r.strikethrough) keys.add(`${r.tabTitle}::${r.rowNumber}`)
+  }
+  return keys
+})
+/** 삭제된 행을 SheetRow 형태로 변환 (목록에 표시용) */
+const deletedRows = computed<SheetRow[]>(() =>
+  detectedDeletedLabels.value.map((it) => ({
+    tabTitle: it.tabTitle,
+    rowNumber: it.rowNumber,
+    name: '',
+    type: 'STRING',
+    label: it.label,
+    value: it.value,
+    description: '',
+  }))
 )
 
 const isLoadingTabs = ref(false)
@@ -959,6 +1012,7 @@ onMounted(() => {
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
       detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
+      detectedDeletedLabels.value = Array.isArray(msg.labelDeleted) ? msg.labelDeleted : []
       if (tabs.value.length === 0) {
         statusMessage.value = '탭을 찾지 못했습니다.'
       } else if (merged.length === 0) {
@@ -966,9 +1020,11 @@ onMounted(() => {
       } else {
         const changedCount = labelChangedSet.value.size
         const addedCount = labelAddedSet.value.size
+        const deletedCount = labelDeletedSet.value.size // 물리적 삭제 + 취소선 포함
         const notices = [
           changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
           addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
+          deletedCount > 0 ? `🗑️ 삭제 ${deletedCount}건 감지` : '',
         ].filter(Boolean).join(' · ')
         statusMessage.value = notices
           ? `탭 ${tabs.value.length}개 · ${merged.length}개 행 불러옴 · ${notices}`
@@ -985,11 +1041,14 @@ onMounted(() => {
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
       detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
+      detectedDeletedLabels.value = Array.isArray(msg.labelDeleted) ? msg.labelDeleted : []
       const changedCount = changed.length
       const addedCount = detectedNewLabels.value.length
+      const deletedCount = detectedDeletedLabels.value.length
       const notices = [
         changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
         addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
+        deletedCount > 0 ? `🗑️ 삭제 ${deletedCount}건 감지` : '',
       ].filter(Boolean).join(' · ')
       statusMessage.value = rows.value.length
         ? `${msg.tabTitle} 탭에서 ${rows.value.length}개 항목을 불러왔습니다.` +
