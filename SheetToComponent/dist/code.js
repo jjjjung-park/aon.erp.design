@@ -578,41 +578,17 @@
         const out = { type: "selection", selection: info };
         figma.ui.postMessage(out);
       }
-      function getTopLevelAncestorOnPage(node) {
-        let n = node;
-        while (n.parent && n.parent.type !== "PAGE") {
-          n = n.parent;
-        }
-        return n;
-      }
       function getCloneParent(selection) {
-        var _a;
-        const top = getTopLevelAncestorOnPage(selection);
-        if (top === selection && ((_a = selection.parent) == null ? void 0 : _a.type) === "PAGE") {
-          return figma.currentPage;
+        const parent = selection.parent;
+        if (parent && parent.type !== "PAGE" && parent.type !== "DOCUMENT" && "children" in parent) {
+          return parent;
         }
-        return top;
-      }
-      function getPlacementRectInParent(selection, cloneParent) {
-        if (cloneParent === figma.currentPage) {
-          return { x: selection.x, y: selection.y, width: selection.width, height: selection.height };
-        }
-        const selBox = selection.absoluteBoundingBox;
-        const parBox = "absoluteBoundingBox" in cloneParent ? cloneParent.absoluteBoundingBox : null;
-        if (!selBox || !parBox) {
-          return { x: selection.x, y: selection.y, width: selection.width, height: selection.height };
-        }
-        return {
-          x: selBox.x - parBox.x,
-          y: selBox.y - parBox.y,
-          width: selBox.width,
-          height: selBox.height
-        };
+        return figma.currentPage;
       }
       figma.on("selectionchange", sendSelection);
       setTimeout(sendSelection, 100);
       figma.ui.onmessage = (msg) => __async(null, null, function* () {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f;
         try {
           if (msg.type === "close") {
             figma.closePlugin();
@@ -760,39 +736,36 @@
             }
             const generated = [];
             const cloneLabelToNodeIds = {};
-            const layout = msg.generateLayout === "right" ? "right" : "below";
-            const gap = 20;
-            const spacing = 16;
             const cloneParent = getCloneParent(selection);
-            const rel = getPlacementRectInParent(selection, cloneParent);
-            if (layout === "right") {
-              let currentX = rel.x + rel.width + gap;
-              for (const row of msg.keywordRows) {
-                const clone = selection.clone();
-                clone.x = currentX;
-                clone.y = rel.y;
-                currentX += clone.width + spacing;
+            const selectionIndex = cloneParent.children.findIndex((c) => c.id === selection.id);
+            const parentLayoutMode = "layoutMode" in cloneParent ? cloneParent.layoutMode : "NONE";
+            const manualLayout = msg.generateLayout === "right" ? "right" : "below";
+            let currentX = selection.x + selection.width;
+            let currentY = selection.y + selection.height;
+            for (let i = 0; i < msg.keywordRows.length; i++) {
+              const row = msg.keywordRows[i];
+              const clone = selection.clone();
+              if (selectionIndex >= 0) {
+                cloneParent.insertChild(selectionIndex + 1 + i, clone);
+              } else {
                 cloneParent.appendChild(clone);
-                applyRowToSelectionClone(clone, row);
-                generated.push(clone);
-                const key = labelKeyForDiff(row.label);
-                cloneLabelToNodeIds[key] = [...(_b = cloneLabelToNodeIds[key]) != null ? _b : [], clone.id];
-                if ("setPluginData" in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id);
               }
-            } else {
-              let currentY = rel.y + rel.height + gap;
-              for (const row of msg.keywordRows) {
-                const clone = selection.clone();
-                clone.x = rel.x;
-                clone.y = currentY;
-                currentY += clone.height + spacing;
-                cloneParent.appendChild(clone);
-                applyRowToSelectionClone(clone, row);
-                generated.push(clone);
-                const key = labelKeyForDiff(row.label);
-                cloneLabelToNodeIds[key] = [...(_c = cloneLabelToNodeIds[key]) != null ? _c : [], clone.id];
-                if ("setPluginData" in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id);
+              if (parentLayoutMode === "NONE") {
+                if (manualLayout === "right") {
+                  clone.x = currentX;
+                  clone.y = selection.y;
+                  currentX += clone.width;
+                } else {
+                  clone.x = selection.x;
+                  clone.y = currentY;
+                  currentY += clone.height;
+                }
               }
+              applyRowToSelectionClone(clone, row);
+              generated.push(clone);
+              const key = labelKeyForDiff(row.label);
+              cloneLabelToNodeIds[key] = [...(_b = cloneLabelToNodeIds[key]) != null ? _b : [], clone.id];
+              if ("setPluginData" in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id);
             }
             if (spreadsheetId) {
               writeSheetSnapshotOnSelection(selection, spreadsheetId, msg.snapshotRows, cloneLabelToNodeIds);
@@ -812,7 +785,7 @@
               throw new Error("\uB3D9\uAE30\uD654\uD560 \uBCC0\uACBD \uD56D\uBAA9\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.");
             }
             let updated = 0;
-            for (const labelItem of (_d = msg.labelChangedItems) != null ? _d : []) {
+            for (const labelItem of (_c = msg.labelChangedItems) != null ? _c : []) {
               const cnt = syncLabelOnPage(figma.currentPage, labelItem.oldLabel, labelItem.newLabel);
               updated += cnt;
               if (cnt === 0) {
@@ -842,7 +815,7 @@
               }
             }
             if (Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0) {
-              const syncSpreadsheetIdForValue = msg.url ? (_e = parseSpreadsheetId(msg.url)) != null ? _e : void 0 : void 0;
+              const syncSpreadsheetIdForValue = msg.url ? (_d = parseSpreadsheetId(msg.url)) != null ? _d : void 0 : void 0;
               const found = findAnySnapshotOnPage(figma.currentPage, syncSpreadsheetIdForValue);
               if (found) {
                 const snapByKey = /* @__PURE__ */ new Map();
@@ -859,7 +832,7 @@
               }
             }
             {
-              const syncSpreadsheetId = msg.url ? (_f = parseSpreadsheetId(msg.url)) != null ? _f : void 0 : void 0;
+              const syncSpreadsheetId = msg.url ? (_e = parseSpreadsheetId(msg.url)) != null ? _e : void 0 : void 0;
               const found = findAnySnapshotOnPage(figma.currentPage, syncSpreadsheetId);
               if (found) {
                 let updatedRows = found.snapshot.rows.map((r) => __spreadValues({}, r));
@@ -880,7 +853,7 @@
                     }
                   }
                 }
-                for (const item of (_g = msg.labelChangedItems) != null ? _g : []) {
+                for (const item of (_f = msg.labelChangedItems) != null ? _f : []) {
                   const idx = updatedRows.findIndex((r) => r.tabTitle === item.tabTitle && r.rowNumber === item.rowNumber);
                   if (idx >= 0) updatedRows[idx] = __spreadProps(__spreadValues({}, updatedRows[idx]), { label: item.newLabel });
                   const oldKey = labelKeyForDiff(item.oldLabel);

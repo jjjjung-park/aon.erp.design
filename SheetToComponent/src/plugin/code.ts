@@ -904,48 +904,16 @@ function sendSelection() {
   figma.ui.postMessage(out)
 }
 
-/** 선택에서 페이지까지 올라갈 때, 페이지의 직접 자식인 조상 (최상위 컨테이너) */
-function getTopLevelAncestorOnPage(node: SceneNode): SceneNode {
-  let n: BaseNode | null = node
-  while (n.parent && n.parent.type !== 'PAGE') {
-    n = n.parent
-  }
-  return n as SceneNode
-}
-
 /**
- * 복제본을 붙일 부모: 중첩 구조면 최상위(페이지 직속) 조상 안에 넣고,
- * 선택이 이미 페이지 직속이면 페이지에 둔다(자기 안에 중첩 방지).
+ * 복제본의 부모 결정: 선택 노드의 바로 위 부모 프레임/그룹.
+ * 부모가 PAGE/DOCUMENT이거나 없으면 현재 페이지를 사용.
  */
 function getCloneParent(selection: SceneNode): ChildrenMixin {
-  const top = getTopLevelAncestorOnPage(selection)
-  if (top === selection && selection.parent?.type === 'PAGE') {
-    return figma.currentPage
+  const parent = selection.parent
+  if (parent && parent.type !== 'PAGE' && parent.type !== 'DOCUMENT' && 'children' in parent) {
+    return parent as unknown as ChildrenMixin
   }
-  return top as ChildrenMixin
-}
-
-/** cloneParent 좌표계에서 선택 노드의 배치 사각형 (width/height는 바운딩 박스 기준) */
-function getPlacementRectInParent(selection: SceneNode, cloneParent: ChildrenMixin): {
-  x: number
-  y: number
-  width: number
-  height: number
-} {
-  if (cloneParent === figma.currentPage) {
-    return { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
-  }
-  const selBox = selection.absoluteBoundingBox
-  const parBox = 'absoluteBoundingBox' in cloneParent ? cloneParent.absoluteBoundingBox : null
-  if (!selBox || !parBox) {
-    return { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
-  }
-  return {
-    x: selBox.x - parBox.x,
-    y: selBox.y - parBox.y,
-    width: selBox.width,
-    height: selBox.height,
-  }
+  return figma.currentPage
 }
 
 figma.on('selectionchange', sendSelection)
@@ -1122,40 +1090,54 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       const generated: SceneNode[] = []
       const cloneLabelToNodeIds: Record<string, string[]> = {}
-      const layout = msg.generateLayout === 'right' ? 'right' : 'below'
-      const gap = 20
-      const spacing = 16
-      const cloneParent = getCloneParent(selection)
-      const rel = getPlacementRectInParent(selection, cloneParent)
 
-      if (layout === 'right') {
-        let currentX = rel.x + rel.width + gap
-        for (const row of msg.keywordRows) {
-          const clone = selection.clone()
-          clone.x = currentX
-          clone.y = rel.y
-          currentX += clone.width + spacing
+      // 바로 위 부모 프레임을 복제본 부모로 사용
+      const cloneParent = getCloneParent(selection)
+
+      // 부모 내 선택 노드의 인덱스 (sibling 삽입 위치 계산용)
+      const selectionIndex = (cloneParent as { children: readonly SceneNode[] }).children
+        .findIndex((c) => c.id === selection.id)
+
+      // 부모의 오토레이아웃 방향 (있으면 Figma가 위치 자동 처리)
+      const parentLayoutMode: 'HORIZONTAL' | 'VERTICAL' | 'NONE' =
+        'layoutMode' in cloneParent ? (cloneParent as FrameNode).layoutMode : 'NONE'
+
+      // 오토레이아웃 없을 때 수동 배치 방향 (기본 below)
+      const manualLayout: 'right' | 'below' = msg.generateLayout === 'right' ? 'right' : 'below'
+
+      // 오토레이아웃 없을 때 누적 좌표 (붙도록 = gap 없음)
+      let currentX = selection.x + selection.width
+      let currentY = selection.y + selection.height
+
+      for (let i = 0; i < msg.keywordRows.length; i++) {
+        const row = msg.keywordRows[i]
+        const clone = selection.clone()
+
+        // clone()은 selection과 동일 부모에 추가됨 → insertChild로 sibling 위치로 이동
+        if (selectionIndex >= 0) {
+          cloneParent.insertChild(selectionIndex + 1 + i, clone)
+        } else {
           cloneParent.appendChild(clone)
-          applyRowToSelectionClone(clone, row)
-          generated.push(clone)
-          const key = labelKeyForDiff(row.label)
-          cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
-          if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
         }
-      } else {
-        let currentY = rel.y + rel.height + gap
-        for (const row of msg.keywordRows) {
-          const clone = selection.clone()
-          clone.x = rel.x
-          clone.y = currentY
-          currentY += clone.height + spacing
-          cloneParent.appendChild(clone)
-          applyRowToSelectionClone(clone, row)
-          generated.push(clone)
-          const key = labelKeyForDiff(row.label)
-          cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
-          if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
+
+        // 오토레이아웃이 없는 경우에만 수동으로 위치 지정 (gap 없이 붙임)
+        if (parentLayoutMode === 'NONE') {
+          if (manualLayout === 'right') {
+            clone.x = currentX
+            clone.y = selection.y
+            currentX += clone.width
+          } else {
+            clone.x = selection.x
+            clone.y = currentY
+            currentY += clone.height
+          }
         }
+
+        applyRowToSelectionClone(clone, row)
+        generated.push(clone)
+        const key = labelKeyForDiff(row.label)
+        cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
+        if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
       }
 
       if (spreadsheetId) {
