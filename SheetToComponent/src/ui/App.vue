@@ -132,7 +132,7 @@
             </div>
           </div>
 
-          <div class="max-h-44 overflow-auto border border-gray-200 rounded-lg">
+          <div class="max-h-60 overflow-auto border border-gray-200 rounded-lg">
             <label
               v-for="r in rows"
               :key="rowId(r)"
@@ -149,17 +149,51 @@
               />
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5 truncate">
-                  <span class="text-[12px] font-semibold text-gray-800 truncate">{{ r.label || r.name || '(no label)' }}</span>
+                  <span class="text-[12px] font-semibold text-gray-800 truncate">
+                    <template v-if="keyword.trim()">
+                      <span
+                        v-for="(part, pi) in splitByKeyword(r.label || r.name || '(no label)', keyword)"
+                        :key="pi"
+                        :class="part.match ? 'text-blue-500' : ''"
+                      >{{ part.text }}</span>
+                    </template>
+                    <template v-else>{{ r.label || r.name || '(no label)' }}</template>
+                  </span>
                   <span class="text-[11px] text-gray-400 font-normal shrink-0">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
                   <span
                     v-if="labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
                     class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-orange-500 text-white leading-none"
                   >label 변경</span>
                 </div>
-                <div class="text-[11px] text-gray-500 truncate">value: {{ r.value }}</div>
+                <div class="text-[11px] text-gray-500 truncate">value:
+                  <template v-if="keyword.trim()">
+                    <span
+                      v-for="(part, pi) in splitByKeyword(r.value, keyword)"
+                      :key="pi"
+                      :class="part.match ? 'text-blue-500' : ''"
+                    >{{ part.text }}</span>
+                  </template>
+                  <template v-else>{{ r.value }}</template>
+                </div>
                 <div v-if="r.description" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
               </div>
             </label>
+          </div>
+
+          <!-- 선택된 항목 label 태그 목록 -->
+          <div v-if="selectedRows.length > 0" class="flex flex-wrap gap-1 pt-1">
+            <span
+              v-for="r in selectedRows"
+              :key="rowId(r)"
+              class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200"
+            >
+              {{ r.label || r.name || '(no label)' }}
+              <button
+                type="button"
+                class="text-gray-400 hover:text-gray-600 leading-none"
+                @click.prevent="toggleRow(r)"
+              >✕</button>
+            </span>
           </div>
         </div>
       </section>
@@ -418,6 +452,22 @@ function autoMatchMapping() {
 
 function rowId(r: SheetRow) {
   return `${r.tabTitle}::${r.rowNumber}::${r.name}::${r.label}`
+}
+
+/** 텍스트를 키워드 기준으로 분할 — 매칭 부분과 비매칭 부분 교대로 반환 */
+function splitByKeyword(text: string, kw: string): { text: string; match: boolean }[] {
+  const k = kw.trim().toLowerCase()
+  if (!k) return [{ text, match: false }]
+  const result: { text: string; match: boolean }[] = []
+  let rest = text
+  while (rest.length > 0) {
+    const idx = rest.toLowerCase().indexOf(k)
+    if (idx === -1) { result.push({ text: rest, match: false }); break }
+    if (idx > 0) result.push({ text: rest.slice(0, idx), match: false })
+    result.push({ text: rest.slice(idx, idx + k.length), match: true })
+    rest = rest.slice(idx + k.length)
+  }
+  return result
 }
 
 function plainSheetRows(list: SheetRow[]): SheetRow[] {

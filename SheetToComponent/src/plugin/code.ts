@@ -1,4 +1,4 @@
-figma.showUI(__html__, { width: 420, height: 620, title: 'SheetToComponent' })
+figma.showUI(__html__, { width: 460, height: 960, title: 'SheetToComponent' })
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
