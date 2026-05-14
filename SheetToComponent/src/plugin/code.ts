@@ -905,15 +905,41 @@ function sendSelection() {
 }
 
 /**
- * 복제본의 부모 결정: 선택 노드의 바로 위 부모 프레임/그룹.
- * 부모가 PAGE/DOCUMENT이거나 없으면 현재 페이지를 사용.
+ * 복제본을 삽입할 부모와 anchor(sibling 기준 노드)를 반환.
+ *
+ * 인스턴스 노드나 인스턴스 내부에는 자식을 추가할 수 없으므로,
+ * 트리를 위로 올라가며 편집 가능한 첫 번째 부모(FRAME / GROUP / COMPONENT / PAGE)를 찾는다.
+ * anchor = 최종 부모의 직접 자식 중 selection의 조상(또는 selection 자신) → sibling 삽입 기준.
  */
-function getCloneParent(selection: SceneNode): ChildrenMixin {
-  const parent = selection.parent
-  if (parent && parent.type !== 'PAGE' && parent.type !== 'DOCUMENT' && 'children' in parent) {
-    return parent as unknown as ChildrenMixin
+function getCloneContext(selection: SceneNode): { cloneParent: ChildrenMixin; anchor: SceneNode } {
+  let anchor: SceneNode = selection
+  let p: BaseNode | null = selection.parent
+
+  while (p) {
+    if (p.type === 'PAGE' || p.type === 'DOCUMENT') {
+      return { cloneParent: figma.currentPage, anchor }
+    }
+
+    // 인스턴스이거나 인스턴스 내부에 있으면 편집 불가 → 위로 이동
+    const isInstance = p.type === 'INSTANCE'
+    const insideInstance = (() => {
+      let a = p!.parent
+      while (a && a.type !== 'PAGE' && a.type !== 'DOCUMENT') {
+        if (a.type === 'INSTANCE') return true
+        a = a.parent
+      }
+      return false
+    })()
+
+    if (!isInstance && !insideInstance && 'children' in p) {
+      return { cloneParent: p as unknown as ChildrenMixin, anchor }
+    }
+
+    anchor = p as SceneNode
+    p = p.parent
   }
-  return figma.currentPage
+
+  return { cloneParent: figma.currentPage, anchor }
 }
 
 figma.on('selectionchange', sendSelection)
@@ -1091,23 +1117,25 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       const generated: SceneNode[] = []
       const cloneLabelToNodeIds: Record<string, string[]> = {}
 
-      // 바로 위 부모 프레임을 복제본 부모로 사용
-      const cloneParent = getCloneParent(selection)
+      // 편집 가능한 부모 프레임과 그 안의 anchor 노드를 찾음 (인스턴스 내부 선택 시 안전하게 탈출)
+      const { cloneParent, anchor } = getCloneContext(selection)
 
-      // 부모 내 선택 노드의 인덱스 (sibling 삽입 위치 계산용)
+      // anchor 기준으로 부모 내 삽입 위치 계산
       const selectionIndex = (cloneParent as { children: readonly SceneNode[] }).children
-        .findIndex((c) => c.id === selection.id)
+        .findIndex((c) => c.id === anchor.id)
 
       // 부모의 오토레이아웃 방향 (있으면 Figma가 위치 자동 처리)
       const parentLayoutMode: 'HORIZONTAL' | 'VERTICAL' | 'NONE' =
         'layoutMode' in cloneParent ? (cloneParent as FrameNode).layoutMode : 'NONE'
 
-      // 오토레이아웃 없을 때 수동 배치 방향 (기본 below)
-      const manualLayout: 'right' | 'below' = msg.generateLayout === 'right' ? 'right' : 'below'
+      // 감싸는 프레임이 없으면(페이지 직속) 무조건 아래로, 있으면 UI 설정 따름
+      const isOnPage = (cloneParent as BaseNode).type === 'PAGE'
+      const manualLayout: 'right' | 'below' = isOnPage ? 'below' : (msg.generateLayout === 'right' ? 'right' : 'below')
 
-      // 오토레이아웃 없을 때 누적 좌표 (붙도록 = gap 없음)
-      let currentX = selection.x + selection.width
-      let currentY = selection.y + selection.height
+      // 오토레이아웃 없을 때 누적 좌표 기준은 anchor 노드 위치 사용
+      const anchorNode = anchor as SceneNode & { x: number; y: number; width: number; height: number }
+      let currentX = anchorNode.x + anchorNode.width
+      let currentY = anchorNode.y + anchorNode.height
 
       for (let i = 0; i < msg.keywordRows.length; i++) {
         const row = msg.keywordRows[i]
@@ -1124,10 +1152,10 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
         if (parentLayoutMode === 'NONE') {
           if (manualLayout === 'right') {
             clone.x = currentX
-            clone.y = selection.y
+            clone.y = anchorNode.y
             currentX += clone.width
           } else {
-            clone.x = selection.x
+            clone.x = anchorNode.x
             clone.y = currentY
             currentY += clone.height
           }
