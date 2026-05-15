@@ -1,4 +1,4 @@
-figma.showUI(__html__, { width: 420, height: 620, title: 'SheetToComponent' })
+figma.showUI(__html__, { width: 460, height: 960, title: 'SheetToComponent' })
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -10,6 +10,8 @@ type SheetRow = {
   label: string
   value: string
   description: string
+  /** 구글 시트에서 취소선(strikethrough) 처리된 행 — 삭제 예정으로 감지 */
+  strikethrough?: boolean
 }
 
 type SelectionInfo = {
@@ -64,11 +66,20 @@ type SheetLabelChangedItem = {
   value: string
 }
 
+/** 스냅샷에 없던 신규 행 */
+type SheetLabelNewItem = {
+  tabTitle: string
+  rowNumber: number
+  label: string
+  value: string
+}
+
+/** 스냅샷에는 있지만 현재 시트에서 삭제된 행 */
 type PluginToUiMessage =
   | { type: 'selection'; selection: SelectionInfo | null }
   | { type: 'settings'; apiKey: string; recentSheets: RecentSheet[] }
-  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[] }
-  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[] }
+  | { type: 'tabs'; tabs: { sheetId: number; title: string }[]; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
+  | { type: 'tab-rows'; tabTitle: string; rows: SheetRow[]; labelChanged: SheetLabelChangedItem[]; labelAdded: SheetLabelNewItem[] }
   | { type: 'search-results'; keyword: string; rows: SheetRow[] }
   | {
       type: 'sheet-diff'
@@ -290,6 +301,22 @@ function computeLabelChanges(prevRows: SheetRow[], currRows: SheetRow[]): SheetL
   return result
 }
 
+/** 스냅샷에 없던 신규 행(tabTitle::rowNumber 기준)을 반환 */
+function computeNewLabels(prevRows: SheetRow[], currRows: SheetRow[]): SheetLabelNewItem[] {
+  const prevKeys = new Set(prevRows.map((r) => `${r.tabTitle}::${r.rowNumber}`))
+  return currRows
+    .filter((r) => !r.strikethrough && !prevKeys.has(`${r.tabTitle}::${r.rowNumber}`))
+    .map((r) => ({ tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label, value: r.value }))
+}
+
+function detectNewLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelNewItem[] {
+  const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
+  if (!pageSnap) return []
+  return computeNewLabels(pageSnap.snapshot.rows, currentRows)
+}
+
+
+
 function readSheetSnapshotFromNode(root: SceneNode): NormalizedSheetSnapshot | null {
   if (!('getPluginData' in root) || typeof (root as { getPluginData?: (k: string) => string }).getPluginData !== 'function') {
     return null
@@ -467,24 +494,78 @@ async function fetchSheetRowsByTabTitle(
   apiKey: string,
   tabTitle: string,
 ): Promise<SheetRow[]> {
-  // description까지 포함하도록 A:E (최소)로 읽기
+  // includeGridData=true로 셀 값과 취소선 서식을 함께 가져옴
   const range = `${tabTitle}!A:E`
+  const fields = 'sheets.data.rowData.values(userEnteredValue,userEnteredFormat.textFormat.strikethrough)'
   const url =
     `https://sheets.googleapis.com/v4/spreadsheets/${encodeURIComponent(spreadsheetId)}` +
-    `/values/${encodeURIComponent(range)}` +
-    `?valueRenderOption=UNFORMATTED_VALUE&key=${encodeURIComponent(apiKey)}`
+    `?includeGridData=true` +
+    `&ranges=${encodeURIComponent(range)}` +
+    `&fields=${encodeURIComponent(fields)}` +
+    `&key=${encodeURIComponent(apiKey)}`
 
   const res = await fetch(url)
   if (!res.ok) throw new Error('시트 데이터를 가져오지 못했습니다. URL/탭 이름/권한을 확인해주세요.')
   const data: any = await res.json()
-  const values: unknown[][] = Array.isArray(data?.values) ? data.values : []
-  const str = values.map((r) => r.map((v) => String(v ?? '')))
-  const parsed = parseRowsFromValues(str, tabTitle)
-  return parsed.map((r, idx) => ({
-    tabTitle,
-    rowNumber: idx + 2,
-    ...r,
-  }))
+
+  const rowData: any[] = data?.sheets?.[0]?.data?.[0]?.rowData ?? []
+  if (rowData.length === 0) return []
+
+  // 셀 값 → string 변환 (NFC 정규화로 한글 분리 방지)
+  function cellStr(cell: any): string {
+    const v = cell?.userEnteredValue
+    if (!v) return ''
+    if ('stringValue' in v) return String(v.stringValue ?? '').normalize('NFC')
+    if ('numberValue' in v) return String(v.numberValue ?? '')
+    if ('boolValue' in v) return String(v.boolValue ?? '')
+    return ''
+  }
+
+  // 헤더 행 파싱 (열 인덱스 찾기)
+  const headerCells: any[] = rowData[0]?.values ?? []
+  const headerRow = headerCells.map(cellStr)
+  const nameIndex = findSheetColumnIndex(headerRow, 'name')
+  const typeIndex = findSheetColumnIndex(headerRow, 'type')
+  const labelIndex = findSheetColumnIndex(headerRow, 'label')
+  const valueIndex = findSheetColumnIndex(headerRow, 'value')
+  const descIndex = findSheetColumnIndex(headerRow, 'description')
+
+  if (nameIndex < 0 || typeIndex < 0 || labelIndex < 0 || valueIndex < 0) {
+    throw new Error('첫 번째 행에서 name, type, label, value 헤더를 찾지 못했습니다. (열 이름은 대소문자 구분 없음)')
+  }
+
+  // 데이터 행 파싱
+  const result: SheetRow[] = []
+  let rowCount = 0
+  for (let i = 1; i < rowData.length; i++) {
+    const cells: any[] = rowData[i]?.values ?? []
+    const name = cellStr(cells[nameIndex]).trim()
+    const type = cellStr(cells[typeIndex]).trim()
+    const label = cellStr(cells[labelIndex]).trim()
+    const value = cellStr(cells[valueIndex]).trim()
+    const description = descIndex >= 0 ? cellStr(cells[descIndex]).trim() : ''
+
+    if (!name && !label) continue // 빈 행 건너뜀
+
+    // 행의 임의 셀에 취소선이 있으면 삭제 예정 행으로 표시
+    const strikethrough = cells.some((cell: any) =>
+      cell?.userEnteredFormat?.textFormat?.strikethrough === true
+    )
+
+    rowCount++
+    result.push({
+      tabTitle,
+      rowNumber: rowCount + 1, // 기존 방식과 동일: 헤더=1행, 첫 데이터=2행
+      name,
+      type,
+      label,
+      value,
+      description,
+      strikethrough,
+    })
+  }
+
+  return result
 }
 
 /** 모든 탭의 행을 순서대로 이어 붙임 (개별 탭 오류 시 해당 탭만 건너뜀) */
@@ -522,10 +603,10 @@ function hasDuplicateSheetLabels(rows: SheetRow[]): boolean {
 }
 
 function rowMatchesKeyword(row: SheetRow, keyword: string): boolean {
-  const k = keyword.trim().toLowerCase()
-  if (!k) return false
-  const hay = [row.label, row.value].join(' ').toLowerCase()
-  return hay.includes(k)
+  const keywords = keyword.split(',').map((k) => k.trim().toLowerCase().normalize('NFC')).filter((k) => k.length >= 2)
+  if (keywords.length === 0) return false
+  const hay = [row.label, row.value].join(' ').toLowerCase().normalize('NFC')
+  return keywords.some((k) => hay.includes(k))
 }
 
 // ── Selection helpers ──────────────────────────────────────────────────────────
@@ -904,48 +985,42 @@ function sendSelection() {
   figma.ui.postMessage(out)
 }
 
-/** 선택에서 페이지까지 올라갈 때, 페이지의 직접 자식인 조상 (최상위 컨테이너) */
-function getTopLevelAncestorOnPage(node: SceneNode): SceneNode {
-  let n: BaseNode | null = node
-  while (n.parent && n.parent.type !== 'PAGE') {
-    n = n.parent
-  }
-  return n as SceneNode
-}
-
 /**
- * 복제본을 붙일 부모: 중첩 구조면 최상위(페이지 직속) 조상 안에 넣고,
- * 선택이 이미 페이지 직속이면 페이지에 둔다(자기 안에 중첩 방지).
+ * 복제본을 삽입할 부모와 anchor(sibling 기준 노드)를 반환.
+ *
+ * 인스턴스 노드나 인스턴스 내부에는 자식을 추가할 수 없으므로,
+ * 트리를 위로 올라가며 편집 가능한 첫 번째 부모(FRAME / GROUP / COMPONENT / PAGE)를 찾는다.
+ * anchor = 최종 부모의 직접 자식 중 selection의 조상(또는 selection 자신) → sibling 삽입 기준.
  */
-function getCloneParent(selection: SceneNode): ChildrenMixin {
-  const top = getTopLevelAncestorOnPage(selection)
-  if (top === selection && selection.parent?.type === 'PAGE') {
-    return figma.currentPage
-  }
-  return top as ChildrenMixin
-}
+function getCloneContext(selection: SceneNode): { cloneParent: ChildrenMixin; anchor: SceneNode } {
+  let anchor: SceneNode = selection
+  let p: BaseNode | null = selection.parent
 
-/** cloneParent 좌표계에서 선택 노드의 배치 사각형 (width/height는 바운딩 박스 기준) */
-function getPlacementRectInParent(selection: SceneNode, cloneParent: ChildrenMixin): {
-  x: number
-  y: number
-  width: number
-  height: number
-} {
-  if (cloneParent === figma.currentPage) {
-    return { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
+  while (p) {
+    if (p.type === 'PAGE' || p.type === 'DOCUMENT') {
+      return { cloneParent: figma.currentPage, anchor }
+    }
+
+    // 인스턴스이거나 인스턴스 내부에 있으면 편집 불가 → 위로 이동
+    const isInstance = p.type === 'INSTANCE'
+    const insideInstance = (() => {
+      let a = p!.parent
+      while (a && a.type !== 'PAGE' && a.type !== 'DOCUMENT') {
+        if (a.type === 'INSTANCE') return true
+        a = a.parent
+      }
+      return false
+    })()
+
+    if (!isInstance && !insideInstance && 'children' in p) {
+      return { cloneParent: p as unknown as ChildrenMixin, anchor }
+    }
+
+    anchor = p as SceneNode
+    p = p.parent
   }
-  const selBox = selection.absoluteBoundingBox
-  const parBox = 'absoluteBoundingBox' in cloneParent ? cloneParent.absoluteBoundingBox : null
-  if (!selBox || !parBox) {
-    return { x: selection.x, y: selection.y, width: selection.width, height: selection.height }
-  }
-  return {
-    x: selBox.x - parBox.x,
-    y: selBox.y - parBox.y,
-    width: selBox.width,
-    height: selBox.height,
-  }
+
+  return { cloneParent: figma.currentPage, anchor }
 }
 
 figma.on('selectionchange', sendSelection)
@@ -993,7 +1068,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       })
 
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged } satisfies PluginToUiMessage)
+      const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }
@@ -1013,7 +1089,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       const rows = await fetchSheetRowsByTabTitle(spreadsheetId, msg.apiKey, msg.tabTitle.trim())
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
-      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged } satisfies PluginToUiMessage)
+      const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
+      figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
       await postSettingsToUi()
       return
     }
@@ -1122,40 +1199,56 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
 
       const generated: SceneNode[] = []
       const cloneLabelToNodeIds: Record<string, string[]> = {}
-      const layout = msg.generateLayout === 'right' ? 'right' : 'below'
-      const gap = 20
-      const spacing = 16
-      const cloneParent = getCloneParent(selection)
-      const rel = getPlacementRectInParent(selection, cloneParent)
 
-      if (layout === 'right') {
-        let currentX = rel.x + rel.width + gap
-        for (const row of msg.keywordRows) {
-          const clone = selection.clone()
-          clone.x = currentX
-          clone.y = rel.y
-          currentX += clone.width + spacing
+      // 편집 가능한 부모 프레임과 그 안의 anchor 노드를 찾음 (인스턴스 내부 선택 시 안전하게 탈출)
+      const { cloneParent, anchor } = getCloneContext(selection)
+
+      // anchor 기준으로 부모 내 삽입 위치 계산
+      const selectionIndex = (cloneParent as { children: readonly SceneNode[] }).children
+        .findIndex((c) => c.id === anchor.id)
+
+      // 부모의 오토레이아웃 방향 (있으면 Figma가 위치 자동 처리)
+      const parentLayoutMode: 'HORIZONTAL' | 'VERTICAL' | 'NONE' =
+        'layoutMode' in cloneParent ? (cloneParent as FrameNode).layoutMode : 'NONE'
+
+      // 감싸는 프레임이 없으면(페이지 직속) 무조건 아래로, 있으면 UI 설정 따름
+      const isOnPage = (cloneParent as BaseNode).type === 'PAGE'
+      const manualLayout: 'right' | 'below' = isOnPage ? 'below' : (msg.generateLayout === 'right' ? 'right' : 'below')
+
+      // 오토레이아웃 없을 때 누적 좌표 기준은 anchor 노드 위치 사용
+      const anchorNode = anchor as SceneNode & { x: number; y: number; width: number; height: number }
+      let currentX = anchorNode.x + anchorNode.width
+      let currentY = anchorNode.y + anchorNode.height
+
+      for (let i = 0; i < msg.keywordRows.length; i++) {
+        const row = msg.keywordRows[i]
+        const clone = selection.clone()
+
+        // clone()은 selection과 동일 부모에 추가됨 → insertChild로 sibling 위치로 이동
+        if (selectionIndex >= 0) {
+          cloneParent.insertChild(selectionIndex + 1 + i, clone)
+        } else {
           cloneParent.appendChild(clone)
-          applyRowToSelectionClone(clone, row)
-          generated.push(clone)
-          const key = labelKeyForDiff(row.label)
-          cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
-          if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
         }
-      } else {
-        let currentY = rel.y + rel.height + gap
-        for (const row of msg.keywordRows) {
-          const clone = selection.clone()
-          clone.x = rel.x
-          clone.y = currentY
-          currentY += clone.height + spacing
-          cloneParent.appendChild(clone)
-          applyRowToSelectionClone(clone, row)
-          generated.push(clone)
-          const key = labelKeyForDiff(row.label)
-          cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
-          if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
+
+        // 오토레이아웃이 없는 경우에만 수동으로 위치 지정 (gap 없이 붙임)
+        if (parentLayoutMode === 'NONE') {
+          if (manualLayout === 'right') {
+            clone.x = currentX
+            clone.y = anchorNode.y
+            currentX += clone.width
+          } else {
+            clone.x = anchorNode.x
+            clone.y = currentY
+            currentY += clone.height
+          }
         }
+
+        applyRowToSelectionClone(clone, row)
+        generated.push(clone)
+        const key = labelKeyForDiff(row.label)
+        cloneLabelToNodeIds[key] = [...(cloneLabelToNodeIds[key] ?? []), clone.id]
+        if ('setPluginData' in clone) clone.setPluginData(CLONE_SOURCE_PLUGIN_KEY, selection.id)
       }
 
       if (spreadsheetId) {

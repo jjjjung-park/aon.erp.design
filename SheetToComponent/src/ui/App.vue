@@ -14,7 +14,7 @@
     <main class="flex-1 overflow-y-auto p-4 space-y-4">
       <!-- 1) Sheet -->
       <section class="space-y-2">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">1) 시트 호출</div>
+        <div class="text-[13px] font-bold text-gray-900">1) 시트 호출 <span class="text-red-500">*</span></div>
         <p class="text-[10px] text-gray-500 leading-relaxed">
           시트 호출 시 탭 목록과 함께 전체 탭의 label/value 행을 한 번에 불러옵니다. 탭 범위에서 특정 탭만 고르면 해당 탭만 다시 조회합니다.
         </p>
@@ -70,7 +70,7 @@
         />
 
         <div class="flex flex-col gap-1">
-          <label class="text-xs font-medium text-gray-700">탭 범위</label>
+          <label class="text-[11px] font-medium text-gray-400">탭 범위</label>
           <select
             v-model="tabScope"
             class="w-full text-xs px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
@@ -86,18 +86,18 @@
 
       <!-- 2) Keyword search -->
       <section class="space-y-2 pt-3 border-t border-gray-100">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">2) 키워드 검색</div>
+        <div class="text-[13px] font-bold text-gray-900">2) 키워드 검색</div>
         <div class="flex gap-2">
           <input
             v-model="keyword"
             type="text"
-            placeholder="name/type/label/value/description에서 검색"
+            placeholder="두 글자 이상 입력"
             class="flex-1 text-xs px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            @keydown.enter.prevent="onKeywordEnter"
+            @keyup.enter="onKeywordEnter"
           />
           <button
             class="px-3 py-2 text-xs rounded-md bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope)"
+            :disabled="isSearching || isLoadingTabRows || !sheetUrl.trim() || !apiKey.trim() || (!keyword.trim() && cachedAllTabRows.length === 0 && !tabScope) || (!!keyword.trim() && !keyword.trim().split(',').some(k => k.trim().length >= 2))"
             @click="search"
           >
             {{ isSearching ? '검색 중...' : '검색' }}
@@ -118,6 +118,13 @@
                 수정건 선택
               </button>
               <button
+                v-if="detectedNewLabels.length > 0"
+                class="text-[11px] px-2 py-1 rounded border border-blue-400 text-blue-700 bg-blue-50 hover:bg-blue-100"
+                @click="selectNewLabels"
+              >
+                신규 선택
+              </button>
+              <button
                 class="text-[11px] px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
                 @click="selectAll"
               >
@@ -132,41 +139,85 @@
             </div>
           </div>
 
-          <div class="max-h-44 overflow-auto border border-gray-200 rounded-lg">
+          <div class="max-h-60 overflow-auto border border-gray-200 rounded-lg">
             <label
               v-for="r in rows"
               :key="rowId(r)"
               :class="[
-                'flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0 hover:bg-gray-50',
-                labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`) ? 'bg-orange-50' : ''
+                'flex items-start gap-2 px-3 py-2 border-b border-gray-100 last:border-b-0',
+                r.strikethrough ? 'bg-gray-50 opacity-60 cursor-default' : 'hover:bg-gray-50',
+                !r.strikethrough && labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`) ? 'bg-orange-50' : ''
               ]"
             >
               <input
                 type="checkbox"
                 class="mt-1"
                 :checked="selectedRowIds.has(rowId(r))"
-                @change="toggleRow(r)"
+                :disabled="r.strikethrough"
+                @change="!r.strikethrough && toggleRow(r)"
               />
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5 truncate">
-                  <span class="text-[12px] font-semibold text-gray-800 truncate">{{ r.label || r.name || '(no label)' }}</span>
+                  <span :class="['text-[12px] font-semibold truncate', r.strikethrough ? 'text-gray-400 line-through' : 'text-gray-800']">
+                    <template v-if="keyword.trim() && !r.strikethrough">
+                      <span
+                        v-for="(part, pi) in splitByKeyword(r.label || r.name || '(no label)', keyword)"
+                        :key="pi"
+                        :class="part.match ? 'text-blue-500' : ''"
+                      >{{ part.text }}</span>
+                    </template>
+                    <template v-else>{{ r.label || r.name || '(no label)' }}</template>
+                  </span>
                   <span class="text-[11px] text-gray-400 font-normal shrink-0">({{ r.tabTitle }} / {{ r.rowNumber }}행)</span>
                   <span
-                    v-if="labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
+                    v-if="!r.strikethrough && labelChangedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
                     class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-orange-500 text-white leading-none"
                   >label 변경</span>
+                  <span
+                    v-if="!r.strikethrough && labelAddedSet.has(`${r.tabTitle}::${r.rowNumber}`)"
+                    class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-blue-500 text-white leading-none"
+                  >신규</span>
+                  <span
+                    v-if="r.strikethrough"
+                    class="shrink-0 text-[9px] font-bold px-1 py-0.5 rounded bg-gray-400 text-white leading-none"
+                  >삭제됨</span>
                 </div>
-                <div class="text-[11px] text-gray-500 truncate">value: {{ r.value }}</div>
-                <div v-if="r.description" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
+                <div :class="['text-[11px] truncate', r.strikethrough ? 'text-gray-400' : 'text-gray-500']">value:
+                  <template v-if="keyword.trim() && !r.strikethrough">
+                    <span
+                      v-for="(part, pi) in splitByKeyword(r.value, keyword)"
+                      :key="pi"
+                      :class="part.match ? 'text-blue-500' : ''"
+                    >{{ part.text }}</span>
+                  </template>
+                  <template v-else>{{ r.value }}</template>
+                </div>
+                <div v-if="r.description && !r.strikethrough" class="text-[11px] text-gray-400 truncate">desc: {{ r.description }}</div>
               </div>
             </label>
+          </div>
+
+          <!-- 선택된 항목 label 태그 목록 -->
+          <div v-if="selectedRows.length > 0" class="flex flex-wrap gap-1 pt-1">
+            <span
+              v-for="r in selectedRows"
+              :key="rowId(r)"
+              class="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200"
+            >
+              {{ r.label || r.name || '(no label)' }}
+              <button
+                type="button"
+                class="text-gray-400 hover:text-gray-600 leading-none"
+                @click.prevent="toggleRow(r)"
+              >✕</button>
+            </span>
           </div>
         </div>
       </section>
 
       <!-- 3) Selection + property mapping -->
       <section class="space-y-2 pt-3 border-t border-gray-100">
-        <div class="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">3) 연결 대상(선택)</div>
+        <div class="text-[13px] font-bold text-gray-900">3) 연결 대상 <span class="text-red-500">*</span></div>
         <div class="p-3 rounded-lg border"
           :class="selection ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'">
           <template v-if="selection">
@@ -185,13 +236,13 @@
             인스턴스(또는 인스턴스를 포함한 레이어)를 선택해주세요.
           </div>
         </div>
-        <div class="text-[12px] text-gray-600">
-          <div class="font-semibold text-gray-700 mb-1">자동 연결 규칙</div>
+        <div class="text-[12px] text-gray-600 border-1 border-sky-200 bg-sky-50 rounded-lg p-3">
+          <div class="text-[11px] font-medium text-gray-400 mb-1">자동 연결 규칙</div>
           <div class="text-[11px] text-gray-500 leading-5">
-            선택한 컨테이너/인스턴스 내부 인스턴스의 TEXT 프로퍼티 중
-            <code class="text-[10px] bg-gray-100 px-1 rounded">label</code>,
-            <code class="text-[10px] bg-gray-100 px-1 rounded">value</code>,
-            <code class="text-[10px] bg-gray-100 px-1 rounded">description</code>
+            선택한 레이어의 TEXT 프로퍼티 중
+            <code class="text-[10px] bg-sky-200/50 px-1 rounded">label</code>,
+            <code class="text-[10px] bg-sky-200/50 px-1 rounded">value</code>,
+            <code class="text-[10px] bg-sky-200/50 px-1 rounded">description</code>
             이 존재하면 각각 시트의 값으로 자동 연결합니다. (2개 이상 있어도 각각 연결)
           </div>
         </div>
@@ -210,22 +261,32 @@
         일치하는 프로퍼티가 없습니다
       </p>
       <div class="flex gap-2">
+        <!-- 생성 버튼: 수정 항목만 선택된 경우가 아닐 때 표시 -->
+        <div v-if="!hasOnlyChangedSelected || isGenerating" class="relative flex-1 group">
+          <button
+            class="w-full py-2.5 rounded-lg font-semibold text-[13px] transition-colors bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
+            :disabled="!canGenerate || isGenerating"
+            @click="connectAndGenerate"
+          >
+            {{
+              isGenerating
+                ? '생성/연결 중...'
+                : hasDuplicateLabelsInSelection
+                  ? `${selectedRowIds.size}개 기존 인스턴스에 연결`
+                  : `${selectedRowIds.size}개 생성 및 연결`
+            }}
+          </button>
+          <div
+            v-if="!canGenerate && !isGenerating && selectedRows.length > 0"
+            class="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 w-max max-w-[200px] text-center rounded bg-gray-800 px-2 py-1 text-[11px] text-white z-10"
+          >
+            인스턴스 또는 인스턴스를 포함한 레이어를 선택해 주세요
+          </div>
+        </div>
+        <!-- 동기화 버튼: 수정 항목만 선택된 경우에만 표시 -->
         <button
-          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-300"
-          :disabled="!canGenerate || isGenerating"
-          @click="connectAndGenerate"
-        >
-          {{
-            isGenerating
-              ? '생성/연결 중...'
-              : hasDuplicateLabelsInSelection
-                ? `${selectedRowIds.size}개 기존 인스턴스에 연결`
-                : `${selectedRowIds.size}개 생성 및 연결`
-          }}
-        </button>
-        <button
-          v-if="canSync || isSyncing"
-          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors border border-gray-300 bg-white text-gray-800 hover:bg-gray-50 disabled:bg-gray-100 disabled:text-gray-400"
+          v-if="hasOnlyChangedSelected || isSyncing"
+          class="flex-1 py-2.5 rounded-lg font-semibold text-[13px] transition-colors border-1 border-gray-900 bg-white text-gray-900 hover:bg-gray-100 disabled:border-gray-300 disabled:text-gray-400 disabled:bg-white"
           :disabled="isSyncing"
           @click="syncSelectedRows"
         >
@@ -247,6 +308,7 @@ type SheetRow = {
   label: string
   value: string
   description: string
+  strikethrough?: boolean
 }
 
 type SelectionInfo = {
@@ -273,6 +335,14 @@ type SheetLabelChangedItem = {
   rowNumber: number
   value: string
 }
+
+type SheetLabelNewItem = {
+  tabTitle: string
+  rowNumber: number
+  label: string
+  value: string
+}
+
 
 type SheetDiffPayload = {
   hasSnapshot: boolean
@@ -315,6 +385,22 @@ const detectedLabelChanges = ref<SheetLabelChangedItem[]>([])
 const labelChangedSet = computed(() =>
   new Set(detectedLabelChanges.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
 )
+
+/** 시트 호출 시 스냅샷에 없던 신규 행 */
+const detectedNewLabels = ref<SheetLabelNewItem[]>([])
+/** 신규 행의 "tabTitle::rowNumber" 키 집합 (UI 표시용) */
+const labelAddedSet = computed(() =>
+  new Set(detectedNewLabels.value.map((it) => `${it.tabTitle}::${it.rowNumber}`))
+)
+
+/** 취소선 행의 "tabTitle::rowNumber" 키 집합 */
+const labelDeletedSet = computed(() => {
+  const keys = new Set<string>()
+  for (const r of rows.value) {
+    if (r.strikethrough) keys.add(`${r.tabTitle}::${r.rowNumber}`)
+  }
+  return keys
+})
 
 const isLoadingTabs = ref(false)
 const isSearching = ref(false)
@@ -418,6 +504,51 @@ function autoMatchMapping() {
 
 function rowId(r: SheetRow) {
   return `${r.tabTitle}::${r.rowNumber}::${r.name}::${r.label}`
+}
+
+/** 텍스트를 키워드 기준으로 분할 — 매칭 부분과 비매칭 부분 교대로 반환 */
+/** 텍스트를 키워드(들) 기준으로 분할 — 쉼표로 구분된 복수 키워드 지원, 매칭 부분과 비매칭 부분 교대로 반환 */
+function splitByKeyword(text: string, kw: string): { text: string; match: boolean }[] {
+  const keywords = kw.split(',').map((k) => k.trim().toLowerCase().normalize('NFC')).filter((k) => k.length >= 2)
+  if (keywords.length === 0) return [{ text, match: false }]
+
+  // 모든 키워드의 매칭 구간 수집
+  const lower = text.toLowerCase().normalize('NFC')
+  const ranges: { start: number; end: number }[] = []
+  for (const k of keywords) {
+    let idx = 0
+    while (idx < lower.length) {
+      const found = lower.indexOf(k, idx)
+      if (found === -1) break
+      ranges.push({ start: found, end: found + k.length })
+      idx = found + k.length
+    }
+  }
+
+  if (ranges.length === 0) return [{ text, match: false }]
+
+  // 범위 정렬 및 병합 (겹치는 구간 합치기)
+  ranges.sort((a, b) => a.start - b.start)
+  const merged: { start: number; end: number }[] = []
+  for (const r of ranges) {
+    if (merged.length === 0 || r.start >= merged[merged.length - 1].end) {
+      merged.push({ ...r })
+    } else {
+      merged[merged.length - 1].end = Math.max(merged[merged.length - 1].end, r.end)
+    }
+  }
+
+  // 텍스트 분할
+  const result: { text: string; match: boolean }[] = []
+  let pos = 0
+  for (const { start, end } of merged) {
+    if (pos < start) result.push({ text: text.slice(pos, start), match: false })
+    result.push({ text: text.slice(start, end), match: true })
+    pos = end
+  }
+  if (pos < text.length) result.push({ text: text.slice(pos), match: false })
+
+  return result
 }
 
 function plainSheetRows(list: SheetRow[]): SheetRow[] {
@@ -571,11 +702,15 @@ function onTabScopeChange() {
 }
 
 function search() {
+  // 한글 IME 조합 중인 경우 포커스 해제로 커밋 처리
+  ;(document.activeElement as HTMLElement | null)?.blur()
+
   errorMessage.value = ''
   statusMessage.value = ''
 
-  // 키워드가 비어 있으면 전체 결과로 복원
-  if (!keyword.value.trim()) {
+  // 유효한 키워드가 없으면 (빈 입력 또는 쉼표만 입력) 전체 결과로 복원
+  const validKeywords = keyword.value.split(',').map((k) => k.trim()).filter((k) => k.length >= 2)
+  if (validKeywords.length === 0) {
     selectedRowIds.value = new Set()
     if (tabScope.value) {
       // 특정 탭 선택 중이면 해당 탭 재호출
@@ -610,9 +745,12 @@ function search() {
 
 function onKeywordEnter() {
   if (isSearching.value || isLoadingTabRows.value || !sheetUrl.value.trim() || !apiKey.value.trim()) return
-  // 키워드가 있으면 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
-  if (keyword.value.trim() || cachedAllTabRows.value.length > 0 || tabScope.value) search()
+  // 키워드가 있으면 2글자 이상일 때만 검색, 비어 있으면 전체 복원 (단, 데이터가 로드된 상태일 때만)
+  const kw = keyword.value.trim()
+  if (kw && !kw.split(',').some(k => k.trim().length >= 2)) return
+  if (kw || cachedAllTabRows.value.length > 0 || tabScope.value) search()
 }
+
 
 function toggleRow(r: SheetRow) {
   const id = rowId(r)
@@ -626,6 +764,13 @@ function selectChangedLabels() {
   const changedKeys = labelChangedSet.value
   selectedRowIds.value = new Set(
     rows.value.filter((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`)).map(rowId)
+  )
+}
+
+function selectNewLabels() {
+  const addedKeys = labelAddedSet.value
+  selectedRowIds.value = new Set(
+    rows.value.filter((r) => addedKeys.has(`${r.tabTitle}::${r.rowNumber}`)).map(rowId)
   )
 }
 
@@ -656,15 +801,20 @@ const diffRequiresAck = computed(() => {
 })
 
 /**
- * 동기화 버튼 활성 조건:
- * 1. label 변경이 감지된 행이 존재
- * 2. 선택된 행 중 label이 변경된 행이 1개 이상 포함
+ * 선택된 행이 수정 항목(label 변경)만으로 구성되는지 여부.
+ * true이면 동기화 버튼만 표시, false이면 생성 버튼만 표시.
  */
-const canSync = computed(() => {
-  if (detectedLabelChanges.value.length === 0) return false
+const hasOnlyChangedSelected = computed(() => {
+  if (selectedRows.value.length === 0) return false
   const changedKeys = labelChangedSet.value
-  return selectedRows.value.some((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`))
+  return selectedRows.value.every((r) => changedKeys.has(`${r.tabTitle}::${r.rowNumber}`))
 })
+
+/**
+ * 동기화 버튼 활성 조건:
+ * 선택된 행이 수정 항목만으로 구성됨
+ */
+const canSync = computed(() => hasOnlyChangedSelected.value)
 
 /** 플러그인과 동일: 선택 서브트리 전체에서 TEXT label/value/description 매핑 가능 여부 */
 const hasAnyMatchingProps = computed(() => selection.value?.hasMappableSheetProps === true)
@@ -693,6 +843,7 @@ const duplicatedSheetLabels = computed(() => {
 const hasDuplicateLabelsInSelection = computed(() => duplicatedSheetLabels.value.length > 0)
 
 const canGenerate = computed(() => {
+  if (hasOnlyChangedSelected.value) return false
   if (!selection.value) return false
   if (selectedRows.value.length === 0) return false
   if (!hasAnyMatchingProps.value) return false
@@ -829,14 +980,22 @@ onMounted(() => {
       lastSuccessfulInvokeUrl.value = sheetUrl.value.trim()
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
+      detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
       if (tabs.value.length === 0) {
         statusMessage.value = '탭을 찾지 못했습니다.'
       } else if (merged.length === 0) {
         statusMessage.value = `탭 ${tabs.value.length}개를 불러왔습니다. (행 데이터 없음 또는 일부 탭만 읽음)`
       } else {
         const changedCount = labelChangedSet.value.size
-        statusMessage.value = changedCount > 0
-          ? `탭 ${tabs.value.length}개 · ${merged.length}개 행 불러옴 · ⚠️ label 변경 ${changedCount}건 감지`
+        const addedCount = labelAddedSet.value.size
+        const deletedCount = merged.filter((r) => r.strikethrough).length
+        const notices = [
+          changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
+          addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
+          deletedCount > 0 ? `🗑️ 삭제 ${deletedCount}건 감지` : '',
+        ].filter(Boolean).join(' · ')
+        statusMessage.value = notices
+          ? `탭 ${tabs.value.length}개 · ${merged.length}개 행 불러옴 · ${notices}`
           : `탭 ${tabs.value.length}개 · 전체 ${merged.length}개 행(label/value 등)을 불러왔습니다.`
       }
       scheduleSheetDiffRequest()
@@ -849,10 +1008,18 @@ onMounted(() => {
       selectedRowIds.value = new Set()
       const changed = Array.isArray(msg.labelChanged) ? msg.labelChanged : []
       detectedLabelChanges.value = changed
+      detectedNewLabels.value = Array.isArray(msg.labelAdded) ? msg.labelAdded : []
       const changedCount = changed.length
+      const addedCount = detectedNewLabels.value.length
+      const deletedCount = rows.value.filter((r) => r.strikethrough).length
+      const notices = [
+        changedCount > 0 ? `⚠️ label 변경 ${changedCount}건 감지` : '',
+        addedCount > 0 ? `🆕 신규 ${addedCount}건 감지` : '',
+        deletedCount > 0 ? `🗑️ 삭제 ${deletedCount}건 감지` : '',
+      ].filter(Boolean).join(' · ')
       statusMessage.value = rows.value.length
         ? `${msg.tabTitle} 탭에서 ${rows.value.length}개 항목을 불러왔습니다.` +
-          (changedCount > 0 ? ` · ⚠️ label 변경 ${changedCount}건 감지` : '')
+          (notices ? ` · ${notices}` : '')
         : `${msg.tabTitle} 탭에 항목이 없습니다.`
       scheduleSheetDiffRequest()
       return
