@@ -1,0 +1,41 @@
+name: Storybook Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/styles/vars.css'
+      - 'ui/**'
+      - 'markup/components/**'
+      - 'storybook/**'
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # TODO: Storybook 설치 후 아래 단계 활성화
+      # - name: Setup Node
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+      #     cache: 'pnpm'
+
+      # - name: Install dependencies
+      #   run: pnpm install
+
+      # - name: Build Storybook
+      #   run: pnpm build-storybook
+
+      # - name: Deploy to GitHub Pages
+      #   uses: peaceiris/actions-gh-pages@v4
+      #   with:
+      #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      #     publish_dir: ./storybook-static
+
+      - name: Placeholder
+        run: echo "Storybook 배포 준비 중 — 설치 후 위 주석 해제"
