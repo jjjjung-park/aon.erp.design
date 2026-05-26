@@ -25,3 +25,6 @@ coverage/
 ## Misc
 *.log
 *.tsbuildinfo
+
+## Local reference (프로젝트 분석용 임시 복사본)
+_reference/
