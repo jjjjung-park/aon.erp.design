@@ -1,6 +1,37 @@
 import type { Preview, App } from '@storybook/vue3-vite'
 import '../src/assets/index.css'
 
+// Lucide 아이콘 (원본 프로젝트에서 자동 임포트된 것들)
+import {
+  AlertTriangle as LucideAlertTriangle,
+  Calendar as LucideCalendar,
+  Check as LucideCheck,
+  CheckIcon as LucideCheckIcon,
+  ChevronDown as LucideChevronDown,
+  ChevronLeft as LucideChevronLeft,
+  ChevronLeftIcon as LucideChevronLeftIcon,
+  ChevronRight as LucideChevronRight,
+  ChevronRightIcon as LucideChevronRightIcon,
+  ChevronsLeft as LucideChevronsLeft,
+  ChevronsRight as LucideChevronsRight,
+  CircleAlert as LucideCircleAlert,
+  Expand as LucideExpand,
+  Eye as LucideEye,
+  EyeClosed as LucideEyeClosed,
+  FolderDown as LucideFolderDown,
+  Info as LucideInfo,
+  Minimize as LucideMinimize,
+  Paperclip as LucidePaperclip,
+  Plus as LucidePlus,
+  Search as LucideSearch,
+  Settings as LucideSettings,
+  ShieldAlert as LucideShieldAlert,
+  Trash as LucideTrash,
+  Trash2 as LucideTrash2,
+  User as LucideUser,
+  X as LucideX,
+} from 'lucide-vue-next'
+
 // UI 컴포넌트
 import { Button } from '@/ui/button'
 import { Badge } from '@/ui/badge'
@@ -122,6 +153,35 @@ export const setup = (app: App) => {
   app.component('UiEmptyTitle', EmptyTitle)
   app.component('UiTableCell', TableCell)
   app.component('UiTableHead', TableHead)
+
+  // Lucide 아이콘 전역 등록
+  app.component('LucideAlertTriangle', LucideAlertTriangle)
+  app.component('LucideCalendar', LucideCalendar)
+  app.component('LucideCheck', LucideCheck)
+  app.component('LucideCheckIcon', LucideCheckIcon)
+  app.component('LucideChevronDown', LucideChevronDown)
+  app.component('LucideChevronLeft', LucideChevronLeft)
+  app.component('LucideChevronLeftIcon', LucideChevronLeftIcon)
+  app.component('LucideChevronRight', LucideChevronRight)
+  app.component('LucideChevronRightIcon', LucideChevronRightIcon)
+  app.component('LucideChevronsLeft', LucideChevronsLeft)
+  app.component('LucideChevronsRight', LucideChevronsRight)
+  app.component('LucideCircleAlert', LucideCircleAlert)
+  app.component('LucideExpand', LucideExpand)
+  app.component('LucideEye', LucideEye)
+  app.component('LucideEyeClosed', LucideEyeClosed)
+  app.component('LucideFolderDown', LucideFolderDown)
+  app.component('LucideInfo', LucideInfo)
+  app.component('LucideMinimize', LucideMinimize)
+  app.component('LucidePaperclip', LucidePaperclip)
+  app.component('LucidePlus', LucidePlus)
+  app.component('LucideSearch', LucideSearch)
+  app.component('LucideSettings', LucideSettings)
+  app.component('LucideShieldAlert', LucideShieldAlert)
+  app.component('LucideTrash', LucideTrash)
+  app.component('LucideTrash2', LucideTrash2)
+  app.component('LucideUser', LucideUser)
+  app.component('LucideX', LucideX)
 }
 
 export default preview
