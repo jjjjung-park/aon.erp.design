@@ -1,0 +1,11 @@
+{
+  "name": "Auto History",
+  "id": "auto-history-local",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/index.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "permissions": ["currentuser"],
+  "enablePrivatePluginApi": true
+}

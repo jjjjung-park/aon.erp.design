@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { Badge } from '.'
+import { Badge } from '@/ui/badge'
 
 const meta: Meta<typeof Badge> = {
-  title: '코어/Badge',
+  title: '데이터 표시/Badge',
   component: Badge,
   tags: ['autodocs'],
   argTypes: {

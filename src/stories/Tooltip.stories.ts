@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '.'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/ui/tooltip'
 import { Button } from '@/ui/button'
 
 const meta: Meta = {
-  title: '코어/Tooltip',
+  title: '오버레이/Tooltip',
   tags: ['autodocs'],
   argTypes: {
     variant: {

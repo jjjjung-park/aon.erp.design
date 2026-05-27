@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { Alert, AlertTitle, AlertDescription } from '.'
+import { Alert, AlertTitle, AlertDescription } from '@/ui/alert'
 import { LucideInfo, LucideCheck, LucideAlertTriangle, LucideCircleAlert } from 'lucide-vue-next'
 
 const meta: Meta<typeof Alert> = {
-  title: '코어/Alert',
+  title: '피드백/Alert',
   component: Alert,
   tags: ['autodocs'],
   argTypes: {
