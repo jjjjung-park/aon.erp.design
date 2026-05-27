@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/**'
-      - '.storybook/**'
-      - 'package.json'
+      - 'design-sync/src/**'
+      - 'design-sync/.storybook/**'
+      - 'design-sync/package.json'
 
   workflow_dispatch:
 
@@ -27,13 +27,15 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: design-sync
         run: npm ci
 
       - name: Build Storybook
+        working-directory: design-sync
         run: npm run build-storybook
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./storybook-static
+          publish_dir: ./design-sync/storybook-static
