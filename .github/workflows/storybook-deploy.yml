@@ -4,38 +4,38 @@ on:
   push:
     branches: [main]
     paths:
-      - 'assets/styles/vars.css'
-      - 'ui/**'
-      - 'markup/components/**'
-      - 'storybook/**'
+      - 'design-sync/src/**'
+      - 'design-sync/.storybook/**'
+      - 'design-sync/package.json'
 
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # TODO: Storybook 설치 후 아래 단계 활성화
-      # - name: Setup Node
-      #   uses: actions/setup-node@v4
-      #   with:
-      #     node-version: 20
-      #     cache: 'pnpm'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
 
-      # - name: Install dependencies
-      #   run: pnpm install
+      - name: Install dependencies
+        working-directory: design-sync
+        run: npm ci
 
-      # - name: Build Storybook
-      #   run: pnpm build-storybook
+      - name: Build Storybook
+        working-directory: design-sync
+        run: npm run build-storybook
 
-      # - name: Deploy to GitHub Pages
-      #   uses: peaceiris/actions-gh-pages@v4
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: ./storybook-static
-
-      - name: Placeholder
-        run: echo "Storybook 배포 준비 중 — 설치 후 위 주석 해제"
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./design-sync/storybook-static
