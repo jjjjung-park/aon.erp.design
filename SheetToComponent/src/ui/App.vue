@@ -11,6 +11,14 @@
       </button>
     </header>
 
+    <!-- 안내 배너 -->
+    <div class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-start gap-2">
+      <span class="text-amber-500 text-[14px] shrink-0 mt-0.5">⚠️</span>
+      <p class="text-[12px] text-amber-800 leading-relaxed">
+        생성 후 텍스트 정렬 변경 시 추후 수정건 감지가 불가합니다.<br><span class="font-bold">생성 전 텍스트 정렬 변경 후 생성해 주세요.</span>
+      </p>
+    </div>
+
     <main class="flex-1 overflow-y-auto p-4 space-y-4">
       <!-- 1) Sheet -->
       <section class="space-y-2">
@@ -104,7 +112,16 @@
           </button>
         </div>
 
-        <div v-if="rows.length" class="space-y-2">
+        <!-- 로딩 중 표시 -->
+        <div v-if="isLoadingTabs || isLoadingTabRows" class="flex items-center justify-center gap-2 py-6 text-gray-400">
+          <svg class="animate-spin w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+          </svg>
+          <span class="text-[12px]">{{ isLoadingTabs ? '시트 호출 중...' : '탭 데이터 불러오는 중...' }}</span>
+        </div>
+
+        <div v-else-if="rows.length" class="space-y-2">
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-600">
               결과 {{ rows.length }}개 / 선택 {{ selectedRowIds.size }}개
