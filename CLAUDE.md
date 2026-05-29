@@ -83,14 +83,28 @@ Tag → Badge → Progress → Card → Carousel → Accordion → ListBlockItem
 
 ---
 
-## 🔀 로컬 작업 브랜치 현황
+## 🔀 브랜치 전략
+
+### 네이밍 규칙
+프로젝트별 prefix + 버전으로 구분하며, `main`에 직접 push 불가 — 반드시 PR을 통해 머지
+
+```
+plugin/dev_v0.0.2
+storybook/dev_v1.0.1
+hotfix/dev_v0.0.2
+```
+
+| prefix | 대상 프로젝트 | 예시 |
+|--------|-------------|------|
+| `plugin/` | SheetToComponent (Figma 플러그인) | `plugin/dev_v0.0.2` |
+| `storybook/` | design-sync (Storybook) | `storybook/dev_v1.0.1` |
+| `hotfix/` | 긴급 버그 수정 (프로젝트 무관) | `hotfix/dev_v0.0.2` |
+
+### 현재 브랜치 현황
 
 | 브랜치 | 설명 |
 |--------|------|
 | `main` | 배포 기준 브랜치 |
-| `feature/storybook-setup` | Storybook 초기 구성 (머지 완료) |
-| `hotfix/workflow-cache-path` | Actions 캐시 경로 수정 (머지 필요) |
-| `dev_v0.0.1` | SheetToComponent 개발 브랜치 |
 
 ---
 
