@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen bg-white text-[13px] font-sans select-none">
+  <div class="relative flex flex-col h-screen bg-white text-[13px] font-sans select-none">
     <header class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
       <span class="font-semibold text-gray-900">SheetToComponent</span>
       <button
@@ -10,6 +10,25 @@
         초기화
       </button>
     </header>
+
+    <!-- 안내 배너 -->
+    <div class="bg-amber-50 border-b border-amber-200 px-4 py-2 flex items-start gap-2">
+      <span class="text-amber-500 text-[14px] shrink-0 mt-0.5">⚠️</span>
+      <p class="text-[12px] text-amber-800 leading-relaxed">
+        생성 후 텍스트 정렬 변경 시 추후 수정건 감지가 불가합니다.<br><span class="font-bold">생성 전 텍스트 정렬 변경 후 생성해 주세요.</span>
+      </p>
+    </div>
+
+    <!-- 전체 로딩 오버레이 -->
+    <div v-if="isLoadingTabs || isLoadingTabRows || isSearching || isNodeScanning" class="absolute inset-0 z-50 bg-white/70 flex flex-col items-center justify-center gap-2 pointer-events-none">
+      <svg class="animate-spin w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+      </svg>
+      <span class="text-[12px] text-gray-600 font-medium">
+        {{ isNodeScanning ? '노드 분석 중...' : isLoadingTabs ? '시트 호출 중...' : isLoadingTabRows ? '탭 데이터 불러오는 중...' : '검색 중...' }}
+      </span>
+    </div>
 
     <main class="flex-1 overflow-y-auto p-4 space-y-4">
       <!-- 1) Sheet -->
@@ -81,6 +100,13 @@
             <option v-for="t in tabs" :key="t.sheetId" :value="t.title">{{ t.title }}</option>
           </select>
           <p class="text-[10px] text-gray-500">특정 탭만 선택하면 그 탭 행만 다시 불러옵니다. 전체 탭으로 돌리면 시트 호출 때 모아 둔 전체 행 목록을 다시 보여 줍니다.</p>
+          <div v-if="isLoadingTabRows" class="flex items-center gap-2 py-1 text-gray-400">
+            <svg class="animate-spin w-3.5 h-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+            </svg>
+            <span class="text-[11px]">탭 데이터 불러오는 중...</span>
+          </div>
         </div>
       </section>
 
@@ -104,7 +130,16 @@
           </button>
         </div>
 
-        <div v-if="rows.length" class="space-y-2">
+        <!-- 로딩 중 표시 -->
+        <div v-if="isLoadingTabs || isLoadingTabRows" class="flex items-center justify-center gap-2 py-6 text-gray-400">
+          <svg class="animate-spin w-4 h-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+          </svg>
+          <span class="text-[12px]">{{ isLoadingTabs ? '시트 호출 중...' : '탭 데이터 불러오는 중...' }}</span>
+        </div>
+
+        <div v-else-if="rows.length" class="space-y-2">
           <div class="flex items-center justify-between">
             <div class="text-xs text-gray-600">
               결과 {{ rows.length }}개 / 선택 {{ selectedRowIds.size }}개
@@ -406,6 +441,7 @@ const isLoadingTabs = ref(false)
 const isSearching = ref(false)
 const isGenerating = ref(false)
 const isLoadingTabRows = ref(false)
+const isNodeScanning = ref(false)
 const isSyncing = ref(false)
 const statusMessage = ref('')
 const errorMessage = ref('')
@@ -928,7 +964,7 @@ function connectAndGenerate() {
       url: sheetUrl.value,
       apiKey: apiKey.value,
       keywordRows,
-      snapshotRows: plainSheetRows(rows.value),
+      snapshotRows: plainSheetRows(cachedAllTabRows.value),
       tabScope: tabScope.value || undefined,
     },
   }, '*')
@@ -970,7 +1006,13 @@ onMounted(() => {
       return
     }
 
+    if (msg.type === 'node-scanning') {
+      isNodeScanning.value = true
+      return
+    }
+
     if (msg.type === 'tabs') {
+      isNodeScanning.value = false
       isLoadingTabs.value = false
       tabs.value = Array.isArray(msg.tabs) ? msg.tabs : []
       const merged = Array.isArray(msg.rows) ? msg.rows : []
@@ -1003,6 +1045,7 @@ onMounted(() => {
     }
 
     if (msg.type === 'tab-rows') {
+      isNodeScanning.value = false
       isLoadingTabRows.value = false
       rows.value = Array.isArray(msg.rows) ? msg.rows : []
       selectedRowIds.value = new Set()

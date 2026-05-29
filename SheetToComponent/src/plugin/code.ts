@@ -93,6 +93,7 @@ type PluginToUiMessage =
   | { type: 'done'; created: number; appliedInPlace?: number }
   | { type: 'sync-done'; updated: number }
   | { type: 'error'; message: string }
+  | { type: 'node-scanning' }
 
 // ── Settings (clientStorage) ────────────────────────────────────────────────────
 
@@ -955,28 +956,39 @@ function findAnySnapshotOnPage(
   page: PageNode,
   spreadsheetId?: string,
 ): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
-  function visit(node: BaseNode): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
-    if ((node as { removed?: boolean }).removed) return null
-    const snap = readSheetSnapshotFromNode(node as SceneNode)
-    if (snap) {
-      // spreadsheetId 필터가 있으면 일치하는 경우만 반환, 없으면 첫 번째 스냅샷 반환
-      if (!spreadsheetId || snap.spreadsheetId === spreadsheetId) {
-        return { node: node as SceneNode, snapshot: snap }
+  // 페이지 내 모든 스냅샷을 수집한 뒤 가장 최신(capturedAt 기준)을 반환
+  const candidates: { node: SceneNode; snapshot: NormalizedSheetSnapshot }[] = []
+
+  function visit(node: BaseNode): void {
+    try {
+      if ((node as { removed?: boolean }).removed) return
+      const snap = readSheetSnapshotFromNode(node as SceneNode)
+      if (snap && (!spreadsheetId || snap.spreadsheetId === spreadsheetId)) {
+        candidates.push({ node: node as SceneNode, snapshot: snap })
       }
-    }
-    if ('children' in node) {
-      for (const child of (node as ChildrenMixin).children) {
-        const result = visit(child)
-        if (result) return result
+      if ('children' in node) {
+        for (const child of (node as ChildrenMixin).children) {
+          visit(child)
+        }
       }
+    } catch {
+      // 존재하지 않는 서브레이어 등 접근 오류 시 무시
     }
-    return null
   }
+
   for (const child of page.children) {
-    const result = visit(child)
-    if (result) return result
+    visit(child)
   }
-  return null
+
+  if (candidates.length === 0) return null
+
+  // capturedAt 기준 최신 스냅샷 반환
+  candidates.sort((a, b) => {
+    const ta = a.snapshot.capturedAt ? new Date(a.snapshot.capturedAt).getTime() : 0
+    const tb = b.snapshot.capturedAt ? new Date(b.snapshot.capturedAt).getTime() : 0
+    return tb - ta
+  })
+  return candidates[0]
 }
 
 function sendSelection() {
@@ -1067,6 +1079,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
         recentSheets,
       })
 
+      figma.ui.postMessage({ type: 'node-scanning' } satisfies PluginToUiMessage)
+      await new Promise<void>((resolve) => setTimeout(resolve, 32))
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
       const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
       figma.ui.postMessage({ type: 'tabs', tabs, rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
@@ -1088,6 +1102,8 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       })
 
       const rows = await fetchSheetRowsByTabTitle(spreadsheetId, msg.apiKey, msg.tabTitle.trim())
+      figma.ui.postMessage({ type: 'node-scanning' } satisfies PluginToUiMessage)
+      await new Promise<void>((resolve) => setTimeout(resolve, 32))
       const labelChanged = detectLabelChangesFromPage(spreadsheetId, rows)
       const labelAdded = detectNewLabelsFromPage(spreadsheetId, rows)
       figma.ui.postMessage({ type: 'tab-rows', tabTitle: msg.tabTitle.trim(), rows, labelChanged, labelAdded } satisfies PluginToUiMessage)
