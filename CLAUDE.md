@@ -85,6 +85,12 @@ Tag → Badge → Progress → Card → Carousel → Accordion → ListBlockItem
 
 ## 🔀 브랜치 전략
 
+### 작업 순서
+1. 브랜치 먼저 생성
+2. 해당 브랜치에서 작업 및 커밋
+3. 푸시
+4. PR 생성 → 머지
+
 ### 네이밍 규칙
 프로젝트별 prefix + 버전으로 구분하며, `main`에 직접 push 불가 — 반드시 PR을 통해 머지
 
