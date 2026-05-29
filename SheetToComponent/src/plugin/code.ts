@@ -194,6 +194,8 @@ async function postSettingsToUi(): Promise<void> {
 
 const SHEET_SNAPSHOT_PLUGIN_KEY = 'SheetToComponent.sheetMatchSnapshotV1'
 const CLONE_SOURCE_PLUGIN_KEY = 'SheetToComponent.cloneSourceId'
+/** 페이지에 최신 스냅샷 노드 ID를 캐시하는 키 (spreadsheetId별) */
+const SNAPSHOT_NODE_CACHE_KEY_PREFIX = 'SheetToComponent.snapshotNodeId.'
 
 type PersistedSheetSnapshotV1 = {
   v: 1
@@ -391,6 +393,8 @@ function writeSheetSnapshotOnSelection(
       SHEET_SNAPSHOT_PLUGIN_KEY,
       JSON.stringify(payload),
     )
+    // 페이지에 최신 스냅샷 노드 ID 캐시 → 다음 탐색 시 전체 순회 불필요
+    figma.currentPage.setPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId, root.id)
   } catch {
     // 용량·직렬화 실패 시 무시
   }
@@ -952,16 +956,40 @@ function detectLabelChangesFromPage(spreadsheetId: string, currentRows: SheetRow
  * @param spreadsheetId - 지정하면 해당 ID와 일치하는 스냅샷만 반환 (DFS 첫 번째 스냅샷이
  *   다른 시트에 연결된 경우 오탐 방지). 생략하면 첫 번째 스냅샷 반환.
  */
+// 스냅샷이 저장될 수 없는 리프 노드 타입 (탐색 스킵)
+const LEAF_NODE_TYPES = new Set(['TEXT', 'VECTOR', 'RECTANGLE', 'ELLIPSE', 'POLYGON', 'STAR', 'LINE', 'BOOLEAN_OPERATION', 'SLICE'])
+
 function findAnySnapshotOnPage(
   page: PageNode,
   spreadsheetId?: string,
 ): { node: SceneNode; snapshot: NormalizedSheetSnapshot } | null {
-  // 페이지 내 모든 스냅샷을 수집한 뒤 가장 최신(capturedAt 기준)을 반환
+  // 1) 캐시된 노드 ID로 빠른 조회
+  if (spreadsheetId) {
+    try {
+      const cachedId = page.getPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId)
+      if (cachedId) {
+        const cachedNode = figma.getNodeById(cachedId) as SceneNode | null
+        if (cachedNode && !(cachedNode as { removed?: boolean }).removed) {
+          const snap = readSheetSnapshotFromNode(cachedNode)
+          if (snap && snap.spreadsheetId === spreadsheetId) {
+            return { node: cachedNode, snapshot: snap }
+          }
+        }
+        // 캐시가 유효하지 않으면 키 삭제 후 풀스캔으로 폴백
+        page.setPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId, '')
+      }
+    } catch {
+      // 캐시 접근 실패 시 풀스캔으로 폴백
+    }
+  }
+
+  // 2) 폴백: 전체 페이지 탐색 (컨테이너 노드만)
   const candidates: { node: SceneNode; snapshot: NormalizedSheetSnapshot }[] = []
 
   function visit(node: BaseNode): void {
     try {
       if ((node as { removed?: boolean }).removed) return
+      if (LEAF_NODE_TYPES.has((node as SceneNode).type)) return
       const snap = readSheetSnapshotFromNode(node as SceneNode)
       if (snap && (!spreadsheetId || snap.spreadsheetId === spreadsheetId)) {
         candidates.push({ node: node as SceneNode, snapshot: snap })
@@ -971,9 +999,7 @@ function findAnySnapshotOnPage(
           visit(child)
         }
       }
-    } catch {
-      // 존재하지 않는 서브레이어 등 접근 오류 시 무시
-    }
+    } catch { /* 무시 */ }
   }
 
   for (const child of page.children) {
@@ -982,13 +1008,19 @@ function findAnySnapshotOnPage(
 
   if (candidates.length === 0) return null
 
-  // capturedAt 기준 최신 스냅샷 반환
   candidates.sort((a, b) => {
     const ta = a.snapshot.capturedAt ? new Date(a.snapshot.capturedAt).getTime() : 0
     const tb = b.snapshot.capturedAt ? new Date(b.snapshot.capturedAt).getTime() : 0
     return tb - ta
   })
-  return candidates[0]
+
+  // 찾은 최신 노드를 캐시에 저장
+  const best = candidates[0]
+  if (spreadsheetId) {
+    try { page.setPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId, best.node.id) } catch { /* 무시 */ }
+  }
+
+  return best
 }
 
 function sendSelection() {
