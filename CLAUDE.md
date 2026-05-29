@@ -85,6 +85,7 @@ Tag → Badge → Progress → Card → Carousel → Accordion → ListBlockItem
 
 ## 🔀 브랜치 전략
 
+
 ### 작업 순서
 1. 브랜치 먼저 생성
 2. 해당 브랜치에서 작업 및 커밋
@@ -111,6 +112,8 @@ hotfix/dev_v0.0.2
 | 브랜치 | 설명 |
 |--------|------|
 | `main` | 배포 기준 브랜치 |
+
+
 
 ---
 
