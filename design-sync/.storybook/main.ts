@@ -12,6 +12,10 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
   ],
   "framework": "@storybook/vue3-vite",
-  "staticDirs": ["../src"]
+  "staticDirs": ["../src"],
+  viteFinal: async (config) => {
+    config.base = '/aon.erp.design/'
+    return config
+  },
 };
 export default config;
