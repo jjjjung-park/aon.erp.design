@@ -220,6 +220,8 @@ const preview: Preview = {
           '내비게이션':  ['Tabs', 'Pagination'],
           '레이아웃':    ['Layout', 'TableLayout', 'Resizable'],
         }
+        if (a.title === '소개') return -1
+        if (b.title === '소개') return 1
         const [aCat, aItem] = a.title.split('/')
         const [bCat, bItem] = b.title.split('/')
         const aCatIdx = categoryOrder.indexOf(aCat)
