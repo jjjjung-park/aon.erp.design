@@ -137,6 +137,7 @@
       }
       var SHEET_SNAPSHOT_PLUGIN_KEY = "SheetToComponent.sheetMatchSnapshotV1";
       var CLONE_SOURCE_PLUGIN_KEY = "SheetToComponent.cloneSourceId";
+      var SNAPSHOT_NODE_CACHE_KEY_PREFIX = "SheetToComponent.snapshotNodeId.";
       function labelKeyForDiff(rawLabel) {
         const t = String(rawLabel != null ? rawLabel : "").trim();
         return t.length === 0 ? "\0empty" : t;
@@ -272,6 +273,7 @@
             SHEET_SNAPSHOT_PLUGIN_KEY,
             JSON.stringify(payload)
           );
+          figma.currentPage.setPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId, root.id);
         } catch (e) {
         }
       }
@@ -581,11 +583,29 @@
         if (!pageSnap) return [];
         return computeLabelChanges(pageSnap.snapshot.rows, currentRows);
       }
+      var LEAF_NODE_TYPES = /* @__PURE__ */ new Set(["TEXT", "VECTOR", "RECTANGLE", "ELLIPSE", "POLYGON", "STAR", "LINE", "BOOLEAN_OPERATION", "SLICE"]);
       function findAnySnapshotOnPage(page, spreadsheetId) {
+        if (spreadsheetId) {
+          try {
+            const cachedId = page.getPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId);
+            if (cachedId) {
+              const cachedNode = figma.getNodeById(cachedId);
+              if (cachedNode && !cachedNode.removed) {
+                const snap = readSheetSnapshotFromNode(cachedNode);
+                if (snap && snap.spreadsheetId === spreadsheetId) {
+                  return { node: cachedNode, snapshot: snap };
+                }
+              }
+              page.setPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId, "");
+            }
+          } catch (e) {
+          }
+        }
         const candidates = [];
         function visit(node) {
           try {
             if (node.removed) return;
+            if (LEAF_NODE_TYPES.has(node.type)) return;
             const snap = readSheetSnapshotFromNode(node);
             if (snap && (!spreadsheetId || snap.spreadsheetId === spreadsheetId)) {
               candidates.push({ node, snapshot: snap });
@@ -607,7 +627,14 @@
           const tb = b.snapshot.capturedAt ? new Date(b.snapshot.capturedAt).getTime() : 0;
           return tb - ta;
         });
-        return candidates[0];
+        const best = candidates[0];
+        if (spreadsheetId) {
+          try {
+            page.setPluginData(SNAPSHOT_NODE_CACHE_KEY_PREFIX + spreadsheetId, best.node.id);
+          } catch (e) {
+          }
+        }
+        return best;
       }
       function sendSelection() {
         const info = getSelectionInfo();
