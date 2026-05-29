@@ -86,13 +86,19 @@ Tag → Badge → Progress → Card → Carousel → Accordion → ListBlockItem
 ## 🔀 브랜치 전략
 
 ### 네이밍 규칙
-프로젝트별 prefix로 구분하며, `main`에 직접 push 불가 — 반드시 PR을 통해 머지
+프로젝트별 prefix + 버전으로 구분하며, `main`에 직접 push 불가 — 반드시 PR을 통해 머지
+
+```
+plugin/dev_v0.0.2
+storybook/dev_v1.0.1
+hotfix/dev_v0.0.2
+```
 
 | prefix | 대상 프로젝트 | 예시 |
 |--------|-------------|------|
-| `plugin/` | SheetToComponent (Figma 플러그인) | `plugin/loading-indicator` |
-| `storybook/` | design-sync (Storybook) | `storybook/table-component` |
-| `hotfix/` | 긴급 버그 수정 (프로젝트 무관) | `hotfix/workflow-cache-path` |
+| `plugin/` | SheetToComponent (Figma 플러그인) | `plugin/dev_v0.0.2` |
+| `storybook/` | design-sync (Storybook) | `storybook/dev_v1.0.1` |
+| `hotfix/` | 긴급 버그 수정 (프로젝트 무관) | `hotfix/dev_v0.0.2` |
 
 ### 현재 브랜치 현황
 
