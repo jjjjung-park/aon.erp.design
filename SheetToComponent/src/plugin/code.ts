@@ -196,6 +196,12 @@ const SHEET_SNAPSHOT_PLUGIN_KEY = 'SheetToComponent.sheetMatchSnapshotV1'
 const CLONE_SOURCE_PLUGIN_KEY = 'SheetToComponent.cloneSourceId'
 /** 페이지에 최신 스냅샷 노드 ID를 캐시하는 키 (spreadsheetId별) */
 const SNAPSHOT_NODE_CACHE_KEY_PREFIX = 'SheetToComponent.snapshotNodeId.'
+/**
+ * 페이지에 직접 저장하는 durable 스냅샷 키 (spreadsheetId별).
+ * 기준 인스턴스(template)를 삭제해도 변경 감지/동기화가 유지되도록,
+ * 노드가 아닌 페이지에 스냅샷을 누적 저장한다.
+ */
+const SHEET_SNAPSHOT_PAGE_KEY_PREFIX = 'SheetToComponent.pageSnapshot.'
 
 type PersistedSheetSnapshotV1 = {
   v: 1
@@ -319,9 +325,12 @@ function computeNewLabels(prevRows: SheetRow[], currRows: SheetRow[]): SheetLabe
 }
 
 function detectNewLabelsFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelNewItem[] {
-  const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
-  if (!pageSnap) return []
-  return computeNewLabels(pageSnap.snapshot.rows, currentRows)
+  // 페이지 durable 스냅샷 우선 (기준 인스턴스 삭제 후에도 신규 판정 기준 유지)
+  const pageSnapshot = readPageSnapshot(spreadsheetId)
+  if (pageSnapshot) return computeNewLabels(pageSnapshot.rows, currentRows)
+  const nodeSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
+  if (!nodeSnap) return []
+  return computeNewLabels(nodeSnap.snapshot.rows, currentRows)
 }
 
 
@@ -407,6 +416,81 @@ function writeSheetSnapshotOnSelection(
   } catch {
     // 용량·직렬화 실패 시 무시
   }
+}
+
+/** 페이지에 저장된 durable 스냅샷 읽기 (기준 인스턴스 삭제와 무관하게 생존) */
+function readPageSnapshot(spreadsheetId: string): NormalizedSheetSnapshot | null {
+  try {
+    const raw = figma.currentPage.getPluginData(SHEET_SNAPSHOT_PAGE_KEY_PREFIX + spreadsheetId)
+    if (!raw || !raw.trim()) return null
+    const data = JSON.parse(raw) as PersistedSheetSnapshotV2
+    if (!data || data.v !== 2 || !Array.isArray(data.rows)) return null
+    return {
+      spreadsheetId: data.spreadsheetId,
+      capturedAt: data.capturedAt,
+      rows: data.rows,
+      labelToNodeIds: data.labelToNodeIds ?? {},
+      generatedRows: Array.isArray(data.generatedRows) ? data.generatedRows : [],
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * 페이지 durable 스냅샷에 이번 생성분을 병합 저장.
+ * - rows: 최신 시트 전체 행으로 교체 (신규 감지 기준)
+ * - labelToNodeIds: 기존과 union (여러 번 생성 누적)
+ * - generatedRows: tabTitle::rowNumber 기준 병합 (이번 생성이 최신값으로 갱신)
+ */
+function mergeWritePageSnapshot(
+  spreadsheetId: string,
+  rows: SheetRow[],
+  labelToNodeIds: Record<string, string[]>,
+  generatedRows: GeneratedRowRef[],
+): void {
+  const prev = readPageSnapshot(spreadsheetId)
+
+  // labelToNodeIds union
+  const mergedLabelToNodeIds: Record<string, string[]> = { ...(prev?.labelToNodeIds ?? {}) }
+  for (const [k, ids] of Object.entries(labelToNodeIds)) {
+    const set = new Set([...(mergedLabelToNodeIds[k] ?? []), ...ids])
+    mergedLabelToNodeIds[k] = [...set]
+  }
+
+  // generatedRows 병합 (key = tabTitle::rowNumber, 이번 생성이 최신)
+  const genByKey = new Map<string, GeneratedRowRef>()
+  for (const g of (prev?.generatedRows ?? [])) genByKey.set(`${g.tabTitle}::${g.rowNumber}`, g)
+  for (const g of generatedRows) genByKey.set(`${g.tabTitle}::${g.rowNumber}`, { ...g })
+
+  const payload: PersistedSheetSnapshotV2 = {
+    v: 2,
+    spreadsheetId,
+    capturedAt: new Date().toISOString(),
+    rows: rows.map((r) => ({ ...r })),
+    labelToNodeIds: mergedLabelToNodeIds,
+    generatedRows: [...genByKey.values()],
+  }
+  try {
+    figma.currentPage.setPluginData(SHEET_SNAPSHOT_PAGE_KEY_PREFIX + spreadsheetId, JSON.stringify(payload))
+  } catch {
+    // 용량·직렬화 실패 시 무시
+  }
+}
+
+/** 페이지 durable 스냅샷을 통째로 덮어쓰기 (동기화 후 갱신용) */
+function overwritePageSnapshot(snapshot: NormalizedSheetSnapshot): void {
+  const payload: PersistedSheetSnapshotV2 = {
+    v: 2,
+    spreadsheetId: snapshot.spreadsheetId,
+    capturedAt: new Date().toISOString(),
+    rows: snapshot.rows.map((r) => ({ ...r })),
+    labelToNodeIds: snapshot.labelToNodeIds,
+    generatedRows: snapshot.generatedRows.map((g) => ({ ...g })),
+  }
+  try {
+    figma.currentPage.setPluginData(SHEET_SNAPSHOT_PAGE_KEY_PREFIX + snapshot.spreadsheetId, JSON.stringify(payload))
+  } catch { /* 무시 */ }
 }
 
 function postSheetDiffToUi(
@@ -953,20 +1037,22 @@ function syncLabelOnPage(page: PageNode, oldLabel: string, newLabel: string): nu
  * 다른 시트로 연결된 스냅샷이 먼저 발견되더라도 올바른 스냅샷을 찾습니다.
  */
 function detectLabelChangesFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelChangedItem[] {
-  const snapshots = collectAllSnapshotsOnPage(figma.currentPage, spreadsheetId)
-  if (snapshots.length === 0) return []
+  // 페이지 durable 스냅샷 + 노드 스냅샷을 모두 수집 (기준 인스턴스 삭제와 무관하게 생존)
+  const nodeSnaps = collectAllSnapshotsOnPage(figma.currentPage, spreadsheetId)
+  const pageSnap = readPageSnapshot(spreadsheetId)
+  const allSnaps = [...nodeSnaps.map((s) => s.snapshot), ...(pageSnap ? [pageSnap] : [])]
+  if (allSnaps.length === 0) return []
 
-  // 모든 스냅샷의 generatedRows를 합산해 "tabTitle::rowNumber → 생성 당시 라벨" 맵 구성.
-  // 같은 행이 여러 번 생성됐으면 더 최신 스냅샷의 라벨을 기준으로 함(현재 캔버스 상태에 부합).
-  const sorted = [...snapshots].sort((a, b) => {
-    const ta = a.snapshot.capturedAt ? new Date(a.snapshot.capturedAt).getTime() : 0
-    const tb = b.snapshot.capturedAt ? new Date(b.snapshot.capturedAt).getTime() : 0
-    return ta - tb // 오래된 것 먼저 → 최신이 덮어씀
+  // capturedAt 오래된 것 먼저 정렬 → 최신이 덮어쓰도록
+  const sorted = [...allSnaps].sort((a, b) => {
+    const ta = a.capturedAt ? new Date(a.capturedAt).getTime() : 0
+    const tb = b.capturedAt ? new Date(b.capturedAt).getTime() : 0
+    return ta - tb
   })
 
   const capturedLabelByKey = new Map<string, string>()
   let hasAnyGeneratedRows = false
-  for (const { snapshot } of sorted) {
+  for (const snapshot of sorted) {
     for (const g of snapshot.generatedRows) {
       hasAnyGeneratedRows = true
       capturedLabelByKey.set(`${g.tabTitle}::${g.rowNumber}`, g.label)
@@ -975,7 +1061,7 @@ function detectLabelChangesFromPage(spreadsheetId: string, currentRows: SheetRow
 
   // generatedRows가 없는 구버전 스냅샷만 있는 경우: 기존 방식(labelToNodeIds 필터)으로 폴백
   if (!hasAnyGeneratedRows) {
-    const latest = sorted[sorted.length - 1].snapshot
+    const latest = sorted[sorted.length - 1]
     const linkedLabelKeys = new Set(Object.keys(latest.labelToNodeIds ?? {}))
     const prevRows = linkedLabelKeys.size > 0
       ? latest.rows.filter((r) => linkedLabelKeys.has(labelKeyForDiff(r.label)))
@@ -1310,6 +1396,7 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
             tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label,
           }))
           writeSheetSnapshotOnSelection(selection, spreadsheetId, msg.snapshotRows, inPlaceLabelToNodeIds, generatedRows)
+          mergeWritePageSnapshot(spreadsheetId, msg.snapshotRows, inPlaceLabelToNodeIds, generatedRows)
         }
         figma.currentPage.selection = applied
         figma.viewport.scrollAndZoomIntoView(applied)
@@ -1382,6 +1469,7 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
           tabTitle: r.tabTitle, rowNumber: r.rowNumber, label: r.label,
         }))
         writeSheetSnapshotOnSelection(selection, spreadsheetId, msg.snapshotRows, cloneLabelToNodeIds, generatedRows)
+        mergeWritePageSnapshot(spreadsheetId, msg.snapshotRows, cloneLabelToNodeIds, generatedRows)
       }
 
       figma.currentPage.selection = generated
@@ -1404,8 +1492,10 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       // label 변경 동기화 — labelToNodeIds로 정확한 노드를 찾아 변경 (페이지 전체 검색 방지)
       if (Array.isArray(msg.labelChangedItems) && msg.labelChangedItems.length > 0) {
         const syncSpreadsheetId = msg.url ? parseSpreadsheetId(msg.url) ?? undefined : undefined
+        // 페이지 durable 스냅샷 우선 (기준 인스턴스 삭제 후에도 클론 ID 보존)
+        const pageSnap = syncSpreadsheetId ? readPageSnapshot(syncSpreadsheetId) : null
         const found = findAnySnapshotOnPage(figma.currentPage, syncSpreadsheetId)
-        const labelToNodeIds = found?.snapshot.labelToNodeIds ?? {}
+        const labelToNodeIds = pageSnap?.labelToNodeIds ?? found?.snapshot.labelToNodeIds ?? {}
 
         for (const labelItem of msg.labelChangedItems) {
           const oldKey = labelKeyForDiff(labelItem.oldLabel)
@@ -1443,12 +1533,14 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
       // label 변경 동기화 — 스냅샷과 tabTitle+rowNumber 기준 비교 후 label이 바뀐 행만 처리
       if (Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0) {
         const syncSpreadsheetIdForValue = msg.url ? parseSpreadsheetId(msg.url) ?? undefined : undefined
+        const pageSnapForValue = syncSpreadsheetIdForValue ? readPageSnapshot(syncSpreadsheetIdForValue) : null
         const found = findAnySnapshotOnPage(figma.currentPage, syncSpreadsheetIdForValue)
+        const baseRows = pageSnapForValue?.rows ?? found?.snapshot.rows
 
-        if (found) {
+        if (baseRows) {
           // tabTitle+rowNumber 키로 스냅샷 색인
           const snapByKey = new Map<string, SheetRow>()
-          for (const r of found.snapshot.rows) {
+          for (const r of baseRows) {
             snapByKey.set(`${r.tabTitle}::${r.rowNumber}`, r)
           }
           for (const item of msg.valueChangedItems) {
@@ -1482,13 +1574,12 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
         }
 
         if (syncSpreadsheetId && syncedNewLabelByKey.size > 0) {
-          const allSnaps = collectAllSnapshotsOnPage(figma.currentPage, syncSpreadsheetId)
-          for (const { node, snapshot } of allSnaps) {
+          // 스냅샷 1개에 동기화된 label 변경 반영 (rows/labelToNodeIds/generatedRows)
+          const applyToSnapshot = (snapshot: NormalizedSheetSnapshot): NormalizedSheetSnapshot => {
             const updatedRows = snapshot.rows.map((r) => ({ ...r }))
             const updatedLabelToNodeIds = { ...snapshot.labelToNodeIds }
             const updatedGeneratedRows = snapshot.generatedRows.map((g) => ({ ...g }))
 
-            // rows 갱신
             updatedRows.forEach((r, i) => {
               const newLabel = syncedNewLabelByKey.get(`${r.tabTitle}::${r.rowNumber}`)
               if (newLabel !== undefined && r.label.trim() !== newLabel.trim()) {
@@ -1501,15 +1592,24 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
                 }
               }
             })
-
-            // generatedRows 갱신 (변경 감지 기준점이므로 반드시 함께 갱신)
             updatedGeneratedRows.forEach((g, i) => {
               const newLabel = syncedNewLabelByKey.get(`${g.tabTitle}::${g.rowNumber}`)
               if (newLabel !== undefined) updatedGeneratedRows[i] = { ...g, label: newLabel }
             })
 
-            writeSheetSnapshotOnSelection(node, snapshot.spreadsheetId, updatedRows, updatedLabelToNodeIds, updatedGeneratedRows)
+            return { ...snapshot, rows: updatedRows, labelToNodeIds: updatedLabelToNodeIds, generatedRows: updatedGeneratedRows }
           }
+
+          // 노드 스냅샷 갱신 (살아있는 기준 노드들)
+          const allSnaps = collectAllSnapshotsOnPage(figma.currentPage, syncSpreadsheetId)
+          for (const { node, snapshot } of allSnaps) {
+            const u = applyToSnapshot(snapshot)
+            writeSheetSnapshotOnSelection(node, u.spreadsheetId, u.rows, u.labelToNodeIds, u.generatedRows)
+          }
+
+          // 페이지 durable 스냅샷 갱신 (기준 노드 삭제 후에도 유지)
+          const pageSnap = readPageSnapshot(syncSpreadsheetId)
+          if (pageSnap) overwritePageSnapshot(applyToSnapshot(pageSnap))
         }
       }
 
