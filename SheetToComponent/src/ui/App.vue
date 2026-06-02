@@ -1,7 +1,10 @@
 <template>
   <div class="relative flex flex-col h-screen bg-white text-[13px] font-sans select-none">
     <header class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-      <span class="font-semibold text-gray-900">SheetToComponent</span>
+      <span class="flex items-baseline gap-1.5">
+        <span class="font-semibold text-gray-900">SheetToComponent</span>
+        <span class="text-[10px] text-gray-400 font-medium">v{{ APP_VERSION }}</span>
+      </span>
       <button
         class="text-[12px] px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
         @click="resetUi"
@@ -334,6 +337,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+
+declare const __APP_VERSION__: string
+const APP_VERSION = __APP_VERSION__
 
 type SheetRow = {
   tabTitle: string
