@@ -579,9 +579,12 @@
         return updated;
       }
       function detectLabelChangesFromPage(spreadsheetId, currentRows) {
+        var _a;
         const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId);
         if (!pageSnap) return [];
-        return computeLabelChanges(pageSnap.snapshot.rows, currentRows);
+        const linkedLabelKeys = new Set(Object.keys((_a = pageSnap.snapshot.labelToNodeIds) != null ? _a : {}));
+        const prevRows = linkedLabelKeys.size > 0 ? pageSnap.snapshot.rows.filter((r) => linkedLabelKeys.has(labelKeyForDiff(r.label))) : pageSnap.snapshot.rows;
+        return computeLabelChanges(prevRows, currentRows);
       }
       var LEAF_NODE_TYPES = /* @__PURE__ */ new Set(["TEXT", "VECTOR", "RECTANGLE", "ELLIPSE", "POLYGON", "STAR", "LINE", "BOOLEAN_OPERATION", "SLICE"]);
       function findAnySnapshotOnPage(page, spreadsheetId) {
@@ -876,31 +879,6 @@
             for (const labelItem of (_c = msg.labelChangedItems) != null ? _c : []) {
               const cnt = syncLabelOnPage(figma.currentPage, labelItem.oldLabel, labelItem.newLabel);
               updated += cnt;
-              if (cnt === 0) {
-                let dbgVisit2 = function(node) {
-                  var _a2;
-                  if (node.removed) return;
-                  if (node.type === "INSTANCE") {
-                    const p = safeComponentProperties(node);
-                    if (p) {
-                      const lk = resolveKeyByBaseName(p, "label");
-                      if (lk) samples.push(String((_a2 = p[lk].value) != null ? _a2 : ""));
-                    }
-                  }
-                  if ("children" in node && samples.length < 10) {
-                    for (const c of node.children) dbgVisit2(c);
-                  }
-                };
-                var dbgVisit = dbgVisit2;
-                const samples = [];
-                for (const c of figma.currentPage.children) {
-                  if (samples.length < 10) dbgVisit2(c);
-                }
-                figma.notify(
-                  `[\uB514\uBC84\uADF8] \uCC3E\uB294 label: "${labelItem.oldLabel}" / \uD398\uC774\uC9C0 label \uC0D8\uD50C(${samples.length}): ${samples.slice(0, 5).join(" | ") || "\uC5C6\uC74C"}`,
-                  { timeout: 1e4 }
-                );
-              }
             }
             if (Array.isArray(msg.valueChangedItems) && msg.valueChangedItems.length > 0) {
               const syncSpreadsheetIdForValue = msg.url ? (_d = parseSpreadsheetId(msg.url)) != null ? _d : void 0 : void 0;

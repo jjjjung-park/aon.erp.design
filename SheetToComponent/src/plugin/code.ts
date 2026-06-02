@@ -946,7 +946,12 @@ function syncLabelOnPage(page: PageNode, oldLabel: string, newLabel: string): nu
 function detectLabelChangesFromPage(spreadsheetId: string, currentRows: SheetRow[]): SheetLabelChangedItem[] {
   const pageSnap = findAnySnapshotOnPage(figma.currentPage, spreadsheetId)
   if (!pageSnap) return []
-  return computeLabelChanges(pageSnap.snapshot.rows, currentRows)
+  // labelToNodeIds에 등록된 라벨(실제 인스턴스가 생성된 것)만 변경 감지 대상으로 필터링
+  const linkedLabelKeys = new Set(Object.keys(pageSnap.snapshot.labelToNodeIds ?? {}))
+  const prevRows = linkedLabelKeys.size > 0
+    ? pageSnap.snapshot.rows.filter((r) => linkedLabelKeys.has(labelKeyForDiff(r.label)))
+    : pageSnap.snapshot.rows
+  return computeLabelChanges(prevRows, currentRows)
 }
 
 /**
@@ -1325,29 +1330,6 @@ figma.ui.onmessage = async (msg: UiToPluginMessage) => {
         const cnt = syncLabelOnPage(figma.currentPage, labelItem.oldLabel, labelItem.newLabel)
         updated += cnt
 
-        // ── 디버그: 찾지 못했을 때 실제 label 값 샘플 출력 ──────────────
-        if (cnt === 0) {
-          const samples: string[] = []
-          function dbgVisit(node: BaseNode) {
-            if ((node as { removed?: boolean }).removed) return
-            if (node.type === 'INSTANCE') {
-              const p = safeComponentProperties(node as InstanceNode)
-              if (p) {
-                const lk = resolveKeyByBaseName(p, 'label')
-                if (lk) samples.push(String((p[lk] as { value: unknown }).value ?? ''))
-              }
-            }
-            if ('children' in node && samples.length < 10) {
-              for (const c of (node as ChildrenMixin).children) dbgVisit(c)
-            }
-          }
-          for (const c of figma.currentPage.children) { if (samples.length < 10) dbgVisit(c) }
-          figma.notify(
-            `[디버그] 찾는 label: "${labelItem.oldLabel}" / 페이지 label 샘플(${samples.length}): ${samples.slice(0, 5).join(' | ') || '없음'}`,
-            { timeout: 10000 },
-          )
-        }
-        // ────────────────────────────────────────────────────────────────
       }
 
       // label 변경 동기화 — 스냅샷과 tabTitle+rowNumber 기준 비교 후 label이 바뀐 행만 처리
