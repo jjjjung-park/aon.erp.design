@@ -9,6 +9,8 @@ import esbuild from 'esbuild'
 import type { Plugin } from 'vite'
 
 const root = path.dirname(fileURLToPath(import.meta.url))
+const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
+const APP_VERSION = JSON.stringify(pkg.version)
 const distDir = path.join(root, 'dist')
 const distHtml = path.join(distDir, 'index.html')
 const pluginMainOut = path.join(distDir, 'code.js')
@@ -37,6 +39,7 @@ function bundleFigmaPluginMain(): Plugin {
 }
 
 export default defineConfig({
+  define: { __APP_VERSION__: APP_VERSION },
   plugins: [tailwindcss(), vue(), viteSingleFile(), bundleFigmaPluginMain()],
   build: {
     outDir: 'dist',
