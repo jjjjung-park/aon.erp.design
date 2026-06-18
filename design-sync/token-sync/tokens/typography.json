@@ -1,0 +1,166 @@
+{
+  "typography": {
+    "regular": {
+      "h1": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 24,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "h2": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 20,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 16,
+          "lineHeight": "120%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 14,
+          "lineHeight": "150%",
+          "letterSpacing": "-0.2px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 12,
+          "lineHeight": "140%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      }
+    },
+    "bold": {
+      "h1": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 24,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "h2": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 20,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 16,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 14,
+          "lineHeight": "120%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 12,
+          "lineHeight": "130%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      }
+    },
+    "linkText": {
+      "title": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 16,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
+          "textCase": "none"
+        }
+      },
+      "body": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 14,
+          "lineHeight": "120%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
+          "textCase": "none"
+        }
+      },
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 12,
+          "lineHeight": "130%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
+          "textCase": "none"
+        }
+      }
+    }
+  }
+}

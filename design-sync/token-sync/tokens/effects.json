@@ -1,0 +1,30 @@
+{
+  "effects": {
+    "shadow": {
+      "left": {
+        "$type": "shadow",
+        "$value": {
+          "type": "dropShadow",
+          "color": "#BBC0C7",
+          "opacity": 0.2,
+          "x": -4,
+          "y": 0,
+          "blur": 4,
+          "spread": 0
+        }
+      },
+      "bottom": {
+        "$type": "shadow",
+        "$value": {
+          "type": "dropShadow",
+          "color": "#DCE0E5",
+          "opacity": 0.5,
+          "x": 0,
+          "y": 6,
+          "blur": 12,
+          "spread": 0
+        }
+      }
+    }
+  }
+}
