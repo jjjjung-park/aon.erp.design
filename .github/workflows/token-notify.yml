@@ -11,22 +11,33 @@ jobs:
   notify-teams:
     runs-on: ubuntu-latest
     steps:
-      - name: 변경된 파일 목록 추출
-        id: changed
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - name: Teams 알림 전송
         run: |
-          FILES=$(git diff --name-only HEAD~1 HEAD -- 'design-sync/token-sync/tokens/**' | tr '\n' ', ' | sed 's/,$//')
+          FILES=$(git diff --name-only HEAD~1 HEAD -- design-sync/token-sync/tokens/ | tr '\n' ' ')
           BRANCH="${{ github.ref_name }}"
           PUSHER="${{ github.actor }}"
           COMMIT_MSG="${{ github.event.head_commit.message }}"
-          REPO_URL="https://github.com/${{ github.repository }}"
+          REPO_URL="https://github.com/${{ github.repository }}/tree/${BRANCH}/design-sync/token-sync/tokens"
 
-          curl -X POST "${{ secrets.TEAMS_WEBHOOK_URL }}" \
+          BODY=$(jq -n \
+            --arg branch "$BRANCH" \
+            --arg pusher "$PUSHER" \
+            --arg msg "$COMMIT_MSG" \
+            --arg files "$FILES" \
+            --arg url "$REPO_URL" \
+            '{"text": "🎨 디자인 토큰 업데이트\n브랜치: \($branch)\n푸시: \($pusher)\n커밋: \($msg)\n파일: \($files)\n\($url)"}')
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.TEAMS_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"text\": \"🎨 **디자인 토큰 업데이트**\n\n**브랜치:** \`${BRANCH}\`\n**푸시한 사람:** ${PUSHER}\n**커밋 메시지:** ${COMMIT_MSG}\n**변경 파일:** ${FILES}\n\n[GitHub에서 보기](${REPO_URL}/tree/${BRANCH}/design-sync/token-sync/tokens)\"
-            }"
+            -d "$BODY")
+
+          echo "Teams 응답 코드: $HTTP_CODE"
+          if [ "$HTTP_CODE" != "202" ] && [ "$HTTP_CODE" != "200" ]; then
+            echo "Teams 전송 실패"
+            exit 1
+          fi
