@@ -6,38 +6,38 @@
 
 ---
 
-## 안건 1. 토큰 네이밍 통일
+## 안건 1. 토큰 네이밍 통일 ✅ 해소 (2레이어 리팩토링으로 정리됨)
 
-> 현재 Figma 토큰명과 코드 변수명이 달라 동기화 시 혼선 발생.
-> 둘 중 하나의 기준으로 통일 필요.
+> 디자인 시스템 리팩토링(신규 2레이어 토큰)으로 Figma·코드 네이밍이 통일됨.
+> 아래는 과거 불일치 → 현재 결정 기록.
 
-| 항목 | Figma 토큰 | 코드 (vars.css) | 결정 |
-|------|-----------|----------------|------|
-| 기본/연한색 suffix | `default / light` | `deep / bright` | |
-| 배경 prefix | `color/bg/*` | `--color-background-*` | |
-| 그레이 네이밍 | `color/neutral/100` | `--color-neutral-gray-100` | |
-| 타이포 스케일 | `typography/xs~xl` | `typography-h1~caption` | |
+| 항목 | 과거 Figma | 과거 코드 | 현재 결정 (신규 토큰) |
+|------|-----------|----------|---------------------|
+| 기본/연한색 suffix | `default / light` | `deep / bright` | `surface/text/border-{brand,danger,…}` + `*-subtle` |
+| 배경 prefix | `color/bg/*` | `--color-background-*` | `surface/*` semantic 으로 통일 |
+| 그레이 네이밍 | `color/neutral/100` | `--color-neutral-gray-100` | `--color-gray-*` 로 통일 |
+| 타이포 스케일 | `typography/xs~xl` | `typography-h1~caption` | 코드 `typography-*` 유지 (퍼블 자체 관리) |
 
-- [ ] 기준 확정 후 Figma 또는 vars.css 수정 담당자 지정
-- 담당:
-- 완료 기한:
+- [x] 기준 확정: 신규 2레이어 토큰(`vars.css` + `tokens/*.json`)
+- 비고: 잔여 검증은 컴포넌트 CVA 마이그레이션 점검 단계에서 진행
 
 ---
 
-## 안건 2. 토큰 값 불일치 확인
+## 안건 2. 토큰 값 불일치 확인 🟡 대부분 해소 (신규 토큰 기준 정렬)
 
-> 같은 항목인데 Figma와 코드의 실제 값이 다름. 어느 쪽이 기준인지 확인 필요.
+> 신규 2레이어 토큰으로 spacing/radius/border는 정렬됨.
+> line-height·button paddingX 등 일부는 컴포넌트 마이그레이션 점검에서 최종 확인 필요.
 
-| 항목 | Figma 값 | 코드 값 | 기준 | 비고 |
-|------|---------|--------|------|------|
-| line-height 종류 | 2종 (120% / 150%) | 3종 (1.3 / 1.4 / 1.5) | | 코드가 더 세분화됨 |
-| spacing semantic | xs=4 sm=8 md=12 lg=16 xl=24 xxl=32 | sm=4 md=8 lg=12 xl=20 xxl=40 | | 값 자체가 다름 |
-| button radius | 8px | 4px | | |
-| button paddingX | sm/md/lg 미정의 | 전 사이즈 동일 8px | | 의도된 설계인지 확인 |
+| 항목 | 과거 불일치 | 현재 (신규 토큰) | 상태 |
+|------|-----------|-----------------|------|
+| spacing semantic | 값 자체가 다름 | `spacing/padding/*`, `spacing/gap/*` 분리 정의 | ✅ |
+| button radius | 8 vs 4 | `--shape-radius-sm`(4) = `--radius-button` | ✅ |
+| border width | — | `shape/border/{default,strong,heavy}` 정의 | ✅ |
+| line-height 종류 | 2종 vs 3종 | 코드 3종(`tighter/tight/normal`) 유지, font는 퍼블 관리 | 🟡 디자인 확인 |
+| button paddingX | sm/md/lg 미정의 vs 동일값 | `spacing/padding/*` 기준 재정의 | 🟡 컴포넌트 점검 |
 
-- [ ] 항목별 기준 확정
-- 담당:
-- 완료 기한:
+- [x] spacing / radius / border 기준 확정 (신규 토큰)
+- [ ] line-height, button paddingX 최종 확인 (컴포넌트 CVA 마이그레이션 점검 시)
 
 ---
 
