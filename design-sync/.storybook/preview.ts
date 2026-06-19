@@ -210,8 +210,9 @@ const preview: Preview = {
     },
     options: {
       storySort: (a, b) => {
-        const categoryOrder = ['액션', '데이터 입력', '데이터 표시', '피드백', '오버레이', '내비게이션', '레이아웃']
+        const categoryOrder = ['기초', '액션', '데이터 입력', '데이터 표시', '피드백', '오버레이', '내비게이션', '레이아웃']
         const itemOrder = {
+          '기초':        ['Typography'],
           '액션':        ['Button', 'Dropdown'],
           '데이터 입력':  ['Input', 'Checkbox', 'RadioGroup', 'Select', 'DatePicker'],
           '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'ListBlockItem', 'Table'],
