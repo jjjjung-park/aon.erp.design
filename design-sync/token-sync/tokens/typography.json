@@ -65,6 +65,18 @@
           "textCase": "none"
         }
       },
+      "regular-link": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 16,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
+          "textCase": "none"
+        }
+      },
       "bold": {
         "$type": "typography",
         "$value": {
@@ -74,6 +86,18 @@
           "lineHeight": "150%",
           "letterSpacing": "0px",
           "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "bold-link": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 16,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
           "textCase": "none"
         }
       }
