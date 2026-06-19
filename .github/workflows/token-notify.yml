@@ -29,7 +29,38 @@ jobs:
             --arg msg "$COMMIT_MSG" \
             --arg files "$FILES" \
             --arg url "$REPO_URL" \
-            '{"text": "🎨 디자인 토큰 업데이트\n브랜치: \($branch)\n푸시: \($pusher)\n커밋: \($msg)\n파일: \($files)\n\($url)"}')
+            '{
+              "type": "AdaptiveCard",
+              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+              "version": "1.2",
+              "body": [
+                {
+                  "type": "TextBlock",
+                  "text": "🎨 디자인 토큰 업데이트",
+                  "weight": "Bolder",
+                  "size": "Medium"
+                },
+                {
+                  "type": "FactSet",
+                  "facts": [
+                    {"title": "브랜치", "value": $branch},
+                    {"title": "푸시한 사람", "value": $pusher},
+                    {"title": "커밋", "value": $msg},
+                    {"title": "변경 파일", "value": $files}
+                  ]
+                },
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.OpenUrl",
+                      "title": "GitHub에서 보기",
+                      "url": $url
+                    }
+                  ]
+                }
+              ]
+            }')
 
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             -X POST "${{ secrets.TEAMS_WEBHOOK_URL }}" \
