@@ -12,7 +12,7 @@ export const alertVariants = cva(
       variant: {
         default: "border-1 border-border",
         primary: "bg-primary-light text-primary ",
-        info: "bg-gray-100 text-info",
+        info: "bg-gray-100 text-muted",
         warning: "bg-warning-light text-warning ",
         danger: "bg-danger-light text-danger ",
         success: "bg-success-light text-success ",
