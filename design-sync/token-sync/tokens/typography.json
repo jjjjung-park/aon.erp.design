@@ -1,7 +1,7 @@
 {
   "typography": {
-    "regular": {
-      "h1": {
+    "heading1": {
+      "regular": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
@@ -13,7 +13,21 @@
           "textCase": "none"
         }
       },
-      "h2": {
+      "bold": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 24,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      }
+    },
+    "heading2": {
+      "regular": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
@@ -25,31 +39,97 @@
           "textCase": "none"
         }
       },
-      "title": {
+      "bold": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 20,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      }
+    },
+    "title": {
+      "regular": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
           "fontStyle": "Regular",
           "fontSize": 16,
-          "lineHeight": "120%",
+          "lineHeight": "150%",
           "letterSpacing": "0px",
           "textDecoration": "none",
           "textCase": "none"
         }
       },
-      "body": {
+      "bold": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 16,
+          "lineHeight": "150%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      }
+    },
+    "body": {
+      "regular": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
           "fontStyle": "Regular",
           "fontSize": 14,
-          "lineHeight": "150%",
-          "letterSpacing": "-0.2px",
+          "lineHeight": "140%",
+          "letterSpacing": "0px",
           "textDecoration": "none",
           "textCase": "none"
         }
       },
-      "caption": {
+      "bold": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 14,
+          "lineHeight": "140%",
+          "letterSpacing": "0px",
+          "textDecoration": "none",
+          "textCase": "none"
+        }
+      },
+      "regular-link": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "Regular",
+          "fontSize": 14,
+          "lineHeight": "140%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
+          "textCase": "none"
+        }
+      },
+      "bold-link": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Pretendard",
+          "fontStyle": "SemiBold",
+          "fontSize": 14,
+          "lineHeight": "140%",
+          "letterSpacing": "0px",
+          "textDecoration": "underline",
+          "textCase": "none"
+        }
+      }
+    },
+    "caption": {
+      "regular": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
@@ -60,102 +140,38 @@
           "textDecoration": "none",
           "textCase": "none"
         }
-      }
-    },
-    "bold": {
-      "h1": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "Pretendard",
-          "fontStyle": "SemiBold",
-          "fontSize": 24,
-          "lineHeight": "150%",
-          "letterSpacing": "0px",
-          "textDecoration": "none",
-          "textCase": "none"
-        }
       },
-      "h2": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "Pretendard",
-          "fontStyle": "SemiBold",
-          "fontSize": 20,
-          "lineHeight": "150%",
-          "letterSpacing": "0px",
-          "textDecoration": "none",
-          "textCase": "none"
-        }
-      },
-      "title": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "Pretendard",
-          "fontStyle": "SemiBold",
-          "fontSize": 16,
-          "lineHeight": "150%",
-          "letterSpacing": "0px",
-          "textDecoration": "none",
-          "textCase": "none"
-        }
-      },
-      "body": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "Pretendard",
-          "fontStyle": "SemiBold",
-          "fontSize": 14,
-          "lineHeight": "120%",
-          "letterSpacing": "0px",
-          "textDecoration": "none",
-          "textCase": "none"
-        }
-      },
-      "caption": {
+      "bold": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
           "fontStyle": "SemiBold",
           "fontSize": 12,
-          "lineHeight": "130%",
+          "lineHeight": "140%",
           "letterSpacing": "0px",
           "textDecoration": "none",
           "textCase": "none"
         }
-      }
-    },
-    "linkText": {
-      "title": {
+      },
+      "regular-link": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
-          "fontStyle": "SemiBold",
-          "fontSize": 16,
-          "lineHeight": "150%",
+          "fontStyle": "Regular",
+          "fontSize": 12,
+          "lineHeight": "140%",
           "letterSpacing": "0px",
           "textDecoration": "underline",
           "textCase": "none"
         }
       },
-      "body": {
-        "$type": "typography",
-        "$value": {
-          "fontFamily": "Pretendard",
-          "fontStyle": "SemiBold",
-          "fontSize": 14,
-          "lineHeight": "120%",
-          "letterSpacing": "0px",
-          "textDecoration": "underline",
-          "textCase": "none"
-        }
-      },
-      "caption": {
+      "bold-link": {
         "$type": "typography",
         "$value": {
           "fontFamily": "Pretendard",
           "fontStyle": "SemiBold",
           "fontSize": 12,
-          "lineHeight": "130%",
+          "lineHeight": "140%",
           "letterSpacing": "0px",
           "textDecoration": "underline",
           "textCase": "none"
