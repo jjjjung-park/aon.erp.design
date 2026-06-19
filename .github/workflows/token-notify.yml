@@ -1,0 +1,74 @@
+name: 디자인 토큰 업데이트 알림
+
+on:
+  push:
+    branches:
+      - 'token_v*'
+    paths:
+      - 'design-sync/token-sync/tokens/**'
+
+jobs:
+  notify-teams:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Teams 알림 전송
+        run: |
+          FILES=$(git diff --name-only HEAD~1 HEAD -- design-sync/token-sync/tokens/ | tr '\n' ' ')
+          BRANCH="${{ github.ref_name }}"
+          PUSHER="${{ github.actor }}"
+          COMMIT_MSG="${{ github.event.head_commit.message }}"
+          REPO_URL="https://github.com/${{ github.repository }}/tree/${BRANCH}/design-sync/token-sync/tokens"
+
+          BODY=$(jq -n \
+            --arg branch "$BRANCH" \
+            --arg pusher "$PUSHER" \
+            --arg msg "$COMMIT_MSG" \
+            --arg files "$FILES" \
+            --arg url "$REPO_URL" \
+            '{
+              "type": "AdaptiveCard",
+              "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+              "version": "1.2",
+              "body": [
+                {
+                  "type": "TextBlock",
+                  "text": "🎨 디자인 토큰 업데이트",
+                  "weight": "Bolder",
+                  "size": "Medium"
+                },
+                {
+                  "type": "FactSet",
+                  "facts": [
+                    {"title": "브랜치", "value": $branch},
+                    {"title": "푸시한 사람", "value": $pusher},
+                    {"title": "커밋", "value": $msg},
+                    {"title": "변경 파일", "value": $files}
+                  ]
+                },
+                {
+                  "type": "ActionSet",
+                  "actions": [
+                    {
+                      "type": "Action.OpenUrl",
+                      "title": "GitHub에서 보기",
+                      "url": $url
+                    }
+                  ]
+                }
+              ]
+            }')
+
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "${{ secrets.TEAMS_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d "$BODY")
+
+          echo "Teams 응답 코드: $HTTP_CODE"
+          if [ "$HTTP_CODE" != "202" ] && [ "$HTTP_CODE" != "200" ]; then
+            echo "Teams 전송 실패"
+            exit 1
+          fi
