@@ -18,7 +18,7 @@
         <SheetBase title="drawer title" description="drawer 타이틀이 있으면 이걸 사용" full-screen v-model:open="drawerOpen" :dimmed="true">
           <template #tab>
             <nav class="border-b-1 border-border px-6 bg-white">
-              <LineTabs :tab-list="tabList" class="data-[state=true]:after:bg-default"/>
+              <LineTabs :tab-list="tabList" class="data-[state=true]:after:bg-border"/>
             </nav>
           </template>
           <template #body>

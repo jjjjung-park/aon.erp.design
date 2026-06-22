@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 표시/ListBlockItem',
+  title: '데이터 표시/리스트/ListBlockItem',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {

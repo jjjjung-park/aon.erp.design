@@ -215,7 +215,7 @@ const preview: Preview = {
           '기초':        ['Typography'],
           '액션':        ['Button', 'Dropdown'],
           '데이터 입력':  ['Input', 'Checkbox', 'RadioGroup', 'Select', 'DatePicker'],
-          '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'ListBlockItem', 'Table'],
+          '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'Table', '리스트'],
           '피드백':      ['Alert', 'Toast', 'Empty'],
           '오버레이':    ['Tooltip', 'Modal', 'Sheet'],
           '내비게이션':  ['Tabs', 'Pagination'],
