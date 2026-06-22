@@ -23,7 +23,7 @@
           <td>
             <InputBase>
               <template #prefix>
-                <LucideSearchIcon class="mr-1"/>
+                <LucideSearch class="mr-1"/>
               </template>
             </InputBase>
           </td>
@@ -154,7 +154,7 @@
       <div class="my-5">
         <h2>line</h2>
         <LineTabs :tab-list="[{label:'tab1', value:'tab1', active:true}, {label:'tab2', value:'tab2', active:false}]" />
-        <LineTabs :tab-list="[{label:'tab1', value:'tab1', active:true}, {label:'tab2', value:'tab2', active:false}]" class="data-[state=true]:after:bg-default mt-1"/>
+        <LineTabs :tab-list="[{label:'tab1', value:'tab1', active:true}, {label:'tab2', value:'tab2', active:false}]" class="data-[state=true]:after:bg-border mt-1"/>
       </div>
       <div class="my-5">
         <h2>box-tabs</h2>

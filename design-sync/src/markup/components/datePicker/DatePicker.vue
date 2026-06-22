@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import {parseDate} from '@internationalized/date'
 import {type DateValue} from 'reka-ui'
-import type {HTMLAttributes} from "vue";
+import type {HTMLAttributes} from "vue"
 
 const model = defineModel<string>({required: true})
 const props = withDefaults(

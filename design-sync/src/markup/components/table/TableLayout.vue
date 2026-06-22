@@ -18,7 +18,7 @@
                 <LucideSearch class="size-3 stroke-3 text-default-text"/>
               </template>
             </InputBase>
-            <UiButton variant="ghost" size="icon-sm" title="키워드 검색" @click="showFilter = !showFilter" :class="[{'bg-surface':showFilter}, 'relative']">
+            <UiButton variant="ghost" size="icon-sm" title="키워드 검색" @click="showFilter = !showFilter" :class="[{'bg-gray-300':showFilter}, 'relative']">
               <LucideSearch/>
               <!--   적용된 필터 있음 표시     -->
               <UiBadge  size="dot" class="absolute top-0.5 right-0.5 "/>
