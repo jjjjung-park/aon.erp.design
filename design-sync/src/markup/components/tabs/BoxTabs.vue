@@ -1,17 +1,16 @@
 <template>
   <div class="flex">
-    <template v-for="(tab, index) in tabsList">
+    <template v-for="tab in list">
       <div :data-disabled="tab.disabled"
            :data-state="tab.active"
            :class="cn(
-       'flex items-center justify-center px-padding-lg min-w-20 h-8 text-sm bg-background text-secondary border-1 border-surface font-bold -mr-1 cursor-pointer',
-              //disabled
+       'flex items-center justify-center px-padding-lg min-w-20 h-8 text-sm bg-background text-secondary border-1 border-gray-300 font-bold -mr-1 cursor-pointer',
               'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text',
-              //active
               'data-[state=true]:bg-primary-light data-[state=true]:text-primary data-[state=true]:border-primary data-[state=true]:mr-0',
               props.class
-             )">
-        <span class="truncate max-w-[140px]">{{ tab.label + index }}</span>
+             )"
+           @click="!tab.disabled && emit('change', tab.value)">
+        <span class="truncate max-w-[140px]">{{ tab.label }}</span>
       </div>
     </template>
   </div>
@@ -22,19 +21,20 @@ import {cn} from "@/lib/utils.ts";
 import type {HTMLAttributes} from "vue";
 
 const props = defineProps<{
+  tabList?: { label: string; value: string; active: boolean; disabled?: boolean }[]
   class?: HTMLAttributes["class"]
-}>();
+}>()
 
+const emit = defineEmits<{ change: [value: string] }>()
 
-const tabsList = [
-  {label: 'tabs fdfdfdfdfdfdfddfddf', value: 'tabs', active: true},
-  {label: 'tabs', value: 'tabs', active: false, disabled: true},
-  {label: 'tabs', value: 'tabs', active: false},
-  {label: 'tabs', value: 'tabs', active: false},
-  {label: 'tabs', value: 'tabs', active: false},
-  {label: 'tabs', value: 'tabs', active: false},
+const defaultList = [
+  { label: 'tabs', value: 'tab1', active: true },
+  { label: 'tabs', value: 'tab2', active: false, disabled: true },
+  { label: 'tabs', value: 'tab3', active: false },
+  { label: 'tabs', value: 'tab4', active: false },
 ]
 
+const list = computed(() => props.tabList ?? defaultList)
 </script>
 
 <style scoped>

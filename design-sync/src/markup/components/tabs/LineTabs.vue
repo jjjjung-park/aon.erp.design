@@ -8,10 +8,11 @@
              @click="$emit('change', tab.value)"
              :class="cn(
        'flex min-w-fit items-center justify-center px-padding-lg gap-1 h-8 text-sm bg-background font-bold cursor-pointer text-secondary relative',
-               //disabled
                'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text',
-               //active
-               ' data-[state=true]:text-default-text data-[state=true]:after:content-[\'\'] data-[state=true]:after:absolute data-[state=true]:after:bottom-0 data-[state=true]:after:left-0 data-[state=true]:after:w-full data-[state=true]:after:h-[2px] data-[state=true]:after:bg-primary',
+               'data-[state=true]:text-default-text data-[state=true]:after:content-[\'\'] data-[state=true]:after:absolute data-[state=true]:after:bottom-0 data-[state=true]:after:left-0 data-[state=true]:after:w-full data-[state=true]:after:h-[2px]',
+               props.type === 'default'
+                 ? 'data-[state=true]:after:bg-default'
+                 : 'data-[state=true]:after:bg-primary',
                props.class
              )">
           <slot :tab="tab">
@@ -31,8 +32,9 @@ import type {HTMLAttributes} from "vue";
 
 const props = defineProps<{
   class?: HTMLAttributes["class"]
-  tabList:Record<string, any>[]
-}>();
+  tabList: Record<string, any>[]
+  type?: 'primary' | 'default'
+}>()
 
 </script>
 
