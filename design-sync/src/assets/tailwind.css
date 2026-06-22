@@ -21,7 +21,8 @@
   --color-default-text: var(--text-default);
   --color-secondary: var(--color-muted);
   --color-muted: var(--text-muted);
-  --color-default: var(--color-gray-300);
+
+  --color-default: var(--color-gray-600);
   --color-border: var(--border-default);
   --color-background: var(--surface-neutral);
 

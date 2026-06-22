@@ -161,7 +161,7 @@
   /*footer있을 땐 border-b가 없음 (디자인)*/
   .table-secondary tfoot th,
   .table-secondary tfoot td {
-    @apply border-t-1 !border-default;
+    @apply border-t-1 !border-border;
   }
 
   /* secondaty td 색상 제거*/
@@ -228,11 +228,11 @@
   }
 
   .table--group-header thead tr:first-child th {
-    @apply !border-default;
+    @apply !border-border;
   }
 
   .table--group-header thead tr:last-child th {
-    @apply !border-b-1 !border-b-default text-default;
+    @apply !border-b-1 !border-b-border text-default-text;
   }
 
   /* table cross header */
