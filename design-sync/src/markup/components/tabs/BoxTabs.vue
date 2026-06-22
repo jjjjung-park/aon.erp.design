@@ -4,9 +4,12 @@
       <div :data-disabled="tab.disabled"
            :data-state="tab.active"
            :class="cn(
-       'flex items-center justify-center px-padding-lg min-w-20 h-8 text-sm bg-background text-secondary border-1 border-gray-300 font-bold -mr-1 cursor-pointer',
-              'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text',
-              'data-[state=true]:bg-primary-light data-[state=true]:text-primary data-[state=true]:border-primary data-[state=true]:mr-0',
+       'flex items-center justify-center px-padding-lg min-w-20 h-8 text-sm bg-background text-secondary border-1 border-gray-300 font-bold cursor-pointer border-r-0 last:border-r-1 ' +
+              //disabled
+              'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text ' +
+              //active
+              'data-[state=true]:bg-primary-light data-[state=true]:text-primary data-[state=true]:border-primary ' +
+              'data-[state=true]:[&+div]:border-l-primary',
               props.class
              )"
            @click="!tab.disabled && emit('change', tab.value)">
