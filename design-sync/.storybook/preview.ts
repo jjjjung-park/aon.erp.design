@@ -51,6 +51,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/ui/resiz
 import { Toaster } from '@/ui/sonner'
 import YearPicker from '@/ui/aon/year-picker/index.vue'
 import YearRange from '@/ui/aon/year-range/index.vue'
+import Tags from '@/markup/components/tag/Tags.vue'
 
 // ✅ Storybook Vue3의 setup() 호출 — 전역 컴포넌트 등록
 // export const setup = ... 방식은 Storybook 8+ 에서 작동 안 함
@@ -188,6 +189,7 @@ setup((app) => {
   app.component('UiToaster', Toaster)
   app.component('UiDatePicker', YearPicker)
   app.component('UiYearRange', YearRange)
+  app.component('Tags', Tags)
 
   // Lucide 아이콘 전체를 Lucide prefix로 전역 등록 (대문자로 시작하는 것만)
   Object.entries(LucideIcons).forEach(([name, component]) => {

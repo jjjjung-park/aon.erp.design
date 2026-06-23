@@ -46,7 +46,7 @@ export const Line: Story = {
 }
 
 export const LineDefault: Story = {
-  name: 'LineTabs — default',
+  name: 'LineTabs — secondary',
   render: (args) => ({
     components: { LineTabs },
     setup() {
@@ -58,7 +58,7 @@ export const LineDefault: Story = {
     },
     template: `
       <div class="border-b border-border">
-        <LineTabs :tab-list="tabs" type="default" @change="onChange" />
+        <LineTabs :tab-list="tabs" type="secondary" @change="onChange" />
       </div>
     `,
   }),

@@ -1,129 +1,96 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
-import { ref } from 'vue'
 
 const meta: Meta = {
   title: '데이터 표시/리스트/DataList',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    active: {
+      control: 'boolean',
+      description: '활성 상태 (첫 번째 아이템)',
+    },
+    clickable: {
+      control: 'boolean',
+      description: '호버/클릭 가능 상태',
+    },
+    desc: {
+      control: 'boolean',
+      description: '설명 텍스트 (data-list__desc)',
+    },
+    rightColumn: {
+      control: 'radio',
+      options: ['없음', '텍스트', '상태배지'],
+      description: '우측 영역',
+    },
+    countBadge: {
+      control: 'boolean',
+      description: '카운터 배지',
+    },
+  },
+  args: {
+    active: false,
+    clickable: false,
+    desc: false,
+    rightColumn: '없음',
+    countBadge: false,
+  },
 }
 export default meta
-type Story = StoryObj
+type Story = StoryObj<{ active: boolean; clickable: boolean; desc: boolean; rightColumn: '없음' | '텍스트' | '상태배지'; countBadge: boolean }>
 
 export const Default: Story = {
-  name: '기본',
-  render: () => ({
+  name: 'DataList',
+  render: (args) => ({
     setup() {
-      const active = ref('kim')
-      return { active }
+      return { args }
     },
     template: `
       <ul class="data-list w-80">
-        <li class="data-list__item cursor-pointer" :class="active === 'hong' && 'active'" @click="active = 'hong'">
+        <li class="data-list__item" :class="[{ active: args.active }, args.clickable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default']">
           <div class="data-list__cont data-list__cont-left">
-            <span>홍길동</span>
-            <span class="data-list__desc">개발팀 · 사원</span>
-          </div>
-        </li>
-        <li class="data-list__item cursor-pointer" :class="active === 'kim' && 'active'" @click="active = 'kim'">
-          <div class="data-list__cont data-list__cont-left">
-            <span>김철수</span>
-            <span class="data-list__desc">디자인팀 · 대리</span>
-          </div>
-        </li>
-        <li class="data-list__item cursor-pointer" :class="active === 'lee' && 'active'" @click="active = 'lee'">
-          <div class="data-list__cont data-list__cont-left">
-            <span>이영희</span>
-            <span class="data-list__desc">기획팀 · 과장</span>
-          </div>
-        </li>
-      </ul>
-    `,
-  }),
-}
-
-export const TwoColumn: Story = {
-  name: '2단',
-  render: () => ({
-    setup() {
-      const active = ref('kim')
-      return { active }
-    },
-    template: `
-      <ul class="data-list w-80">
-        <li class="data-list__item cursor-pointer" :class="active === 'hong' && 'active'" @click="active = 'hong'">
-          <div class="data-list__cont data-list__cont-left">
-            <span>홍길동</span>
-            <span class="data-list__desc">개발팀 · 사원</span>
-          </div>
-          <div class="data-list__cont data-list__cont-right">
-            <span>2024-01-15</span>
-            <span class="data-list__desc">등록일</span>
-          </div>
-        </li>
-        <li class="data-list__item cursor-pointer" :class="active === 'kim' && 'active'" @click="active = 'kim'">
-          <div class="data-list__cont data-list__cont-left">
-            <span>김철수</span>
-            <span class="data-list__desc">디자인팀 · 대리</span>
-          </div>
-          <div class="data-list__cont data-list__cont-right">
-            <span>2024-03-22</span>
-            <span class="data-list__desc">등록일</span>
-          </div>
-        </li>
-        <li class="data-list__item cursor-pointer" :class="active === 'lee' && 'active'" @click="active = 'lee'">
-          <div class="data-list__cont data-list__cont-left">
-            <span>이영희</span>
-            <span class="data-list__desc">기획팀 · 과장</span>
-          </div>
-          <div class="data-list__cont data-list__cont-right">
-            <span>2023-11-08</span>
-            <span class="data-list__desc">등록일</span>
-          </div>
-        </li>
-      </ul>
-    `,
-  }),
-}
-
-export const WithBadge: Story = {
-  name: '배지',
-  render: () => ({
-    setup() {
-      const active = ref('a')
-      return { active }
-    },
-    template: `
-      <div class="data-list w-80">
-        <div class="data-list__item cursor-pointer hover:bg-gray-100" :class="active === 'a' && 'active'" @click="active = 'a'">
-          <div class="data-list__cont w-[75%]">
-            <p class="flex items-center gap-1">
-              <strong class="truncate">530KAL123W530KAL123W530KAL123W</strong>
-              <UiBadge variant="count" tone="default" size="sm">999+</UiBadge>
-            </p>
-            <span class="caption text-secondary">단일 최초가 <strong>999,999,999 KRW</strong></span>
-          </div>
-          <UiBadge variant="hold" class="self-start">예약중</UiBadge>
-        </div>
-        <div class="data-list__item cursor-pointer hover:bg-gray-100" :class="active === 'b' && 'active'" @click="active = 'b'">
-          <div class="data-list__cont w-[75%]">
-            <p class="flex items-center gap-1">
-              <strong class="truncate">530KAL456W530KAL456W</strong>
-              <UiBadge variant="count" tone="default" size="sm">12</UiBadge>
-            </p>
-            <span class="caption text-secondary">개별 최초가</span>
-          </div>
-        </div>
-        <div class="data-list__item cursor-pointer hover:bg-gray-100" :class="active === 'c' && 'active'" @click="active = 'c'">
-          <div class="data-list__cont w-[75%]">
-            <p class="flex items-center gap-1">
-              <strong class="truncate">530KAL789W</strong>
+            <p v-if="args.countBadge" class="flex items-center gap-1">
+              <strong class="truncate">홍길동</strong>
               <UiBadge variant="count" tone="default" size="sm">5</UiBadge>
             </p>
-            <span class="caption text-secondary">단일 최초가 <strong>88,000 KRW</strong></span>
+            <strong class="truncate" v-else>홍길동</strong>
+            <span v-if="args.desc" class="data-list__desc">개발팀 · 사원</span>
           </div>
-          <UiBadge variant="hold" class="self-start">예약중</UiBadge>
-        </div>
-      </div>
+          <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
+            <span>2024-01-15</span>
+            <span v-if="args.desc" class="data-list__desc">등록일</span>
+          </div>
+          <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
+        </li>
+        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default'">
+          <div class="data-list__cont data-list__cont-left">
+            <p v-if="args.countBadge" class="flex items-center gap-1">
+              <strong class="truncate">김철수</strong>
+              <UiBadge variant="count" tone="default" size="sm">12</UiBadge>
+            </p>
+            <strong class="truncate" v-else>김철수</strong>
+            <span v-if="args.desc" class="data-list__desc">디자인팀 · 대리</span>
+          </div>
+          <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
+            <span>2024-03-22</span>
+            <span v-if="args.desc" class="data-list__desc">등록일</span>
+          </div>
+        </li>
+        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default'">
+          <div class="data-list__cont data-list__cont-left">
+            <p v-if="args.countBadge" class="flex items-center gap-1">
+              <strong class="truncate">이영희</strong>
+              <UiBadge variant="count" tone="default" size="sm">999+</UiBadge>
+            </p>
+            <strong class="truncate" v-else>이영희</strong>
+            <span v-if="args.desc" class="data-list__desc">기획팀 · 과장</span>
+          </div>
+          <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
+            <span>2023-11-08</span>
+            <span v-if="args.desc" class="data-list__desc">등록일</span>
+          </div>
+          <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
+        </li>
+      </ul>
     `,
   }),
 }

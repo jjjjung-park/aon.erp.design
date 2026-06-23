@@ -10,7 +10,7 @@
        'flex min-w-fit items-center justify-center px-padding-lg gap-1 h-8 text-sm bg-background font-bold cursor-pointer text-secondary relative',
                'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text',
                'data-[state=true]:text-default-text data-[state=true]:after:content-[\'\'] data-[state=true]:after:absolute data-[state=true]:after:bottom-0 data-[state=true]:after:left-0 data-[state=true]:after:w-full data-[state=true]:after:h-[2px]',
-               props.type === 'default'
+               props.type === 'secondary'
                  ? 'data-[state=true]:after:bg-default'
                  : 'data-[state=true]:after:bg-primary',
                props.class
@@ -33,7 +33,7 @@ import type {HTMLAttributes} from "vue";
 const props = defineProps<{
   class?: HTMLAttributes["class"]
   tabList: Record<string, any>[]
-  type?: 'primary' | 'default'
+  type?: 'primary' | 'secondary'
 }>()
 
 </script>
