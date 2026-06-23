@@ -5,25 +5,27 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
-    checked:  { control: 'boolean', description: '체크 여부' },
     disabled: { control: 'boolean', description: '비활성화' },
+    showLabel: { control: 'boolean', description: '라벨 표시' },
+    label: { control: 'text', description: '라벨 텍스트' },
   },
   args: {
-    checked: false,
     disabled: false,
+    showLabel: true,
+    label: '체크박스 라벨',
   },
 }
 export default meta
-type Story = StoryObj
+type Story = StoryObj<{ disabled: boolean; showLabel: boolean; label: string }>
 
 export const Default: Story = {
-  name: 'Checkbox — 인터랙티브',
+  name: 'Checkbox',
   render: (args) => ({
     setup() { return { args } },
     template: `
       <div class="flex items-center gap-2">
-        <UiCheckbox id="cb" :checked="args.checked" :disabled="args.disabled" />
-        <UiLabel for="cb">체크박스 라벨</UiLabel>
+        <UiCheckbox id="cb" :disabled="args.disabled" />
+        <UiLabel v-if="args.showLabel" for="cb" :class="{ 'text-disabled-text': args.disabled }">{{ args.label }}</UiLabel>
       </div>
     `,
   }),
