@@ -47,11 +47,13 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/ui/carousel'
 import { Progress } from '@/ui/progress'
 import { RadioGroup, RadioGroupItem } from '@/ui/radio-group'
+import { Switch } from '@/ui/switch'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/ui/resizable'
 import { Toaster } from '@/ui/sonner'
 import YearPicker from '@/ui/aon/year-picker/index.vue'
 import YearRange from '@/ui/aon/year-range/index.vue'
 import Tags from '@/markup/components/tag/Tags.vue'
+import FormItem from '@/markup/components/form/FormItem.vue'
 
 // ✅ Storybook Vue3의 setup() 호출 — 전역 컴포넌트 등록
 // export const setup = ... 방식은 Storybook 8+ 에서 작동 안 함
@@ -183,6 +185,7 @@ setup((app) => {
   app.component('UiProgress', Progress)
   app.component('UiRadioGroup', RadioGroup)
   app.component('UiRadioGroupItem', RadioGroupItem)
+  app.component('UiSwitch', Switch)
   app.component('UiResizableHandle', ResizableHandle)
   app.component('UiResizablePanel', ResizablePanel)
   app.component('UiResizablePanelGroup', ResizablePanelGroup)
@@ -190,6 +193,7 @@ setup((app) => {
   app.component('UiDatePicker', YearPicker)
   app.component('UiYearRange', YearRange)
   app.component('Tags', Tags)
+  app.component('FormItem', FormItem)
 
   // Lucide 아이콘 전체를 Lucide prefix로 전역 등록 (대문자로 시작하는 것만)
   Object.entries(LucideIcons).forEach(([name, component]) => {

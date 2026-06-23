@@ -9,33 +9,57 @@ const sampleItems = [
   { label: '옵션 4', value: '4' },
 ]
 
-const meta: Meta<typeof SelectBase> = {
+const meta: Meta = {
   title: '데이터 입력/Select',
-  component: SelectBase,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
-    placeholder: { control: 'text',   description: '플레이스홀더' },
-    disabled:    { control: 'boolean', description: '비활성화' },
-    readonly:    { control: 'boolean', description: '읽기 전용' },
-    size:        { control: 'select', options: ['sm', 'default', 'lg'], description: '사이즈' },
+    type: {
+      control: 'radio',
+      options: ['기본 셀렉트', 'comboboxTag'],
+      description: '셀렉트 종류',
+    },
+    multiple: {
+      control: 'radio',
+      options: ['단일', '멀티'],
+      description: '선택 모드',
+      if: { arg: 'type', eq: 'comboboxTag' },
+    },
+    placeholder: { control: 'text', description: '플레이스홀더' },
+    disabled: { control: 'boolean', description: '비활성화' },
   },
   args: {
+    type: 'comboboxTag',
+    multiple: '단일',
     placeholder: '선택하세요',
     disabled: false,
-    readonly: false,
-    size: 'default',
   },
 }
 export default meta
-type Story = StoryObj<typeof SelectBase>
+type Story = StoryObj<{ type: '기본 셀렉트' | 'comboboxTag'; multiple: '단일' | '멀티'; placeholder: string; disabled: boolean }>
 
 export const Default: Story = {
-  name: 'Select — 인터랙티브',
+  name: 'Select',
   render: (args) => ({
-    components: { SelectBase },
+    components: { SelectBase, ComboboxTag },
     setup() { return { args, sampleItems } },
-    template: `<div class="w-60"><SelectBase v-bind="args" :list-item="sampleItems" /></div>`,
+    template: `
+      <div class="w-60">
+        <ComboboxTag
+          v-if="args.type === 'comboboxTag'"
+          :list-item="sampleItems"
+          :placeholder="args.placeholder"
+          :multiple="args.multiple === '멀티'"
+          :disabled="args.disabled"
+        />
+        <SelectBase
+          v-else
+          :list-item="sampleItems"
+          :placeholder="args.placeholder"
+          :disabled="args.disabled"
+        />
+      </div>
+    `,
   }),
 }
 
@@ -64,32 +88,6 @@ export const States: Story = {
         <SelectBase :list-item="sampleItems" placeholder="기본" />
         <SelectBase :list-item="sampleItems" placeholder="비활성화" :disabled="true" />
         <SelectBase :list-item="sampleItems" placeholder="읽기 전용" :readonly="true" />
-      </div>
-    `,
-  }),
-}
-
-export const ComboboxTagSingle: Story = {
-  name: 'ComboboxTag — 단일 선택',
-  render: () => ({
-    components: { ComboboxTag },
-    setup() { return { sampleItems } },
-    template: `
-      <div class="w-60">
-        <ComboboxTag :list-item="sampleItems" placeholder="선택하세요" :multiple="false" />
-      </div>
-    `,
-  }),
-}
-
-export const ComboboxTagMultiple: Story = {
-  name: 'ComboboxTag — 다중 선택',
-  render: () => ({
-    components: { ComboboxTag },
-    setup() { return { sampleItems } },
-    template: `
-      <div class="w-60">
-        <ComboboxTag :list-item="sampleItems" placeholder="선택하세요" :multiple="true" :disabled="false" />
       </div>
     `,
   }),

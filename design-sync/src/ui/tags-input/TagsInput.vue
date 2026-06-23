@@ -17,7 +17,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
   <TagsInputRoot
     v-slot="slotProps" v-bind="forwarded" :class="cn(
       'flex flex-wrap gap-2 items-center rounded-input border border-border bg-background px-2 text-sm transition-[color,box-shadow] outline-none',
-      'focus-within:border-primary data-[disabled]:bg-gray-100 data-[disabled]:[&_*:focus-visible]:border-border data-[disabled]:border-border data-[disabled]:[&_[data-reka-collection-item]]:text-primary',
+      'focus-within:border-primary data-[disabled]:bg-disabled data-[disabled]:text-disabled-text data-[disabled]:cursor-not-allowed data-[disabled]:[&_svg]:text-disabled-text data-[disabled]:[&_*:focus-visible]:border-border data-[disabled]:border-border data-[disabled]:[&_[data-reka-collection-item]]:text-primary',
       'dark:aria-invalid:ring-destructive/40 aria-invalid:border-danger aria-invalid:focus-visible:border-danger ',
       props.class)"
   >
