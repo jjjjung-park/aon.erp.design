@@ -10,7 +10,7 @@
             <!--     평소엔 안보이고 hover, 기본 설정된 브랜드일 때만 보이게 처리       -->
             <UiButton variant="ghost" :class="['hover:bg-transparent ml-auto  group-hover:inline-flex', item.value === settingBrand?'inline-flex':'hidden']" size="icon" @click.prevent.stop="defaultSet(item)">
               <!--     기본 설정되면 색상 변경       -->
-              <LucideStar :fill=" item.value === settingBrand?'#007BFFFF':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-gray-400'"/>
+              <LucideStar :fill="item.value === settingBrand?'var(--color-primary)':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-gray-400'"/>
             </UiButton>
           </div>
         </template>
