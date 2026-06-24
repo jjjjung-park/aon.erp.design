@@ -230,7 +230,7 @@
     <section>
       <VirtualList :list-item="items" :scroll-height="'160px'" >
         <template v-slot="{item}">
-          <div class="data-list__item hover:bg-gray-100 cursor-pointer border-b-0" :class="item.active?'bg-primary-light':''">
+          <div class="data-list__item hover:bg-surface-muted cursor-pointer border-b-0" :class="item.active?'bg-primary-light':''">
             {{item.styleCode}}<br/>
             {{item.barcodeLength}}<br/>
           </div>

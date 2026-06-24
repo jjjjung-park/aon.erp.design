@@ -12,7 +12,7 @@
         <UiSidebarMenuItem class="gap-1">
           <template v-if="subItem.childItem">
             <UiCollapsible class="group/collapsible">
-              <UiCollapsibleTrigger as-child class="pl-6 hover:bg-gray-100 mb-1">
+              <UiCollapsibleTrigger as-child class="pl-6 hover:bg-surface-muted mb-1">
                 <UiSidebarMenuButton :tooltip="false" class=" h-10 ">
                   <span>{{ subItem.title }}</span>
                   <LucideChevronDown class="ml-auto text-secondary transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180 size-5"/>
@@ -21,7 +21,7 @@
               <!--  CollapsibleContent : 3depth -->
               <UiCollapsibleContent>
                 <UiSidebarMenuSub class="border-0 ">
-                  <UiSidebarMenuSubItem v-for="item in subItem.childItem" :key="item.title" class="h-10 flex items-center pl-8 hover:bg-gray-100 rounded-sm has-[span[data-active=true]]:bg-primary-light">
+                  <UiSidebarMenuSubItem v-for="item in subItem.childItem" :key="item.title" class="h-10 flex items-center pl-8 hover:bg-surface-muted rounded-sm has-[span[data-active=true]]:bg-primary-light">
                     <UiSidebarMenuSubButton as-child  @click="router.push(item.url || '#')" :is-active="item.isActive">
                       <span>{{ item.title }}</span>
                     </UiSidebarMenuSubButton>
@@ -31,7 +31,7 @@
             </UiCollapsible>
           </template>
           <template v-else>
-            <UiSidebarMenuButton :is-active="subItem.isActive" :tooltip="false" class="pl-6 h-10 hover:bg-gray-100 data-[active=true]:bg-primary-light data-[active=true]:text-primary data-[active=true]:font-bold" @click="router.push(subItem.url || '#');" >
+            <UiSidebarMenuButton :is-active="subItem.isActive" :tooltip="false" class="pl-6 h-10 hover:bg-surface-muted data-[active=true]:bg-primary-light data-[active=true]:text-primary data-[active=true]:font-bold" @click="router.push(subItem.url || '#');" >
               <span>{{ subItem.title }}</span>
             </UiSidebarMenuButton>
           </template>

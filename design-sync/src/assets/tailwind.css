@@ -21,6 +21,7 @@
   --color-default-text: var(--text-default);
   --color-secondary: var(--color-muted);
   --color-muted: var(--text-muted);
+  --color-surface-muted: var(--surface-muted);
 
   --color-default: var(--color-gray-600);
   --color-border: var(--border-default);
@@ -31,9 +32,6 @@
   --color-ring-offset: var(--surface-neutral);
 
 
-
-
-  --radius-md: var(--shape-radius-sm);
   --radius-button: var(--shape-radius-sm);
   --radius-input: var(--shape-radius-sm);
   --radius-chip: var(--shape-radius-full);

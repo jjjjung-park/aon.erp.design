@@ -6,8 +6,8 @@
         <slot name="search-body">
           content
         </slot>
-        <!--   클래스 bg-gray-100/50 -> bg-gray-100 변경     -->
-        <div class="rounded-lg bg-gray-100 px-4 py-3 flex  items-center gap-3" v-if="filter">
+        <!--   클래스 bg-surface-muted/50 -> bg-surface-muted 변경     -->
+        <div class="rounded-lg bg-surface-muted px-4 py-3 flex  items-center gap-3" v-if="filter">
           <p class="flex items-center flex-none">
             <LucideBookmark class="size-4 mr-1"/>
             <span class="caption__bold">조회 저장</span>
