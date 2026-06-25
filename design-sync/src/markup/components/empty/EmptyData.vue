@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-surface-muted text-secondary w-full h-full flex items-center justify-center">
+  <div class="bg-surface-muted text-muted w-full h-full flex items-center justify-center">
     <p class="flex flex-col gap-2 items-center ">
       <slot>
         <LucideInfo/>

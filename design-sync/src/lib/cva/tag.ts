@@ -2,24 +2,28 @@ import type { VariantProps } from "class-variance-authority"
 import { cva } from "class-variance-authority"
 
 export const tagsVariants = cva(
-  "flex flex-row items-center justify-between pl-padding-md pr-padding-md gap-1 caption__bold inline-flex rounded-sm h-6 min-w-0 max-w-full truncate",
+  "flex flex-row items-center justify-between pl-padding-md pr-padding-md gap-1 caption__bold inline-flex rounded-sm h-6 min-w-0 max-w-full truncate border-1",
   {
     variants: {
       type: {
-        tag:  'border-transparent',
-        chip: 'rounded-full border-1',
+        tag:  '',
+        chip: 'rounded-full',
       },
       variant: {
-        default:   'bg-primary text-primary-foreground border-primary data-[slot=tag]:bg-gray-600',
-        secondary: 'bg-primary-light text-primary border-primary',
-        outline:   'bg-background border-border border-1 data-[slot=tag]:text-secondary [&_[data-slot=close]]:text-secondary [&_[data-slot=close]:hover]:text-default-text',
-        info:      'bg-gray-200 border-border',
+        default:   'bg-primary text-primary-foreground border-transparent data-[slot=tag]:bg-gray-900',
+        secondary: 'bg-primary-light text-primary border-transparent',
+        outline:   'bg-background border-border data-[slot=tag]:text-muted [&_[data-slot=close]]:text-muted [&_[data-slot=close]:hover]:text-default',
+        info:      'bg-gray-200 border-transparent',
+        disabled:  'bg-disabled text-disabled-text border-border',
       },
     },
     defaultVariants: {
       variant: 'default',
       type: 'tag',
     },
+    compoundVariants: [
+      { type: 'chip', variant: 'secondary', class: 'border-primary' },
+    ],
   },
 )
 

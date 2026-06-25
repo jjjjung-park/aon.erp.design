@@ -9,7 +9,7 @@
         <UiEmptyDescription class="text-md">관리자에게 문의 해 주세요.</UiEmptyDescription>
       </UiEmptyHeader>
       <UiEmptyContent>
-        <UiButton variant="link" size="lg" class="text-default-text" ><LucideChevronLeft/>이전 화면으로 돌아가기</UiButton>
+        <UiButton variant="link" size="lg" class="text-default" ><LucideChevronLeft/>이전 화면으로 돌아가기</UiButton>
       </UiEmptyContent>
     </slot>
   </UiEmpty>

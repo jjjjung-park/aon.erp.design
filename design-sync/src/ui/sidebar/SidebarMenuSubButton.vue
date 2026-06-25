@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<PrimitiveProps & {
     :data-size="size"
     :data-active="isActive"
     :class="cn(
-      'text-default-text hover:font-bold active:font-bold [&>svg]:text-default-text flex h-full w-full -translate-x-px items-center gap-2 overflow-hidden outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+      'text-default hover:font-bold active:font-bold [&>svg]:text-default flex h-full w-full -translate-x-px items-center gap-2 overflow-hidden outline-hidden focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
       'data-[active=true]:text-primary data-[active=true]:font-bold cursor-pointer',
       size === 'sm' && 'text-xs',
       size === 'md' && 'text-sm',

@@ -1,13 +1,13 @@
 <template>
   <UiCombobox by="label">
-    <UiComboboxAnchor :class="cn('border border-border rounded-input', props.class)">
+    <UiComboboxAnchor :class="cn('border border-border rounded-sm', props.class)">
       <UiComboboxTrigger class="w-full">
         <div class="relative items-center flex h-8 gap-1 px-padding-md w-full">
           <slot name="prefix"/>
           <UiComboboxInput class="" :placeholder="placeholder" :disabled="props.disabled"
                            v-model="modelValue"/>
           <span class="absolute end-2 inset-y-0 flex items-center justify-center">
-            <LucideChevronDown class="size-5 text-secondary"/>
+            <LucideChevronDown class="size-5 text-muted"/>
           </span>
         </div>
       </UiComboboxTrigger>

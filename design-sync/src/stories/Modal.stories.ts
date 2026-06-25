@@ -61,7 +61,7 @@ export const Default: Story = {
 //         <Button @click="open = true">모달 열기</Button>
 //         <ModalBase v-model:open="open" v-bind="args">
 //           <template #default>
-//             <p class="text-sm text-secondary">모달 본문 내용이 여기에 표시됩니다.</p>
+//             <p class="text-sm text-muted">모달 본문 내용이 여기에 표시됩니다.</p>
 //           </template>
 //           <template #footer>
 //             <Button @click="open = false">확인</Button>
@@ -98,15 +98,15 @@ export const Default: Story = {
 //         <Button variant="outline" @click="openMd = true">Medium</Button>
 //         <Button variant="outline" size="lg" @click="openLg = true">Large</Button>
 //         <ModalBase v-model:open="openSm" title="Small 모달">
-//           <template #default><p class="text-sm text-secondary">Small 사이즈 모달입니다.</p></template>
+//           <template #default><p class="text-sm text-muted">Small 사이즈 모달입니다.</p></template>
 //           <template #footer><Button @click="openSm = false">닫기</Button></template>
 //         </ModalBase>
 //         <ModalBase v-model:open="openMd" title="Medium 모달">
-//           <template #default><p class="text-sm text-secondary">Medium 사이즈 모달입니다.</p></template>
+//           <template #default><p class="text-sm text-muted">Medium 사이즈 모달입니다.</p></template>
 //           <template #footer><Button @click="openMd = false">닫기</Button></template>
 //         </ModalBase>
 //         <ModalBase v-model:open="openLg" title="Large 모달">
-//           <template #default><p class="text-sm text-secondary">Large 사이즈 모달입니다.</p></template>
+//           <template #default><p class="text-sm text-muted">Large 사이즈 모달입니다.</p></template>
 //           <template #footer><Button @click="openLg = false">닫기</Button></template>
 //         </ModalBase>
 //       </div>

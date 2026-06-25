@@ -32,7 +32,7 @@ export const Default: Story = {
                 <dl class="flex items-start gap-3">
                   <dt class="addr-list__type"><Tags variant="outline">지번</Tags></dt>
                   <dd class="">
-                    <p class="caption text-secondary mb-2">아래 목록에서 정확한 지번 주소를 선택 해 주세요.<br>
+                    <p class="caption text-muted mb-2">아래 목록에서 정확한 지번 주소를 선택 해 주세요.<br>
                       잘 모르시는 경우 ‘선택 안함'을 클릭 해 주세요.</p>
                     <ul class="grid gap-2">
                       <li class="addr-list__item">

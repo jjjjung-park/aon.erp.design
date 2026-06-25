@@ -26,7 +26,7 @@ const forwardedProps = useForwardProps(delegatedProps)
       '[&[data-today]:not([data-selected])]:text-primary hover:bg-primary-light hover:text-primary',
      'focus-within:bg-primary-light focus-visible:bg-primary-light focus:bg-primary-light focus-within:text-primary focus-visible:text-primary focus:text-primary',
       //selected + focus
-      'data-[selection-start]:data-[selected]:focus-within:!border-gray-600/20 data-[selection-end]:data-[selected]:focus-within:!border-gray-600/20 ',
+      'data-[selection-start]:data-[selected]:focus-within:!border-gray-900/20 data-[selection-end]:data-[selected]:focus-within:!border-gray-900/20 ',
       // Selection Start
       'data-[selection-start]:bg-primary data-[selection-start]:!text-primary-foreground data-[selection-start]:hover:bg-primary data-[selection-start]:hover:text-primary-foreground data-[selection-start]:focus:bg-primary data-[selection-start]:focus:text-primary-foreground',
       // Selection End

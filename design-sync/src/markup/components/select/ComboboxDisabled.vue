@@ -45,7 +45,7 @@
     </template>
     <template v-else>
       <UiTagsInput class="w-full min-h-8 gap-1 py-1 items-center" :class="readonly?'bg-surface-muted':'bg-disabled'" :disabled="true" >
-        <span :class="readonly?'text-default-text':'text-disabled-text'">{{ placeholder }}</span>
+        <span :class="readonly?'text-default':'text-disabled-text'">{{ placeholder }}</span>
         <!--   clear 버튼     -->
         <div class="ml-auto flex items-center pl-2">
           <TagsInputClear v-if="selectValue.length > 0">

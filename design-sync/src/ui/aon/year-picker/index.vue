@@ -73,7 +73,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
                   'text-sm size-12 font-normal aria-selected:opacity-100 cursor-default border-2 border-transparent focus-within:bg-primary-light focus-visible:bg-primary-light focus:bg-primary-light focus-within:text-primary focus-visible:text-primary focus:text-primary',
                   '[&[data-today]:not([data-selected])]:bg-background [&[data-today]:not([data-selected])]:text-primary [&[data-today]:not([data-selected])]:focus:bg-primary-light hover:bg-primary-light hover:text-primary ',
                   // Selected
-                  'data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:opacity-100 data-[selected]:hover:bg-primary data-[selected]:hover:text-primary-foreground data-[selected]:focus:bg-primary data-[selected]:focus:text-primary-foreground  data-[selected]:focus:!border-gray-600/20',
+                  'data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:opacity-100 data-[selected]:hover:bg-primary data-[selected]:hover:text-primary-foreground data-[selected]:focus:bg-primary data-[selected]:focus:text-primary-foreground  data-[selected]:focus:!border-gray-900/20',
                   // Disabled
                   'data-[disabled]:text-disabled-text data-[disabled]:opacity-50',
                   // Unavailable

@@ -4,7 +4,7 @@
       <div class="flex gap-2 justify-between items-center border-1 border-border rounded-sm h-8 min-w-60 pl-2" >
 
         <p class="flex items-center gap-2" :class="!value && 'text-disabled-text'">
-          <LucideCalendar class="size-4 text-secondary"/>
+          <LucideCalendar class="size-4 text-muted"/>
           <template v-if="value.start">
             <template v-if="value.end">
               {{
@@ -34,7 +34,7 @@
           </template>
         </p>
         <UiButton variant="ghost" class="hover:bg-transparent" size="icon-sm">
-          <LucideX class="size-4" :class="!value ? 'text-transparent':'text-secondary'"/>
+          <LucideX class="size-4" :class="!value ? 'text-transparent':'text-muted'"/>
         </UiButton>
       </div>
     </UiPopoverTrigger>

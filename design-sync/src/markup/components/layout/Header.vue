@@ -18,12 +18,12 @@
 
       <div class="flex items-center gap-2">
         <div class="gap-2 flex items-center">
-          <UiButton class="text-secondary relative " variant="ghost" size="icon" @click="openAlert = true">
+          <UiButton class="text-muted relative " variant="ghost" size="icon" @click="openAlert = true">
             <LucideBell />
             <UiBadge variant="destructive" size="dot" class="absolute top-1 right-1" />
           </UiButton>
           <UiSeparator orientation="vertical" class="h-4"/>
-          <UiButton class="text-secondary relative " variant="ghost" size="icon">
+          <UiButton class="text-muted relative " variant="ghost" size="icon">
             <LucideSettings class=""/>
             <UiBadge variant="destructive" size="dot" class="bg-success absolute top-1 right-1" />
           </UiButton>
@@ -41,7 +41,7 @@
             </div>
             <div class="h-8 flex flex-col">
               <p class="caption__bold">홍길동님</p>
-              <span class="caption text-secondary">안녕하시와요</span>
+              <span class="caption text-muted">안녕하시와요</span>
             </div>
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent class="">

@@ -17,7 +17,7 @@ export const Default: Story = {
           <UiCarouselItem v-for="i in 5" :key="i">
             <UiCard>
               <UiCardContent class="flex items-center justify-center h-40">
-                <span class="text-3xl font-bold text-secondary">{{ i }}</span>
+                <span class="text-3xl font-bold text-muted">{{ i }}</span>
               </UiCardContent>
             </UiCard>
           </UiCarouselItem>

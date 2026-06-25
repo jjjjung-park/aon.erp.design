@@ -105,7 +105,7 @@ export const Triple: Story = {
 //         <Button @click="open = true">시트 열기</Button>
 //         <SheetBase v-model:open="open" v-bind="args">
 //           <template #default>
-//             <p class="text-sm text-secondary">시트 본문 내용이 여기에 표시됩니다.</p>
+//             <p class="text-sm text-muted">시트 본문 내용이 여기에 표시됩니다.</p>
 //           </template>
 //           <template #footer>
 //             <Button @click="open = false">저장</Button>

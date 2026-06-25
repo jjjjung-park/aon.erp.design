@@ -18,12 +18,14 @@
 
   --color-disabled: var(--surface-disabled);
   --color-disabled-text: var(--text-disabled);
-  --color-default-text: var(--text-default);
-  --color-secondary: var(--color-muted);
+
+  --color-subtle: var(--surface-disabled);
+  --color-subtle-text: var(--text-disabled);
+
+  --color-default: var(--color-gray-900);
   --color-muted: var(--text-muted);
   --color-surface-muted: var(--surface-muted);
 
-  --color-default: var(--color-gray-600);
   --color-border: var(--border-default);
   --color-background: var(--surface-neutral);
 
@@ -31,10 +33,6 @@
   --color-ring: var(--color-border-focus);
   --color-ring-offset: var(--surface-neutral);
 
-
-  --radius-button: var(--shape-radius-sm);
-  --radius-input: var(--shape-radius-sm);
-  --radius-chip: var(--shape-radius-full);
 
   --spacing-padding-sm: var(--spacing-padding-xxs);
   --spacing-padding-md: var(--spacing-padding-xs);
@@ -55,7 +53,7 @@
   --color-gray-300: var(--color-gray-300);
   --color-gray-400: var(--color-gray-400);
   --color-gray-500: var(--color-gray-500);
-  --color-gray-600: var(--color-gray-900);
+  --color-gray-900: var(--color-gray-900);
 
   @keyframes accordion-down {
     from {

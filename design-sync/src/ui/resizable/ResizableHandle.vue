@@ -29,7 +29,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
   >
     <template v-if="props.withHandle">
       <div class="bg-gray-200 z-10 flex h-6 w-4 items-center justify-center rounded-xs border-border border-1">
-        <GripVertical class="size-3 text-secondary" />
+        <GripVertical class="size-3 text-muted" />
       </div>
     </template>
   </SplitterResizeHandle>
