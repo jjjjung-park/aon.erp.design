@@ -9,15 +9,15 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-neutral shadow-xs hover:bg-[#0069DA] active:bg-[#005ABB]",
+          "bg-primary text-neutral shadow-xs hover:bg-[var(--color-blue-600)] active:bg-[var(--color-blue-700)]",
         destructive:
-          "bg-background text-danger border-danger border-1 shadow-xs hover:bg-[#FFEFEF] ",
+          "bg-background text-danger border-danger border-1 shadow-xs hover:bg-danger-light ",
         outline:
-          "border border-border bg-background shadow-xs hover:bg-accent hover:text-primary hover:border-primary active:bg-[#EFF7FF] dark:bg-inputs/30 dark:border-border dark:hover:bg-inputs/50",
+          "border border-border bg-background shadow-xs hover:text-primary hover:border-primary active:bg-primary-light dark:bg-inputs/30 dark:border-border dark:hover:bg-inputs/50",
         secondary:
-          "bg-primary-light border-primary border text-primary shadow-xs hover:bg-[#C8E4FF] active:bg-[#9BCDFF]",
+          "bg-primary-light border-primary border text-primary shadow-xs hover:bg-[var(--color-blue-200)] active:bg-[var(--color-blue-300)]",
         ghost:
-          "text-default hover:bg-primary-light dark:hover:bg-accent/50 disabled:bg-background ",
+          "text-default hover:bg-surface-muted dark:hover:bg-accent/50 disabled:bg-background ",
         link: "[&:has(>span):not(:has(img,svg))]:max-w-full  underline underline-offset-3  !min-w-0 !p-0 hover:text-primary  disabled:bg-transparent disabled:!cursor-not-allowed",
       },
       size: {
