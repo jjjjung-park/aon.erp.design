@@ -314,7 +314,7 @@
           <div class="flex flex-col text-left gap-1">
             <UiInput placeholder="placeholder" id="비밀번호를 입력해 주세요"
                      aria-invalid="false"></UiInput>
-            <p class="text-xs text-secondary">대문자,숫자,특수문자 조합 6자리</p>
+            <p class="text-xs text-muted">대문자,숫자,특수문자 조합 6자리</p>
           </div>
         </td>
         <td class="" colspan="3">

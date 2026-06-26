@@ -4,7 +4,7 @@
     <header class="contents-header">
       <div class="contents-header__title">
         <h2>페이지 최소 스펙 - 테이블 데이터 적음</h2>
-        <p class="text-secondary">타이틀+버튼+탭+검색+테이블 조합 (페이지네이션 없음)</p>
+        <p class="text-muted">타이틀+버튼+탭+검색+테이블 조합 (페이지네이션 없음)</p>
       </div>
       <div class="contents-header__button justify-self-end">
         <UiSheet>
@@ -70,7 +70,7 @@
                 <!--     text만 두줄 : div로 한번 더 감싸야 함    -->
                 <div class="flex flex-col ">
                   <p class="">테이블</p>
-                  <span class="text-xs text-secondary">sub text</span>
+                  <span class="text-xs text-muted">sub text</span>
                 </div>
               </div>
 

@@ -97,8 +97,8 @@
             <template #body>
               <div class="grid gap-4 ">
                 <dl>
-                  <dt class="text-secondary caption__bold">고정 항목</dt>
-                  <dd class="rounded-sm px-padding-lg py-padding-6 text-secondary">고정된 항목이 없습니다.</dd>
+                  <dt class="text-muted caption__bold">고정 항목</dt>
+                  <dd class="rounded-sm px-padding-lg py-padding-6 text-muted">고정된 항목이 없습니다.</dd>
                 </dl>
               </div>
             </template>
@@ -138,7 +138,7 @@
             <div class="flex flex-col gap-2">
               <div>
                 <p class="font-bold mb-1">조회</p>
-                <span class="caption text-secondary">미작성된 케어라벨 항목만 다운로드를 원하시면 <strong>미작성 항목</strong>을 선택 후 양식 다운로드 버튼을 클릭해주세요.</span>
+                <span class="caption text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 <strong>미작성 항목</strong>을 선택 후 양식 다운로드 버튼을 클릭해주세요.</span>
               </div>
               <div class="flex flex-col gap-3 p-4 bg-light">
                 <div class="flex  gap-2  [&>*]:w-1/2">
@@ -159,13 +159,13 @@
           <!--    필터가 없이 다운로드 버튼만 있을때    -->
           <template #file-action>
             <div class="flex items-center justify-between gap-6 py-4">
-              <p class="caption !leading-normal text-secondary">미작성된 케어라벨 항목만 다운로드를 원하시면 미작성 항목을 선택 후 양식 다운로드 버튼을 클릭해주세요.</p>
+              <p class="caption !leading-normal text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 미작성 항목을 선택 후 양식 다운로드 버튼을 클릭해주세요.</p>
               <UiButton variant="outline" size="sm" class="ml-auto"><LucideDownload/>양식 다운로드</UiButton>
             </div>
             <UiSeparator orientation="horizontal" class="!h-2 bg-light -mx-6 !w-auto"/>
           </template>
           <template #upload-message>
-            <div class="text-secondary caption text-center px-6 !leading-normal">
+            <div class="text-muted caption text-center px-6 !leading-normal">
               <p class="mb-4"> 양식 다운로드를 통해 내용을 작성 후<br/>
                 양식 파일을 끌어올리거나, 클릭해서 추가해 주세요.</p>
               <p> 최대 첨부 파일 : N개 이하</p>
@@ -366,7 +366,7 @@
                       </p>
                       <div class="flex flex-col justify-center  ">
                         <p class="">테이블</p>
-                        <span class="text-xs text-secondary">sub text</span>
+                        <span class="text-xs text-muted">sub text</span>
                       </div>
                     </div>
                   </div>
@@ -439,7 +439,7 @@
                       </p>
                       <div class="flex flex-col justify-center  ">
                         <p class="">테이블</p>
-                        <span class="text-xs text-secondary">sub text</span>
+                        <span class="text-xs text-muted">sub text</span>
                       </div>
                     </div>
                   </div>
@@ -512,7 +512,7 @@
                       </p>
                       <div class="flex flex-col justify-center  ">
                         <p class="">테이블</p>
-                        <span class="text-xs text-secondary">sub text</span>
+                        <span class="text-xs text-muted">sub text</span>
                       </div>
                     </div>
                   </div>

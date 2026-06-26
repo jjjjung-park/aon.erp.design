@@ -4,7 +4,7 @@
       <header class="contents-header">
         <div class="contents-header__title">
           <h2>페이지 최대 스펙 - 테이블 데이터 많음</h2>
-          <p class="text-secondary">타이틀+버튼+탭+검색+테이블 조합(페이지네이션 있음)</p>
+          <p class="text-muted">타이틀+버튼+탭+검색+테이블 조합(페이지네이션 있음)</p>
         </div>
         <div class="contents-header__button justify-self-end">
           <UiSheet>
