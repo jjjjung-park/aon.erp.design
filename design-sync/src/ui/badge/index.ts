@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority"
 export { default as Badge } from "./Badge.vue"
 
 export const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-full caption__bold whitespace-nowrap shrink-0 [&>svg]:size-4 gap-1 [&>svg]:pointer-events-none  aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow]",
+  "inline-flex items-center justify-center rounded-full caption__bold whitespace-nowrap shrink-0 [&>svg]:size-4 gap-1 [&>svg]:pointer-events-none  aria-invalid:ring-danger/20 dark:aria-invalid:ring-danger/40 aria-invalid:border-danger transition-[color,box-shadow]",
   {
     variants: {
       variant: {
@@ -14,10 +14,10 @@ export const badgeVariants = cva(
         secondary:
           "border border-primary bg-primary-light text-primary [a&]:hover:bg-secondary/90",
         destructive:
-         "bg-danger text-white [a&]:hover:bg-destructive/90 ",
+         "bg-danger text-neutral [a&]:hover:bg-danger/90 ",
         /*상태별*/
         info:
-          "bg-gray-200 text-muted border",
+          "bg-subtle text-muted border",
         outline:
           "border text-default border-border bg-background [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         process:
@@ -45,12 +45,12 @@ export const badgeVariants = cva(
       {
         variant: "count",
         tone: "default",
-        class: "bg-gray-200 text-muted"
+        class: "bg-subtle text-muted"
       },
       {
         variant: "count",
         tone: "important",
-        class: "bg-danger text-white"
+        class: "bg-danger text-neutral"
       }
     ],
     defaultVariants: {

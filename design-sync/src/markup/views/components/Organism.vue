@@ -17,7 +17,7 @@
         </UiButton>
         <SheetBase title="drawer title" description="drawer 타이틀이 있으면 이걸 사용" full-screen v-model:open="drawerOpen" :dimmed="true">
           <template #tab>
-            <nav class="border-b-1 border-border px-6 bg-white">
+            <nav class="border-b-1 border-border px-6 bg-background">
               <LineTabs :tab-list="tabList" class="data-[state=true]:after:bg-border"/>
             </nav>
           </template>
@@ -29,7 +29,7 @@
                   <FormItem label="label" v-for="i in 5"/>
                 </div>
               </div>
-              <nav class="border-b-1 border-border px-6 bg-white">
+              <nav class="border-b-1 border-border px-6 bg-background">
                 <LineTabs :tab-list="tabList"/>
               </nav>
               <div class="view-list">
@@ -97,8 +97,8 @@
             <template #body>
               <div class="grid gap-4 ">
                 <dl>
-                  <dt class="text-secondary caption__bold">고정 항목</dt>
-                  <dd class="rounded-sm px-padding-lg py-padding-6 text-secondary">고정된 항목이 없습니다.</dd>
+                  <dt class="text-muted caption__bold">고정 항목</dt>
+                  <dd class="rounded-sm px-padding-lg py-padding-6 text-muted">고정된 항목이 없습니다.</dd>
                 </dl>
               </div>
             </template>
@@ -138,7 +138,7 @@
             <div class="flex flex-col gap-2">
               <div>
                 <p class="font-bold mb-1">조회</p>
-                <span class="caption text-secondary">미작성된 케어라벨 항목만 다운로드를 원하시면 <strong>미작성 항목</strong>을 선택 후 양식 다운로드 버튼을 클릭해주세요.</span>
+                <span class="caption text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 <strong>미작성 항목</strong>을 선택 후 양식 다운로드 버튼을 클릭해주세요.</span>
               </div>
               <div class="flex flex-col gap-3 p-4 bg-light">
                 <div class="flex  gap-2  [&>*]:w-1/2">
@@ -159,13 +159,13 @@
           <!--    필터가 없이 다운로드 버튼만 있을때    -->
           <template #file-action>
             <div class="flex items-center justify-between gap-6 py-4">
-              <p class="caption !leading-normal text-secondary">미작성된 케어라벨 항목만 다운로드를 원하시면 미작성 항목을 선택 후 양식 다운로드 버튼을 클릭해주세요.</p>
+              <p class="caption !leading-normal text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 미작성 항목을 선택 후 양식 다운로드 버튼을 클릭해주세요.</p>
               <UiButton variant="outline" size="sm" class="ml-auto"><LucideDownload/>양식 다운로드</UiButton>
             </div>
             <UiSeparator orientation="horizontal" class="!h-2 bg-light -mx-6 !w-auto"/>
           </template>
           <template #upload-message>
-            <div class="text-secondary caption text-center px-6 !leading-normal">
+            <div class="text-muted caption text-center px-6 !leading-normal">
               <p class="mb-4"> 양식 다운로드를 통해 내용을 작성 후<br/>
                 양식 파일을 끌어올리거나, 클릭해서 추가해 주세요.</p>
               <p> 최대 첨부 파일 : N개 이하</p>
@@ -265,7 +265,7 @@
           <h2 class="">size-md</h2>
           <UiCard size="md" class="w-80 min-h-[64px]">
         <UiCardHeader class="flex items-center gap-2">
-          <div class="rounded-sm bg-gray-200 size-12"></div>
+          <div class="rounded-sm bg-subtle size-12"></div>
           <div class="flex flex-col gap-0">
             <p class="title__bold">메뉴 타이틀 영역</p>
             <p>서브 타이블 영역</p>
@@ -284,7 +284,7 @@
         </UiCardHeader>
         <UiCardFooter class="mt-2 justify-between items-start">
           <p>sample text</p>
-          <div class="rounded-full bg-gray-200 w-6 h-6"></div>
+          <div class="rounded-full bg-subtle w-6 h-6"></div>
         </UiCardFooter>
       </UiCard>
         </section>
@@ -366,7 +366,7 @@
                       </p>
                       <div class="flex flex-col justify-center  ">
                         <p class="">테이블</p>
-                        <span class="text-xs text-secondary">sub text</span>
+                        <span class="text-xs text-muted">sub text</span>
                       </div>
                     </div>
                   </div>
@@ -439,7 +439,7 @@
                       </p>
                       <div class="flex flex-col justify-center  ">
                         <p class="">테이블</p>
-                        <span class="text-xs text-secondary">sub text</span>
+                        <span class="text-xs text-muted">sub text</span>
                       </div>
                     </div>
                   </div>
@@ -512,7 +512,7 @@
                       </p>
                       <div class="flex flex-col justify-center  ">
                         <p class="">테이블</p>
-                        <span class="text-xs text-secondary">sub text</span>
+                        <span class="text-xs text-muted">sub text</span>
                       </div>
                     </div>
                   </div>
@@ -586,7 +586,7 @@
     <section>
       <h2>table select list</h2>
       <!--  modal 안에서 TableLayout 아래쪽에 위치   -->
-      <div class="sticky left-0 bottom-0 right-0 z-1  py-4 px-8 border-t-1 border-border bg-white flex-none max-h-30 overflow-y-auto">
+      <div class="sticky left-0 bottom-0 right-0 z-1  py-4 px-8 border-t-1 border-border bg-background flex-none max-h-30 overflow-y-auto">
         <section class="grid gap-3">
           <p>선택된 항목 <span class="font-bold">총 00건</span></p>
           <div class="flex flex-wrap gap-1">

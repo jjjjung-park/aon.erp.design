@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-2 justify-center w-full">
     <template v-for="(item, index) in total" :key="index">
-      <UiButton variant="ghost" size="icon-sm" class="w-2 h-2 bg-gray-300 data-[state=active]:bg-primary" />
+      <UiButton variant="ghost" size="icon-sm" class="w-2 h-2 bg-border data-[state=active]:bg-primary" />
     </template>
   </div>
 </template>
