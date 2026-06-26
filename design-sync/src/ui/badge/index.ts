@@ -17,7 +17,7 @@ export const badgeVariants = cva(
          "bg-danger text-white [a&]:hover:bg-destructive/90 ",
         /*상태별*/
         info:
-          "bg-gray-200 text-muted border",
+          "bg-subtle text-muted border",
         outline:
           "border text-default border-border bg-background [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         process:
@@ -45,7 +45,7 @@ export const badgeVariants = cva(
       {
         variant: "count",
         tone: "default",
-        class: "bg-gray-200 text-muted"
+        class: "bg-subtle text-muted"
       },
       {
         variant: "count",

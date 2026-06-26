@@ -265,7 +265,7 @@
           <h2 class="">size-md</h2>
           <UiCard size="md" class="w-80 min-h-[64px]">
         <UiCardHeader class="flex items-center gap-2">
-          <div class="rounded-sm bg-gray-200 size-12"></div>
+          <div class="rounded-sm bg-subtle size-12"></div>
           <div class="flex flex-col gap-0">
             <p class="title__bold">메뉴 타이틀 영역</p>
             <p>서브 타이블 영역</p>
@@ -284,7 +284,7 @@
         </UiCardHeader>
         <UiCardFooter class="mt-2 justify-between items-start">
           <p>sample text</p>
-          <div class="rounded-full bg-gray-200 w-6 h-6"></div>
+          <div class="rounded-full bg-subtle w-6 h-6"></div>
         </UiCardFooter>
       </UiCard>
         </section>
