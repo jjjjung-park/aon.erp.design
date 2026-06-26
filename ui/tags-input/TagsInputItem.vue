@@ -1,0 +1,20 @@
+<script setup lang="ts">
+import type { TagsInputItemProps } from "reka-ui"
+import type { HTMLAttributes } from "vue"
+
+import { reactiveOmit } from "@vueuse/core"
+import { TagsInputItem, useForwardProps } from "reka-ui"
+import { cn } from "@/lib/utils"
+
+const props = defineProps<TagsInputItemProps & { class?: HTMLAttributes["class"] }>()
+
+const delegatedProps = reactiveOmit(props, "class")
+
+const forwardedProps = useForwardProps(delegatedProps)
+</script>
+
+<template>
+  <TagsInputItem v-bind="forwardedProps" :class="cn('flex items-center rounded-full border-primary border-1 bg-primary-light h-6 data-[state=active]:border-primary text-primary px-padding-md gap-1', props.class)">
+    <slot />
+  </TagsInputItem>
+</template>
