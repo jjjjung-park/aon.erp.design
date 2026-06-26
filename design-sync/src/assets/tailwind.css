@@ -2,11 +2,25 @@
 @import 'tw-animate-css';
 
 @theme inline {
-  --font-sans: "Pretendard", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  /* font */
+  --font-sans: var(--font-family-base), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
   "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
+  --font-weight-bold: var(--font-weight-bold);
+
+  /* font-size */
+  --text-md: var(--font-size-md);
+  --text-lg: var(--font-size-lg);
+  --text-xl: var(--font-size-xl);
+
+  /* line-height (md 이상은 Figma title 기준 1.5, xs/sm은 body 상속 1.4) */
+  --text-md--line-height: 1.5;
+  --text-lg--line-height: 1.5;
+  --text-xl--line-height: 1.5;
+
+  /* color — semantic */
   --color-primary: var(--surface-brand);
-  --color-primary-foreground: var(--surface-neutral);
+
   --color-primary-light: var(--surface-brand-subtle);
 
   --color-danger: var(--surface-danger);
@@ -26,28 +40,14 @@
   --color-muted: var(--text-muted);
   --color-surface-muted: var(--surface-muted);
 
+  --color-neutral: var(--surface-neutral);
   --color-border: var(--border-default);
   --color-background: var(--surface-neutral);
 
-
-  --color-ring: var(--color-border-focus);
+  --color-ring: var(--border-brand);
   --color-ring-offset: var(--surface-neutral);
 
-
-  --spacing-padding-sm: var(--spacing-padding-xxs);
-  --spacing-padding-md: var(--spacing-padding-xs);
-  --spacing-padding-lg: var(--spacing-padding-sm);
-  --spacing-padding-xl: var(--unit-20);
-
-  --text-md: var(--font-size-md);
-  --text-lg: var(--font-size-lg);
-  --text-xl: var(--font-size-xl);
-
-  /* text-* 기본 줄간격 = Figma 텍스트 스타일(regular) 기준 */
-  --text-md--line-height: 1.5;
-  --text-lg--line-height: 1.5;
-  --text-xl--line-height: 1.5;
-
+  /* color — gray scale */
   --color-gray-100: var(--color-gray-100);
   --color-gray-200: var(--color-gray-200);
   --color-gray-300: var(--color-gray-300);
@@ -55,21 +55,20 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-900: var(--color-gray-900);
 
+  /* spacing */
+  --spacing-padding-sm: var(--spacing-padding-xxs);
+  --spacing-padding-md: var(--spacing-padding-xs);
+  --spacing-padding-lg: var(--spacing-padding-sm);
+  --spacing-padding-xl: var(--unit-20);
+
+  /* animation */
   @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--reka-accordion-content-height);
-    }
+    from { height: 0; }
+    to { height: var(--reka-accordion-content-height); }
   }
   @keyframes accordion-up {
-    from {
-      height: var(--reka-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
+    from { height: var(--reka-accordion-content-height); }
+    to { height: 0; }
   }
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -79,13 +78,6 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0 50%; }
   }
-
-}
-/* font-bold 유틸리티 확장 = 디자인 텍스트 스타일 body-bold (600 / 1.2), font-size는 제외 */
-@utility font-bold {
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
-  letter-spacing: normal;
 }
 
 .gradient-animate {
@@ -93,14 +85,14 @@
   background-size: 200% 200%;
   animation: gradient 10s ease infinite;
 }
-/* 전역 */
+
 @layer base {
   ::-webkit-scrollbar-thumb {
     background: var(--color-gray-300);
     border-radius: 9999px;
   }
 
-  /* 프로젝트 전체 기본 본문 = typo-body (14 / 400 / 1.4) */
+  /* typo-body: 14 / 400 / 1.4 */
   body {
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-regular);
@@ -108,14 +100,14 @@
     color: var(--text-default);
   }
 
-  /* h1: typo-h1-bold (24 / 600 / 1.5) */
+  /* typo-h1-bold: 24 / 600 / 1.5 */
   h1 {
     font-size: var(--font-size-xl);
     font-weight: var(--font-weight-bold);
     line-height: 1.5;
   }
 
-  /* h2: typo-h2-bold (20 / 600 / 1.5) */
+  /* typo-h2-bold: 20 / 600 / 1.5 */
   h2 {
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
@@ -125,5 +117,4 @@
   strong {
     font-weight: var(--font-weight-bold);
   }
-
 }
