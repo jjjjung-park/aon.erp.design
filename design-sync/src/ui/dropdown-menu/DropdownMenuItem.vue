@@ -24,7 +24,7 @@ const forwardedProps = useForwardProps(delegatedProps)
     :data-inset="inset ? '' : undefined"
     :data-variant="variant"
     v-bind="forwardedProps"
-    :class="cn('caption__bold focus:bg-primary-light focus:text-primary data-[variant=destructive]:text-destructive-foreground data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/40 data-[variant=destructive]:focus:text-destructive-foreground data-[variant=destructive]:*:[svg]:!text-destructive-foreground [&_svg:not([class*=\'text-\'])]:text-muted relative flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden hover:cursor-pointer select-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled-text data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4', props.class)"
+    :class="cn('caption__bold focus:bg-primary-light focus:text-primary data-[variant=destructive]:text-danger data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/40 data-[variant=destructive]:focus:text-danger data-[variant=destructive]:*:[svg]:!text-danger [&_svg:not([class*=\'text-\'])]:text-muted relative flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden hover:cursor-pointer select-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled-text data-[inset]:pl-8 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4', props.class)"
   >
     <slot />
   </DropdownMenuItem>

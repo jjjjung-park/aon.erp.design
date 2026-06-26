@@ -26,17 +26,17 @@ const forwardedProps = useForwardProps(delegatedProps)
       '[&[data-today]:not([data-selected])]:text-primary hover:bg-primary-light hover:text-primary',
      'focus-within:bg-primary-light focus-visible:bg-primary-light focus:bg-primary-light focus-within:text-primary focus-visible:text-primary focus:text-primary',
       //selected + focus
-      'data-[selection-start]:data-[selected]:focus-within:!border-gray-900/20 data-[selection-end]:data-[selected]:focus-within:!border-gray-900/20 ',
+      'data-[selection-start]:data-[selected]:focus-within:ring-2 data-[selection-start]:data-[selected]:focus-within:ring-ring/50 data-[selection-end]:data-[selected]:focus-within:ring-2 data-[selection-end]:data-[selected]:focus-within:ring-ring/50 ',
       // Selection Start
       'data-[selection-start]:bg-primary data-[selection-start]:!text-neutral data-[selection-start]:hover:bg-primary data-[selection-start]:hover:text-neutral data-[selection-start]:focus:bg-primary data-[selection-start]:focus:text-neutral',
       // Selection End
       'data-[selection-end]:bg-primary data-[selection-end]:text-neutral data-[selection-end]:hover:bg-primary data-[selection-end]:hover:text-neutral data-[selection-end]:focus:bg-primary data-[selection-end]:focus:text-neutral',
       // Outside months
-      'data-[outside-view]:text-muted-foreground',
+      'data-[outside-view]:text-muted',
       // Disabled
-      'data-[disabled]:text-muted-foreground data-[disabled]:opacity-50',
+      'data-[disabled]:text-muted data-[disabled]:opacity-50',
       // Unavailable
-      'data-[unavailable]:text-destructive-foreground data-[unavailable]:line-through',
+      'data-[unavailable]:text-danger data-[unavailable]:line-through',
       props.class,
     )"
     v-bind="forwardedProps"

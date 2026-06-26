@@ -24,7 +24,7 @@ const forwardedProps = useForwardProps(delegatedProps)
        'focus-within:bg-primary-light focus-visible:bg-primary-light focus:bg-primary-light focus-within:text-primary focus-visible:text-primary focus:text-primary',
       '[&[data-today]:not([data-selected])]:bg-background [&[data-today]:not([data-selected])]:text-primary hover:bg-primary-light hover:text-primary ',
       // Selected
-      'data-[selected]:bg-primary data-[selected]:text-neutral data-[selected]:focus:border-gray-900/20 data-[selected]:opacity-100 data-[selected]:hover:bg-primary data-[selected]:hover:text-neutral data-[selected]:focus:bg-primary data-[selected]:focus:text-neutral',
+      'data-[selected]:bg-primary data-[selected]:text-neutral data-[selected]:focus-visible:ring-2 data-[selected]:focus-visible:ring-ring/50 data-[selected]:opacity-100 data-[selected]:hover:bg-primary data-[selected]:hover:text-neutral data-[selected]:focus:bg-primary data-[selected]:focus:text-neutral',
       // Disabled
       'data-[disabled]:text-disabled-text data-[disabled]:opacity-50',
       // Unavailable
