@@ -11,7 +11,7 @@ const props = defineProps<{
   <td
     data-slot="table-cell"
     :class="cn(
-      'align-middle  [&>[role=checkbox]]:translate-y-[2px] h-12 relative text-sm border-t border-border bg-white [&>div.flex]:min-w-0 [&>div]:[&:has([role=checkbox])]:text-center focus-visible:outline-none',
+      'align-middle  [&>[role=checkbox]]:translate-y-[2px] h-12 relative text-sm border-t border-border bg-background [&>div.flex]:min-w-0 [&>div]:[&:has([role=checkbox])]:text-center focus-visible:outline-none',
       props.class)"
   >
     <slot />

@@ -17,7 +17,7 @@
         </UiButton>
         <SheetBase title="drawer title" description="drawer 타이틀이 있으면 이걸 사용" full-screen v-model:open="drawerOpen" :dimmed="true">
           <template #tab>
-            <nav class="border-b-1 border-border px-6 bg-white">
+            <nav class="border-b-1 border-border px-6 bg-background">
               <LineTabs :tab-list="tabList" class="data-[state=true]:after:bg-border"/>
             </nav>
           </template>
@@ -29,7 +29,7 @@
                   <FormItem label="label" v-for="i in 5"/>
                 </div>
               </div>
-              <nav class="border-b-1 border-border px-6 bg-white">
+              <nav class="border-b-1 border-border px-6 bg-background">
                 <LineTabs :tab-list="tabList"/>
               </nav>
               <div class="view-list">
@@ -586,7 +586,7 @@
     <section>
       <h2>table select list</h2>
       <!--  modal 안에서 TableLayout 아래쪽에 위치   -->
-      <div class="sticky left-0 bottom-0 right-0 z-1  py-4 px-8 border-t-1 border-border bg-white flex-none max-h-30 overflow-y-auto">
+      <div class="sticky left-0 bottom-0 right-0 z-1  py-4 px-8 border-t-1 border-border bg-background flex-none max-h-30 overflow-y-auto">
         <section class="grid gap-3">
           <p>선택된 항목 <span class="font-bold">총 00건</span></p>
           <div class="flex flex-wrap gap-1">

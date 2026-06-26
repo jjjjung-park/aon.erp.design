@@ -6,7 +6,7 @@
         <button
           v-for="item in screens"
           :key="item.name"
-          class="px-3 h-8 rounded-sm text-sm hover:bg-gray-100"
+          class="px-3 h-8 rounded-sm text-sm hover:bg-surface-muted"
           :class="current === item.name ? 'bg-primary-light text-primary font-bold' : ''"
           @click="current = item.name"
         >
