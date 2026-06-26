@@ -10,7 +10,7 @@ export const badgeVariants = cva(
       variant: {
         /*일반*/
         default:
-          "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          "bg-primary text-neutral [a&]:hover:bg-primary/90",
         secondary:
           "border border-primary bg-primary-light text-primary [a&]:hover:bg-secondary/90",
         destructive:

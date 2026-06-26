@@ -11,7 +11,7 @@ export { default as InputGroupText } from "./InputGroupText.vue"
 export { default as InputGroupTextarea } from "./InputGroupTextarea.vue"
 
 export const inputGroupAddonVariants = cva(
-  "text-muted flex h-auto cursor-text items-center justify-center text-sm font-medium select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:text-disabled-text",
+  "text-muted flex h-auto cursor-text items-center justify-center text-sm font-bold select-none [&>svg:not([class*='size-'])]:size-4 [&>kbd]:rounded-[calc(var(--radius)-5px)] group-data-[disabled=true]/input-group:text-disabled-text",
   {
     variants: {
       align: {

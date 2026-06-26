@@ -10,7 +10,7 @@ export const tagsVariants = cva(
         chip: 'rounded-full',
       },
       variant: {
-        default:   'bg-primary text-primary-foreground border-transparent data-[slot=tag]:bg-gray-900',
+        default:   'bg-primary text-neutral border-transparent data-[slot=tag]:bg-gray-900',
         secondary: 'bg-primary-light text-primary border-transparent',
         outline:   'bg-background border-border data-[slot=tag]:text-muted [&_[data-slot=close]]:text-muted [&_[data-slot=close]:hover]:text-default',
         info:      'bg-gray-200 border-transparent',

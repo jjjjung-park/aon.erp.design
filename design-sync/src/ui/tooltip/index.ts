@@ -9,7 +9,7 @@ export { default as TooltipTrigger } from "./TooltipTrigger.vue"
 
 export const tooltipContentVariants = cva(
   "group z-50 w-fit rounded-sm px-3 py-2 text-xs text-balance max-w-80 max-h-90 overflow-y-auto " +
-  " [&.sidebar-tooltip]:bg-primary [&.sidebar-tooltip]:text-primary-foreground [&.sidebar-tooltip]:border-0 [&.tooltip--dark]:bg-gray-900 [&.tooltip--dark]:text-white [&.tooltip--dark]:border-0 bg-background border-1 border-border text-default" , //variant 추가하고 지워야됨
+  " [&.sidebar-tooltip]:bg-primary [&.sidebar-tooltip]:text-neutral [&.sidebar-tooltip]:border-0 [&.tooltip--dark]:bg-gray-900 [&.tooltip--dark]:text-white [&.tooltip--dark]:border-0 bg-background border-1 border-border text-default" , //variant 추가하고 지워야됨
   {
     variants: {
       variant: {

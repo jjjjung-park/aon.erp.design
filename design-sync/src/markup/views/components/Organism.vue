@@ -701,7 +701,7 @@
               <div class="p-1">
                 <UiCard>
                   <UiCardContent class="flex aspect-square items-center justify-center p-6">
-                    <span class="text-4xl font-semibold">{{ index + 1 }}</span>
+                    <span class="text-xl font-bold">{{ index + 1 }}</span>
                   </UiCardContent>
                 </UiCard>
               </div>
@@ -721,7 +721,7 @@
               <div class="p-1" :class="index === selectedIndex ? '' : 'opacity-50'">
                 <UiCard>
                   <UiCardContent class="flex aspect-square items-center justify-center p-6">
-                    <span class="text-4xl font-semibold">{{ index + 1 }}</span>
+                    <span class="text-xl font-bold">{{ index + 1 }}</span>
                   </UiCardContent>
                 </UiCard>
               </div>
