@@ -10,7 +10,7 @@
             <!--     평소엔 안보이고 hover, 기본 설정된 브랜드일 때만 보이게 처리       -->
             <UiButton variant="ghost" :class="['hover:bg-transparent ml-auto  group-hover:inline-flex', item.value === settingBrand?'inline-flex':'hidden']" size="icon" @click.prevent.stop="defaultSet(item)">
               <!--     기본 설정되면 색상 변경       -->
-              <LucideStar :fill=" item.value === settingBrand?'#007BFFFF':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-gray-400'"/>
+              <LucideStar :fill="item.value === settingBrand?'var(--color-primary)':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-gray-400'"/>
             </UiButton>
           </div>
         </template>
@@ -18,12 +18,12 @@
 
       <div class="flex items-center gap-2">
         <div class="gap-2 flex items-center">
-          <UiButton class="text-secondary relative " variant="ghost" size="icon" @click="openAlert = true">
+          <UiButton class="text-muted relative " variant="ghost" size="icon" @click="openAlert = true">
             <LucideBell />
             <UiBadge variant="destructive" size="dot" class="absolute top-1 right-1" />
           </UiButton>
           <UiSeparator orientation="vertical" class="h-4"/>
-          <UiButton class="text-secondary relative " variant="ghost" size="icon">
+          <UiButton class="text-muted relative " variant="ghost" size="icon">
             <LucideSettings class=""/>
             <UiBadge variant="destructive" size="dot" class="bg-success absolute top-1 right-1" />
           </UiButton>
@@ -41,7 +41,7 @@
             </div>
             <div class="h-8 flex flex-col">
               <p class="caption__bold">홍길동님</p>
-              <span class="caption text-secondary">안녕하시와요</span>
+              <span class="caption text-muted">안녕하시와요</span>
             </div>
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent class="">

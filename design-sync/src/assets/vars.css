@@ -34,6 +34,16 @@
   --color-orange-50: #FFF6E8;
   --color-orange-500: #F36D00;
 
+  /* font */
+  --font-family-base: Pretendard;
+  --font-size-xl: 24px;
+  --font-size-lg: 20px;
+  --font-size-md: 16px;
+  --font-size-sm: 14px;
+  --font-size-xs: 12px;
+  --font-weight-bold: 600;
+  --font-weight-regular: 400;
+
   /* unit */
   --unit-0: 0px;
   --unit-1: 1px;
@@ -47,16 +57,6 @@
   --unit-32: 32px;
   --unit-40: 40px;
   --unit-64: 64px;
-
-  /* font (퍼블 자체 관리) */
-  --font-size-xl: 24px;
-  --font-size-lg: 20px;
-  --font-size-md: 16px;
-  --font-size-sm: 14px;
-  --font-size-xs: 12px;
-  --font-family-pretendard: Pretendard;
-  --font-weight-bold: 600;
-  --font-weight-regular: 400;
 
 
   /* ===========================
@@ -100,11 +100,11 @@
   --icon-default: var(--text-default);
   --icon-neutral: var(--text-neutral);
   --icon-brand: var(--text-brand);
+  --icon-muted: var(--text-muted);
   --icon-disabled: var(--text-disabled);
   --icon-danger: var(--text-danger);
   --icon-success: var(--text-success);
   --icon-warning: var(--text-warning);
-  --icon-muted: var(--text-muted);
 
   /* size */
   --size-xxs: var(--unit-12);
@@ -142,17 +142,5 @@
   --shape-stroke-sm: 1.6px;
   --shape-stroke-md: var(--unit-2);
 
-
-  /* ===========================
-     PUBLISHER-ONLY
-     =========================== */
-
-  /* 퍼블 자체 토큰 */
-  --color-border-focus: var(--color-blue-500);
-
-  /* 컴포넌트 min-width (Figma 미정의, 코드에서 사용 중) */
-  --size-width-min-sm: 40px;
-  --size-width-min-md: 80px;
-  --size-width-min-lg: 104px;
 
 }

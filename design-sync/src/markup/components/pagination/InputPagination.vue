@@ -3,7 +3,7 @@
     <UiButton variant="ghost" size="icon">
       <LucideChevronLeftIcon/>
     </UiButton>
-    <div class="flex  items-center gap-2 text-secondary text-sm">
+    <div class="flex  items-center gap-2 text-muted text-sm">
       <UiInput class="w-[64px] text-center" v-model="modelValue"/>
       <span class="text-disabled-text">/</span>
       {{ total }}

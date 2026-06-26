@@ -69,7 +69,7 @@ export const Default: Story = {
         <p v-if="args.dnd" class="text-xs text-muted mb-2">{{ args.dndState === '기본' ? '기본 상태' : 'item--' + args.dndState }}</p>
         <ul class="w-[360px]">
           <li class="list-block-item" :class="{ active: args.active }">
-            <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-secondary"><LucideEqual /></UiButton>
+            <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
             <LucidePin v-if="args.icon" class="size-4 shrink-0" />
             <p class="list-block-item__label">{{ args.label }}</p>
             <div v-if="args.editButton" class="list-block-item__edit ml-auto gap-1">
@@ -78,7 +78,7 @@ export const Default: Story = {
             </div>
           </li>
           <li class="list-block-item" :class="args.dnd && args.dndState !== '기본' ? 'item--' + args.dndState : ''">
-            <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-secondary"><LucideEqual /></UiButton>
+            <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
             <LucidePin v-if="args.icon" class="size-4 shrink-0" />
             <p class="list-block-item__label">{{ args.label }}</p>
             <div v-if="args.editButton" class="list-block-item__edit ml-auto gap-1">
@@ -97,7 +97,7 @@ export const Default: Story = {
             <UiCollapsibleContent class="flex flex-col gap-2">
               <UiCollapsible class="flex flex-col gap-1">
                 <div class="list-block-item" :class="{ active: args.active }">
-                  <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-secondary"><LucideEqual /></UiButton>
+                  <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
                   <div class="list-block-item__collapse-label">
                     <UiCollapsibleTrigger class="size-3 justify-center" />
                     <p class="list-block-item__label">자식 있는 항목</p>
@@ -111,7 +111,7 @@ export const Default: Story = {
                 <UiCollapsibleContent class="flex flex-col gap-1">
                   <UiCollapsible class="flex flex-col gap-1">
                     <div class="list-block-item" v-for="n in 3" :key="n">
-                      <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-secondary"><LucideEqual /></UiButton>
+                      <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
                       <div class="list-block-item__collapse-label pl-5">
                         <p class="list-block-item__label">자식 항목 {{ n }}</p>
                       </div>
@@ -126,7 +126,7 @@ export const Default: Story = {
               </UiCollapsible>
               <UiCollapsible class="flex flex-col gap-1">
                 <div class="list-block-item" :class="args.dnd && args.dndState !== '기본' ? 'item--' + args.dndState : ''">
-                  <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-secondary"><LucideEqual /></UiButton>
+                  <UiButton v-if="args.dnd" variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
                   <div class="list-block-item__collapse-label pl-1">
                     <p class="list-block-item__label">자식 없는 항목</p>
                   </div>

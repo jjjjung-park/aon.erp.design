@@ -4,23 +4,17 @@
 
 @layer utilities {
   .title {
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-regular);
-    line-height: 1.5;
+    @apply text-md;
   }
   .title__bold {
-    font-size: var(--font-size-md);
-    font-weight: var(--font-weight-bold);
-    line-height: 1.5;
+    @apply text-md font-bold;
   }
 
   .caption {
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-regular);
+    @apply text-xs;
   }
   .caption__bold {
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
+    @apply text-xs font-bold;
   }
 
   :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
@@ -150,7 +144,7 @@
   }
 
   .table-secondary th {
-    @apply !h-8 bg-gray-100 !text-xs !border-gray-200 text-secondary;
+    @apply !h-8 bg-gray-100 !text-xs !border-gray-200 text-muted;
   }
 
   .table-secondary tbody tr:first-child td,
@@ -220,7 +214,7 @@
 
   /*table group header  bem 패턴 오타 : 언더바 -> 하이픈 두개, 메인 테이블은 bg 제거*/
   .table--group-header thead tr th {
-    @apply !border-b-0 !border-t-1 !border-gray-200 text-secondary relative;
+    @apply !border-b-0 !border-t-1 !border-gray-200 text-muted relative;
   }
 
   .table--group-header thead tr th:not(:last-child):before {
@@ -232,7 +226,7 @@
   }
 
   .table--group-header thead tr:last-child th {
-    @apply !border-b-1 !border-b-border text-default-text;
+    @apply !border-b-1 !border-b-border text-default;
   }
 
   /* table cross header */
@@ -247,7 +241,7 @@
     @apply content-[''] absolute right-0 top-0 bottom-0 w-[1px] bg-gray-200 z-5;
   }
   .table-secondary tr .table__row-header {
-    @apply !bg-gray-100 text-secondary;
+    @apply !bg-gray-100 text-muted;
   }
 
   /*pin 스타일링 css에서 처리*/
@@ -395,7 +389,7 @@
   }
 
   .select-content {
-    @apply scroll-py-1 empty:after:text-secondary empty:after:content-[attr(data-empty-text)] empty:p-1 empty:after:block;
+    @apply scroll-py-1 empty:after:text-muted empty:after:content-[attr(data-empty-text)] empty:p-1 empty:after:block;
   }
 
   .select-content__list-item {
@@ -411,7 +405,7 @@
   }
 
   .addr-list__type > div[data-slot='tag'] {
-    @apply min-w-12 !justify-center text-secondary;
+    @apply min-w-12 !justify-center text-muted;
   }
 
   .addr-list__item {
@@ -475,7 +469,7 @@
     @apply truncate max-w-full min-w-0;
   }
   .data-list__desc {
-    @apply text-xs text-secondary truncate block basis-1/2;
+    @apply text-xs text-muted truncate block basis-1/2;
   }
 
   /* icon-list */
@@ -490,10 +484,10 @@
   }
   /*읽지 않은 신규 알림 표시 - 알림 탭에서만 쓰임*/
   .icon-list__notification {
-    @apply absolute top-0 -left-1 text-xs text-secondary;
+    @apply absolute top-0 -left-1 text-xs text-muted;
   }
   .icon-list__icon.icon-list__icon--default {
-    @apply text-default-text border-1 border-border [&>svg]:size-4 [&>svg]:stroke-[2.5];
+    @apply text-default border-1 border-border [&>svg]:size-4 [&>svg]:stroke-[2.5];
   }
   .icon-list__icon.icon-list__icon--success {
     @apply text-success bg-success-light;
@@ -547,7 +541,7 @@
 
   /* 라우터 탭(페이지탭) 수정*/
   .page-tab--active {
-    @apply bg-white !h-[40px] border-b-white rounded-t-md border-x-1 border-t-1 relative !text-default-text [&_svg]:text-default-text;
+    @apply bg-white !h-[40px] border-b-white rounded-t-md border-x-1 border-t-1 relative !text-default [&_svg]:text-default;
   }
 
   .page-tab--active:before,

@@ -49,12 +49,12 @@ export const Default: Story = {
         <UiPopover v-else-if="args.pickerType === '년도'" v-model:open="yearOpen">
           <UiPopoverTrigger as-child>
             <div class="flex gap-2 justify-between items-center border border-border rounded-sm h-8 px-3 bg-background w-full cursor-pointer hover:border-primary transition-colors">
-              <p class="flex items-center gap-2" :class="!yearValue ? 'text-disabled-text' : 'text-default-text'">
-                <LucideCalendar class="size-4 text-secondary flex-none" />
+              <p class="flex items-center gap-2" :class="!yearValue ? 'text-disabled-text' : 'text-default'">
+                <LucideCalendar class="size-4 text-muted flex-none" />
                 {{ yearValue ? yearValue.year + '년' : '년도를 선택해 주세요' }}
               </p>
               <UiButton variant="ghost" class="hover:bg-transparent" size="icon-sm" @click.prevent.stop="yearValue = null">
-                <LucideX class="size-4" :class="!yearValue ? 'text-transparent' : 'text-secondary'" />
+                <LucideX class="size-4" :class="!yearValue ? 'text-transparent' : 'text-muted'" />
               </UiButton>
             </div>
           </UiPopoverTrigger>
@@ -67,8 +67,8 @@ export const Default: Story = {
         <UiPopover v-else-if="args.pickerType === '년도 범위'" v-model:open="yearRangeOpen">
           <UiPopoverTrigger as-child>
             <div class="flex gap-2 justify-between items-center border border-border rounded-sm h-8 px-3 bg-background w-full cursor-pointer hover:border-primary transition-colors">
-              <p class="flex items-center gap-2" :class="!yearRangeValue.start ? 'text-disabled-text' : 'text-default-text'">
-                <LucideCalendar class="size-4 text-secondary flex-none" />
+              <p class="flex items-center gap-2" :class="!yearRangeValue.start ? 'text-disabled-text' : 'text-default'">
+                <LucideCalendar class="size-4 text-muted flex-none" />
                 <template v-if="yearRangeValue.start">
                   {{ yearRangeValue.start.year }}년
                   <template v-if="yearRangeValue.end"> - {{ yearRangeValue.end.year }}년</template>
@@ -76,7 +76,7 @@ export const Default: Story = {
                 <template v-else>년도 범위를 선택해 주세요</template>
               </p>
               <UiButton variant="ghost" class="hover:bg-transparent" size="icon-sm" @click.prevent.stop="yearRangeValue = { start: null, end: null }">
-                <LucideX class="size-4" :class="!yearRangeValue.start ? 'text-transparent' : 'text-secondary'" />
+                <LucideX class="size-4" :class="!yearRangeValue.start ? 'text-transparent' : 'text-muted'" />
               </UiButton>
             </div>
           </UiPopoverTrigger>

@@ -73,7 +73,7 @@ export const WithAffix: Story = {
         </InputBase>
         <InputBase placeholder="사용자명">
           <template #prefix><LucideUser class="size-3 stroke-3" /></template>
-          <template #suffix><span class="text-xs text-secondary">@aon.com</span></template>
+          <template #suffix><span class="text-xs text-muted">@aon.com</span></template>
         </InputBase>
       </div>
     `,

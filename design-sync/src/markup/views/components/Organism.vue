@@ -230,7 +230,7 @@
     <section>
       <VirtualList :list-item="items" :scroll-height="'160px'" >
         <template v-slot="{item}">
-          <div class="data-list__item hover:bg-gray-100 cursor-pointer border-b-0" :class="item.active?'bg-primary-light':''">
+          <div class="data-list__item hover:bg-surface-muted cursor-pointer border-b-0" :class="item.active?'bg-primary-light':''">
             {{item.styleCode}}<br/>
             {{item.barcodeLength}}<br/>
           </div>
@@ -265,7 +265,7 @@
           <h2 class="">size-md</h2>
           <UiCard size="md" class="w-80 min-h-[64px]">
         <UiCardHeader class="flex items-center gap-2">
-          <div class="rounded-md bg-gray-200 size-12"></div>
+          <div class="rounded-sm bg-gray-200 size-12"></div>
           <div class="flex flex-col gap-0">
             <p class="title__bold">메뉴 타이틀 영역</p>
             <p>서브 타이블 영역</p>
@@ -701,7 +701,7 @@
               <div class="p-1">
                 <UiCard>
                   <UiCardContent class="flex aspect-square items-center justify-center p-6">
-                    <span class="text-4xl font-semibold">{{ index + 1 }}</span>
+                    <span class="text-xl font-bold">{{ index + 1 }}</span>
                   </UiCardContent>
                 </UiCard>
               </div>
@@ -721,7 +721,7 @@
               <div class="p-1" :class="index === selectedIndex ? '' : 'opacity-50'">
                 <UiCard>
                   <UiCardContent class="flex aspect-square items-center justify-center p-6">
-                    <span class="text-4xl font-semibold">{{ index + 1 }}</span>
+                    <span class="text-xl font-bold">{{ index + 1 }}</span>
                   </UiCardContent>
                 </UiCard>
               </div>

@@ -17,9 +17,9 @@ const delegatedProps = reactiveOmit(props, "class")
   <ComboboxGroup
     data-slot="combobox-group"
     v-bind="delegatedProps"
-    :class="cn('overflow-hidden p-1 text-foreground', props.class)"
+    :class="cn('overflow-hidden p-1 text-default', props.class)"
   >
-    <ComboboxLabel v-if="heading" class="p-2 h-8 text-xs font-medium text-disabled">
+    <ComboboxLabel v-if="heading" class="p-2 h-8 text-xs font-bold text-disabled">
       {{ heading }}
     </ComboboxLabel>
     <slot />

@@ -4,7 +4,7 @@
     <div class="table-layout__top grid grid-cols-2 items-center  ">
       <template v-if="!$slots['data-action']">
         <div class="table-layout__data-action flex gap-3 items-center">
-          <p class="text-sm text-secondary font-bold ">총 245건</p>
+          <p class="text-sm text-muted font-bold ">총 245건</p>
         </div>
       </template>
       <template v-else>
@@ -15,7 +15,7 @@
           <template v-if="filter">
             <InputBase class="h-6 gap-2 text-xs sm" v-if="showFilter">
               <template #prefix>
-                <LucideSearch class="size-3 stroke-3 text-default-text"/>
+                <LucideSearch class="size-3 stroke-3 text-default"/>
               </template>
             </InputBase>
             <UiButton variant="ghost" size="icon-sm" title="키워드 검색" @click="showFilter = !showFilter" :class="[{'bg-gray-300':showFilter}, 'relative']">
@@ -43,7 +43,7 @@
               </UiDropdownMenuTrigger>
               <UiDropdownMenuContent class="w-40 mr-2 [&>div]:justify-center">
                 <UiDropdownMenuItem @click="open('Setting')">테이블 설정</UiDropdownMenuItem>
-                <UiDropdownMenuItem  @click="open('Sort')" >테이블 정렬 <UiBadge variant="info" class="size-4 text-secondary">30</UiBadge></UiDropdownMenuItem>
+                <UiDropdownMenuItem  @click="open('Sort')" >테이블 정렬 <UiBadge variant="info" class="size-4 text-muted">30</UiBadge></UiDropdownMenuItem>
                 <UiDropdownMenuItem >데이터 넓이 초기화</UiDropdownMenuItem>
               </UiDropdownMenuContent>
             </UiDropdownMenu>

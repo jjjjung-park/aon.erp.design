@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-background text-default-text">
+  <div class="min-h-screen flex flex-col bg-background text-default">
     <header class="flex items-center gap-2 border-b border-border px-4 h-12 shrink-0">
       <span class="title__bold mr-2">마크업 화면 미리보기</span>
       <nav class="flex items-center gap-1">

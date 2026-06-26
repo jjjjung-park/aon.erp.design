@@ -106,6 +106,13 @@ hotfix/dev_v0.0.2
 | `plugin/` | SheetToComponent (Figma 플러그인) | `plugin/dev_v0.0.2` |
 | `storybook/` | design-sync (Storybook) | `storybook/dev_v1.0.1` |
 | `hotfix/` | 긴급 버그 수정 (프로젝트 무관) | `hotfix/dev_v0.0.2` |
+| `token_` | design-sync 디자인 토큰 작업 | `token_v0.0.3` |
+
+### 🎨 토큰 작업 시작 규칙 (중요)
+디자인 토큰 작업(`design-sync/token-sync/tokens/*.json` 수정)을 **새로 시작할 때는 반드시 먼저 `/token-branch` 를 실행**해, 최신 `main` 기준의 토큰 전용 브랜치(`token_v0.0.x`)를 만든 뒤 작업한다.
+- 옛 브랜치 끝에 이어서 만들지 말 것 — 과거 "25 commits behind" 사고의 원인이었다.
+- 토큰 전용 브랜치(`token_v0.0.*`)가 **아닌** 곳에서 토큰 JSON을 수정하려 하면 가드 훅(`.claude/hooks/token-branch-guard.sh`)이 자동으로 막고 `/token-branch` 실행을 안내한다.
+- 작업 도중에는 다시 실행할 필요 없다 — **시작할 때 한 번**이면 충분.
 
 ### 현재 브랜치 현황
 

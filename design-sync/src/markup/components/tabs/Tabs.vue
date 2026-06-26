@@ -8,7 +8,7 @@
               //disabled
               'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text',
               //active
-              'data-[state=true]:bg-primary data-[state=true]:text-primary-foreground data-[state=true]:border-primary',
+              'data-[state=true]:bg-primary data-[state=true]:text-neutral data-[state=true]:border-primary',
               props.class
              )">
         <span class="truncate max-w-[140px]">{{ tab.label + index }}</span>

@@ -56,7 +56,7 @@ export const Default: Story = {
             </div>
             <div class="icon-list__body">
               <p>알림에 대한 내용이 나오는 영역</p>
-              <span class="text-secondary">26.03.16 11:13</span>
+              <span class="text-muted">26.03.16 11:13</span>
             </div>
             <div class="icon-list__button mt-2">
               <UiButton variant="link" size="sm" class="justify-start text-primary">

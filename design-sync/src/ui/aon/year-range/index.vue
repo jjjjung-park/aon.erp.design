@@ -74,11 +74,11 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
                     'data-[highlighted]:bg-primary-light [&[data-highlighted]:not([data-highlighted-end=true]):not([data-selected])]:rounded-none',
                     ' [&[data-today]:not([data-selected])]:text-primary hover:bg-primary-light hover:text-primary',
                     //selected + focus
-                    'data-[selection-start]:data-[selected]:focus-within:!border-gray-600/20 data-[selection-end]:data-[selected]:focus-within:!border-gray-600/20 ',
+                    'data-[selection-start]:data-[selected]:focus-within:!border-gray-900/20 data-[selection-end]:data-[selected]:focus-within:!border-gray-900/20 ',
                     // Selection Start
-                    'data-[selection-start]:bg-primary data-[selection-start]:text-primary-foreground data-[selection-start]:hover:bg-primary data-[selection-start]:hover:text-primary-foreground data-[selection-start]:focus:bg-primary data-[selection-start]:focus:text-primary-foreground',
+                    'data-[selection-start]:bg-primary data-[selection-start]:text-neutral data-[selection-start]:hover:bg-primary data-[selection-start]:hover:text-neutral data-[selection-start]:focus:bg-primary data-[selection-start]:focus:text-neutral',
                     // Selection End
-                    'data-[selection-end]:bg-primary data-[selection-end]:text-primary-foreground data-[selection-end]:hover:bg-primary data-[selection-end]:hover:text-primary-foreground data-[selection-end]:focus:bg-primary data-[selection-end]:focus:text-primary-foreground',
+                    'data-[selection-end]:bg-primary data-[selection-end]:text-neutral data-[selection-end]:hover:bg-primary data-[selection-end]:hover:text-neutral data-[selection-end]:focus:bg-primary data-[selection-end]:focus:text-neutral',
                     // Outside months
                     'data-[outside-view]:text-muted-foreground',
                     // Disabled
