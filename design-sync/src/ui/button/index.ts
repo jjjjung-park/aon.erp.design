@@ -6,7 +6,7 @@ export { default as Button } from "./Button.vue"
 export const buttonVariants = cva(
     "inline-flex align-middle items-center justify-center gap-1  whitespace-nowrap rounded-sm  font-bold transition-all cursor-pointer " +
     "disabled:pointer-events-none [&_svg]:pointer-events-none disabled:bg-disabled disabled:border-0 disabled:text-disabled-text [&_svg:not([class*='size-'])]:size-5 shrink-0 [&_svg]:shrink-0 outline-none " +
-    " aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive focus-visible:ring-ring/50 focus-visible:ring-[2px] ",
+    " aria-invalid:ring-danger/20 dark:aria-invalid:ring-danger/40 aria-invalid:border-danger focus-visible:ring-ring/50 focus-visible:ring-[2px] ",
     {
       variants: {
         variant: {
