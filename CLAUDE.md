@@ -108,12 +108,11 @@ hotfix/dev_v0.0.2
 | `hotfix/` | 긴급 버그 수정 (프로젝트 무관) | `hotfix/dev_v0.0.2` |
 | `token_` | design-sync 디자인 토큰 작업 | `token_v0.0.3` |
 
-### 🎨 토큰 작업 규칙 (중요)
-디자인 토큰 작업(`design-sync/token-sync/tokens/*.json` 수정)은 자유롭게 하고, **작업을 다 마친 뒤 `/token-branch` 를 한 번 실행**한다. 그러면 최신 `main` 기준의 새 브랜치(`token_v0.0.x`)에 변경을 담아 **푸시 + PR 생성**까지 자동으로 처리한다.
-- 분기는 항상 **최신 `origin/main` 기준** — 옛 브랜치 끝에 이어 만들지 말 것 (과거 "25 commits behind" 사고의 원인).
-- 작업물은 별도 worktree에서 다루어 원본 작업 폴더를 건드리지 않는다.
-- 세션 시작·토큰 파일 수정 시 자동 안내 훅(`.claude/hooks/`)이 `/token-branch` 사용을 상기시킨다.
-- `main` 직접 push·force-push 금지. main 반영은 PR로만.
+### 🎨 토큰 작업 시작 규칙 (중요)
+디자인 토큰 작업(`design-sync/token-sync/tokens/*.json` 수정)을 **새로 시작할 때는 반드시 먼저 `/token-branch` 를 실행**해, 최신 `main` 기준의 토큰 전용 브랜치(`token_v0.0.x`)를 만든 뒤 작업한다.
+- 옛 브랜치 끝에 이어서 만들지 말 것 — 과거 "25 commits behind" 사고의 원인이었다.
+- 토큰 전용 브랜치(`token_v0.0.*`)가 **아닌** 곳에서 토큰 JSON을 수정하려 하면 가드 훅(`.claude/hooks/token-branch-guard.sh`)이 자동으로 막고 `/token-branch` 실행을 안내한다.
+- 작업 도중에는 다시 실행할 필요 없다 — **시작할 때 한 번**이면 충분.
 
 ### 현재 브랜치 현황
 
