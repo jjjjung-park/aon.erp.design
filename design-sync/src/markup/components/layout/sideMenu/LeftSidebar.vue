@@ -2,7 +2,7 @@
   <UiSidebar class="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row" v-bind="props">
     <UiSidebar collapsible="none" class="bg-primary w-(--sidebar-width-icon) group-data-[collapsible=icon]:w-0">
       <UiSidebarHeader class="p-4">
-        <div class="flex items-center justify-center rounded-sm bg-white text-primary size-8">
+        <div class="flex items-center justify-center rounded-sm bg-background text-primary size-8">
           <img src="@/assets/images/logo.svg" alt="logo" class="">
         </div>
 
@@ -16,7 +16,7 @@
 
     <!--  펼침 메뉴  -->
     <UiSidebar collapsible="none" class="hidden flex-1 md:flex group-data-[collapsible=icon]:hidden border-border border-r gap-3">
-      <UiSidebarHeader class="items-center px-padding-lg py-0">
+      <UiSidebarHeader class="items-center px-padding-sm py-0">
         <UiSidebarMenuButton size="lg" class=" title__bold text-default p-0 h-16">
           AON ERP System
         </UiSidebarMenuButton>

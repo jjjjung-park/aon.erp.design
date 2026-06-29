@@ -94,7 +94,7 @@
   }
 
   td > div {
-    @apply flex items-center h-full truncate break-words px-padding-md;
+    @apply flex items-center h-full truncate break-words px-padding-xs;
   }
 
   /*th는 기본 center 정렬*/
@@ -275,7 +275,7 @@
 
   /*toast custom*/
   li[data-sonner-toast][data-styled='true'] {
-    @apply !p-padding-lg  !text-sm;
+    @apply !p-padding-sm  !text-sm;
   }
 
   [data-sonner-toast][data-styled='true'] [data-description] {
@@ -284,7 +284,7 @@
 
   /*박스 형태 리스트 + dnd + collapsible 스타일*/
   .list-block-item {
-    @apply flex items-center gap-1 h-10 rounded-sm px-padding-md truncate;
+    @apply flex items-center gap-1 h-10 rounded-sm px-padding-xs truncate;
   }
   .list-block-item.active {
     @apply bg-primary-light [&_p]:text-primary font-bold;

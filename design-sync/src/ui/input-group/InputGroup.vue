@@ -12,7 +12,7 @@ const props = defineProps<{
     data-slot="input-group"
     role="group"
     :class="cn(
-      'group/input-group border-border dark:bg-inputs/30 relative flex w-full items-center rounded-sm border transition-[color,box-shadow] outline-none pr-padding-md pl-2 bg-background',
+      'group/input-group border-border dark:bg-inputs/30 relative flex w-full items-center rounded-sm border transition-[color,box-shadow] outline-none pr-padding-xs pl-2 bg-background',
       'h-8 min-w-0 has-[>textarea]:h-auto',
 
       // Variants based on alignment.

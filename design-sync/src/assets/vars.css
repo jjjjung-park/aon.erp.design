@@ -57,6 +57,9 @@
   --unit-32: 32px;
   --unit-40: 40px;
   --unit-64: 64px;
+  --unit-80: 80px;
+  --unit-104: 104px;
+  --unit-128: 128px;
 
 
   /* ===========================
@@ -114,12 +117,12 @@
   --size-lg: var(--unit-40);
 
   /* spacing / padding */
-  --spacing-padding-xxs: var(--unit-4);
-  --spacing-padding-xs: var(--unit-8);
-  --spacing-padding-sm: var(--unit-12);
-  --spacing-padding-lg: var(--unit-16);
-  --spacing-padding-xl: var(--unit-24);
-  --spacing-padding-xxl: var(--unit-32);
+  --padding-xxs: var(--unit-4);
+  --padding-xs: var(--unit-8);
+  --padding-sm: var(--unit-12);
+  --padding-lg: var(--unit-20);
+  --padding-xl: var(--unit-24);
+  --padding-xxl: var(--unit-32);
 
   /* spacing / gap */
   --spacing-gap-xs: var(--unit-4);

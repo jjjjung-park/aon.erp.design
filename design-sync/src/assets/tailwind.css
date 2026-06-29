@@ -56,10 +56,12 @@
   --color-gray-900: var(--color-gray-900);
 
   /* spacing */
-  --spacing-padding-sm: var(--spacing-padding-xxs);
-  --spacing-padding-md: var(--spacing-padding-xs);
-  --spacing-padding-lg: var(--spacing-padding-sm);
-  --spacing-padding-xl: var(--unit-20);
+  --spacing-padding-xxs: var(--padding-xxs);
+  --spacing-padding-xs: var(--padding-xs);
+  --spacing-padding-sm: var(--padding-sm);
+  --spacing-padding-lg: var(--padding-lg);
+  --spacing-padding-xl: var(--padding-xl);
+  --spacing-padding-xxl: var(--padding-xxl);
 
   /* animation */
   @keyframes accordion-down {

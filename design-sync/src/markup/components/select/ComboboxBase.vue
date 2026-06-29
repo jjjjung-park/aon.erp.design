@@ -2,7 +2,7 @@
   <UiCombobox by="label">
     <UiComboboxAnchor :class="cn('border border-border rounded-sm', props.class)">
       <UiComboboxTrigger class="w-full">
-        <div class="relative items-center flex h-8 gap-1 px-padding-md w-full">
+        <div class="relative items-center flex h-8 gap-1 px-padding-xs w-full">
           <slot name="prefix"/>
           <UiComboboxInput class="" :placeholder="placeholder" :disabled="props.disabled"
                            v-model="modelValue"/>

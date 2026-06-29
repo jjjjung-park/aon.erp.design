@@ -3,7 +3,7 @@
     <!--  router tab 있는 경우 top-21 / 없는 경우 top-10  // 전체화면 정책 변경 시 fullsize : left-5 top-5 w-auto  -->
     <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120 shadow-gray-400 bottom-0 ', props.class]" :style="props.style">
 
-      <UiSheetHeader class="px-padding-xl min-h-14 gap-0">
+      <UiSheetHeader class="px-padding-lg min-h-14 gap-0">
         <div class="flex justify-between items-center bg-background rounded-t-lg gap-0.5">
           <UiSheetTitle>
             <slot name="title">{{title}}</slot>

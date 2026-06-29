@@ -5,7 +5,7 @@
     :default-open="props.forceOpen"
   >
     <UiPopoverTrigger as-child :class="[{'border-danger':ariaInvalid}, props.class]" :aria-invalid="ariaInvalid">
-      <div class="flex gap-2 justify-between items-center border-1 border-border rounded-sm h-8 px-padding-md bg-background w-full" >
+      <div class="flex gap-2 justify-between items-center border-1 border-border rounded-sm h-8 px-padding-xs bg-background w-full" >
         <p :class="['flex items-center gap-2', {'text-disabled-text': !isValue}]"
         >
           <LucideCalendar class="size-4 text-muted flex-none"/>
