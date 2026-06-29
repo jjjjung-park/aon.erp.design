@@ -37,7 +37,9 @@
     "VariableID:189:9",
     "VariableID:189:11",
     "VariableID:189:17",
-    "VariableID:371:1280"
+    "VariableID:371:1280",
+    "VariableID:517:7056",
+    "VariableID:517:7054"
   ],
   "variables": [
     {
@@ -891,6 +893,46 @@
       "resolvedValuesByMode": {
         "24:0": {
           "resolvedValue": 80,
+          "alias": null
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:517:7056",
+      "name": "unit/104",
+      "description": "",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "24:0": 104
+      },
+      "resolvedValuesByMode": {
+        "24:0": {
+          "resolvedValue": 104,
+          "alias": null
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:517:7054",
+      "name": "unit/128",
+      "description": "",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "24:0": 128
+      },
+      "resolvedValuesByMode": {
+        "24:0": {
+          "resolvedValue": 128,
           "alias": null
         }
       },
