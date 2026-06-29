@@ -120,6 +120,7 @@
   --padding-xxs: var(--unit-4);
   --padding-xs: var(--unit-8);
   --padding-sm: var(--unit-12);
+  --padding-md: var(--unit-16);
   --padding-lg: var(--unit-20);
   --padding-xl: var(--unit-24);
   --padding-xxl: var(--unit-32);
