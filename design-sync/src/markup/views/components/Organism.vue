@@ -98,7 +98,7 @@
               <div class="grid gap-4 ">
                 <dl>
                   <dt class="text-muted caption__bold">고정 항목</dt>
-                  <dd class="rounded-sm px-padding-lg py-padding-6 text-muted">고정된 항목이 없습니다.</dd>
+                  <dd class="rounded-sm px-padding-sm py-padding-6 text-muted">고정된 항목이 없습니다.</dd>
                 </dl>
               </div>
             </template>

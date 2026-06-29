@@ -16,7 +16,7 @@
 
     <!--  펼침 메뉴  -->
     <UiSidebar collapsible="none" class="hidden flex-1 md:flex group-data-[collapsible=icon]:hidden border-border border-r gap-3">
-      <UiSidebarHeader class="items-center px-padding-lg py-0">
+      <UiSidebarHeader class="items-center px-padding-sm py-0">
         <UiSidebarMenuButton size="lg" class=" title__bold text-default p-0 h-16">
           AON ERP System
         </UiSidebarMenuButton>

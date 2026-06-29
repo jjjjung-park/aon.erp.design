@@ -37,7 +37,7 @@ export const badgeVariants = cva(
       },
       size:{
         "sm":'h-5 px-1 min-w-5',
-        "default":'h-6 min-w-6 px-padding-lg ',
+        "default":'h-6 min-w-6 px-padding-sm ',
         'dot':'w-1 h-1 !p-0'
       }
     },

@@ -2,7 +2,7 @@ import type { VariantProps } from "class-variance-authority"
 import { cva } from "class-variance-authority"
 
 export const tagsVariants = cva(
-  "flex flex-row items-center justify-between pl-padding-md pr-padding-md gap-1 caption__bold inline-flex rounded-sm h-6 min-w-0 max-w-full truncate border-1",
+  "flex flex-row items-center justify-between pl-padding-xs pr-padding-xs gap-1 caption__bold inline-flex rounded-sm h-6 min-w-0 max-w-full truncate border-1",
   {
     variants: {
       type: {

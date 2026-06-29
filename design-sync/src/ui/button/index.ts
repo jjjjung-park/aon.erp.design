@@ -23,9 +23,9 @@ export const buttonVariants = cva(
           link: "[&:has(>span):not(:has(img,svg))]:max-w-full  underline underline-offset-3  !min-w-0 !p-0 hover:text-primary  disabled:bg-transparent disabled:!cursor-not-allowed",
         },
         size: {
-          "sm": " min-w-[40px] h-6 text-xs [&_svg:not([class*='size-'])]:size-3 px-padding-md text-xs [&_svg]:stroke-[3]",
-          "default": "min-w-[64px] h-8 py-2 [&_svg:not([class*='size-'])]:size-4 px-padding-md text-sm [&_svg]:stroke-[2.5]",
-          "lg": "h-10 min-w-[104px] [&_svg:not([class*='size-'])]:size-4 px-padding-md text-md [&_svg]:stroke-[2.5]",
+          "sm": " min-w-[40px] h-6 text-xs [&_svg:not([class*='size-'])]:size-3 px-padding-xs text-xs [&_svg]:stroke-[3]",
+          "default": "min-w-[64px] h-8 py-2 [&_svg:not([class*='size-'])]:size-4 px-padding-xs text-sm [&_svg]:stroke-[2.5]",
+          "lg": "h-10 min-w-[104px] [&_svg:not([class*='size-'])]:size-4 px-padding-xs text-md [&_svg]:stroke-[2.5]",
           "icon-sm": "size-6 [&_svg:not([class*='size-'])]:size-3 [&_svg]:stroke-[3]",
           "icon": "size-8 [&_svg:not([class*='size-'])]:size-4 [&_svg]:stroke-[2.5]",
           "icon-lg": "size-10 [&_svg:not([class*='size-'])]:size-6 ",

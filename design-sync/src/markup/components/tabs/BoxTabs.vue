@@ -4,7 +4,7 @@
       <div :data-disabled="tab.disabled"
            :data-state="tab.active"
            :class="cn(
-       'flex items-center justify-center px-padding-lg min-w-20 h-8 text-sm bg-background text-muted border-1 border-border font-bold cursor-pointer border-r-0 last:border-r-1 ' +
+       'flex items-center justify-center px-padding-sm min-w-20 h-8 text-sm bg-background text-muted border-1 border-border font-bold cursor-pointer border-r-0 last:border-r-1 ' +
               //disabled
               'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text ' +
               //active
