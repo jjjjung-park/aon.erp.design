@@ -154,7 +154,7 @@
                 </div>
               </div>
             </div>
-            <UiSeparator orientation="horizontal" class="!h-2 bg-light -mx-6 !w-auto"/>
+            <UiSeparator orientation="horizontal" class="!h-2 bg-surface-muted -mx-6 !w-auto"/>
           </template>
           <!--    필터가 없이 다운로드 버튼만 있을때    -->
           <template #file-action>
@@ -162,7 +162,7 @@
               <p class="caption !leading-normal text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 미작성 항목을 선택 후 양식 다운로드 버튼을 클릭해주세요.</p>
               <UiButton variant="outline" size="sm" class="ml-auto"><LucideDownload/>양식 다운로드</UiButton>
             </div>
-            <UiSeparator orientation="horizontal" class="!h-2 bg-light -mx-6 !w-auto"/>
+            <UiSeparator orientation="horizontal" class="!h-2 bg-surface-muted -mx-6 !w-auto"/>
           </template>
           <template #upload-message>
             <div class="text-muted caption text-center px-6 !leading-normal">
