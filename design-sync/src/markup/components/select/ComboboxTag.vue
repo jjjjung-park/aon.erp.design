@@ -4,19 +4,19 @@
       v-model="selectValue"
       highlight-on-hover
       :multiple="multiple"
+      :disabled="props.disabled"
       :class="cn('w-full', props.class)"
       v-bind="$attrs"
-
     >
       <!--  w-full을 넣어야 root에서 받은 props width가 먹힘    -->
       <UiPopoverAnchor class="w-full">
-        <UiPopoverTrigger as-child class="" tabindex="0" @keydown.enter="open = true">
+        <UiPopoverTrigger as-child class="" tabindex="0" @keydown.enter="open = true" :disabled="props.disabled">
           <template v-if="multiple">
             <UiTagsInput v-slot="{ modelValue: tags }" v-model="selectValue" :aria-invalid="ariaInvalid" class="w-full min-h-8 gap-1 items-center">
               <template v-if="selectValue.length == 0">
                 <span class="!text-disabled-text">{{ placeholder }}</span>
                 <div class="ml-auto pl-2">
-                  <LucideChevronDown class="size-4 text-secondary"/>
+                  <LucideChevronDown class="size-4 text-muted"/>
                 </div>
               </template>
 
@@ -48,7 +48,7 @@
                 <div class="ml-auto flex items-center pl-2">
                   <!--   TODO svg 사이즈 버튼에서 관장하도록 변경     -->
                   <TagsInputClear v-if="selectValue.length > 0">
-                    <LucideX class="size-4 text-secondary"/>
+                    <LucideX class="size-4 text-muted"/>
                   </TagsInputClear>
                 </div>
 
@@ -58,14 +58,14 @@
           <template v-else>
             <UiTagsInput class="w-full min-h-8 gap-1 py-1 items-center" :aria-invalid="ariaInvalid">
               <!--      w-10/12 클래스 제거        -->
-              <span class="truncate flex-1" :class="[selectValueSingle?'text-default-text':'text-disabled-text']">{{ selectValueSingle || placeholder }}</span>
+              <span class="truncate flex-1" :class="[selectValueSingle?'text-default':'text-disabled-text']">{{ selectValueSingle || placeholder }}</span>
               <!--   clear 버튼     -->
               <div class="ml-auto flex items-center pl-2">
                 <TagsInputClear v-if="selectValue.length > 0">
-                  <LucideX class="size-4 text-secondary"/>
+                  <LucideX class="size-4 text-muted"/>
                 </TagsInputClear>
                 <template v-else>
-                  <LucideChevronDown class="size-4 text-secondary"/>
+                  <LucideChevronDown class="size-4 text-muted"/>
                 </template>
               </div>
             </UiTagsInput>
@@ -124,7 +124,7 @@ import {
   ListboxVirtualizer
 
 } from "reka-ui"
-import {computed, type HTMLAttributes, ref} from "vue"
+import {computed, type HTMLAttributes, ref, watch} from "vue"
 import {InputBase} from "@/markup/components/inputs";
 import Tags from "@/markup/components/tag/Tags.vue";
 import {cn} from "@/lib/utils.ts";
@@ -145,7 +145,7 @@ const props = withDefaults(
   }>(),
   {
     placeholder: '내용을 입력하세요',
-    disabled: true,
+    disabled: false,
     multiple:false,
     ariaInvalid:false,
     listItem: () => [],
@@ -156,7 +156,11 @@ const props = withDefaults(
 const searchValue = ref('')
 const selectValue = ref<string[]>([])
 const selectValueSingle = defineModel('selectValueSingle')
-const open = ref(false)
+const _open = ref(false)
+const open = computed({
+  get: () => _open.value,
+  set: (val) => { if (!props.disabled) _open.value = val },
+})
 const { contains } = useFilter({ sensitivity: 'base' })
 
 

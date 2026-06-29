@@ -1,7 +1,7 @@
 <template>
   <UiSidebarGroup class="flex-col p-0 ">
     <template v-for="item in items" :key="item.title">
-      <UiSidebarMenuButton  class="flex items-center relative justify-center size-16 hover:cursor-pointer hover:bg-transparent text-primary-foreground/40 hover:text-white active:bg-transparent active:text-white data-[active=true]:bg-transparent data-[active=true]:text-white"
+      <UiSidebarMenuButton  class="flex items-center relative justify-center size-16 hover:cursor-pointer hover:bg-transparent text-neutral/40 hover:text-white active:bg-transparent active:text-white data-[active=true]:bg-transparent data-[active=true]:text-white"
                             :tooltip="open?item.title:undefined"
                             :is-active="activeItem.title === item.title"
                            @click="clickAction(item)"

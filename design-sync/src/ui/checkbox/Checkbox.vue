@@ -19,7 +19,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     data-slot="checkbox"
     v-bind="forwarded"
     :class="
-      cn('peer border-border bg-background data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-input border shadow-xs transition-shadow outline-none ' +
+      cn('peer border-border bg-background data-[state=checked]:bg-primary data-[state=checked]:text-neutral data-[state=checked]:border-primary dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-sm border shadow-xs transition-shadow outline-none ' +
        'disabled:cursor-not-allowed disabled:bg-disabled data-[state=checked]:disabled:bg-disabled data-[state=checked]:disabled:border-border' ,
          props.class)"
   >

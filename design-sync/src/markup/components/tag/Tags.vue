@@ -1,6 +1,6 @@
 <template>
-  <div :data-slot="type"
-       :class="cn(tagsVariants({variant, type}),props.class)">
+  <div :data-slot="props.type ?? 'tag'"
+       :class="cn(tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag' }), props.class)">
     <slot>
       <p class="truncate">{{ title }}</p>
     </slot>
@@ -9,22 +9,16 @@
 </template>
 <script setup lang="ts">
 import { cn } from "@/lib/utils"
-import type {HTMLAttributes} from "vue";
+import type { HTMLAttributes } from "vue";
 import { tagsVariants } from "@/lib/cva/tag"
-import type { TagsVariants } from "@/lib/cva/tag"
-const props = withDefaults(defineProps<{
+
+type TagsProps = {
   class?: HTMLAttributes["class"]
-  variant?: TagsVariants["variant"]
-  type?: TagsVariants["type"]
-  title?:string
-  closeable?:boolean
-}>(), {
-  variant: "default",
-  type:'tag',
-  closeable:false,
-})
+  title?: string
+} & (
+  | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info';       closeable?: never }
+  | { type: 'chip'; variant?: 'secondary' | 'outline' | 'disabled'; closeable?: boolean }
+)
+
+const props = defineProps<TagsProps>()
 </script>
-
-<style scoped>
-
-</style>

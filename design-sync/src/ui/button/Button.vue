@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<Props>(), {
     :class="cn(buttonVariants({ variant, size }), props.class)"
   >
     <!--  아이콘 버튼이 아닐때만 span 필요 - 말줄임표용 -->
-    <template v-if="!['icon', 'icon-sm', 'icon-lg'].includes(size)">
+    <template v-if="!['icon', 'icon-sm', 'icon-lg', 'inline-icon', 'inline-icon-sm'].includes(size)">
       <span class="[&:has(img,svg)]:inline-flex [&:has(img,svg)]:gap-1 [&:has(img,svg)]:items-center [&:has(img,svg)]:min-w-0 ">
         <slot/>
       </span>

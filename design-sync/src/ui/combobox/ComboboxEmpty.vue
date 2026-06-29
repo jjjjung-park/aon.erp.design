@@ -14,7 +14,7 @@ const delegatedProps = reactiveOmit(props, "class")
   <ComboboxEmpty
     data-slot="combobox-empty"
     v-bind="delegatedProps"
-    :class="cn('py-6 text-center text-sm text-secondary', props.class)"
+    :class="cn('py-6 text-center text-sm text-muted', props.class)"
   >
     <slot />
   </ComboboxEmpty>

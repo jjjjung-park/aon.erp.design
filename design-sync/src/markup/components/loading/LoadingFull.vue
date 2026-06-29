@@ -2,7 +2,7 @@
   <div :class="cn('bg-background/70 fixed z-999 inset-0 flex flex-col gap-4 justify-center items-center', props.class) ">
     <UiSpinner class="size-14 text-primary"/>
     <slot name="loading-text">
-      <div class="font-bold text-secondary">로딩중입니다...</div>
+      <div class="font-bold text-muted">로딩중입니다...</div>
     </slot>
   </div>
 </template>

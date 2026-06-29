@@ -10,16 +10,16 @@ export const badgeVariants = cva(
       variant: {
         /*일반*/
         default:
-          "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+          "bg-primary text-neutral [a&]:hover:bg-primary/90",
         secondary:
           "border border-primary bg-primary-light text-primary [a&]:hover:bg-secondary/90",
         destructive:
          "bg-danger text-white [a&]:hover:bg-destructive/90 ",
         /*상태별*/
         info:
-          "bg-info-light border-info border",
+          "bg-gray-200 text-muted border",
         outline:
-          "border text-default-text border-border bg-background [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+          "border text-default border-border bg-background [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         process:
           "bg-primary-light text-primary  border  border-primary",
         accept:
@@ -45,7 +45,7 @@ export const badgeVariants = cva(
       {
         variant: "count",
         tone: "default",
-        class: "bg-gray-200 text-secondary"
+        class: "bg-gray-200 text-muted"
       },
       {
         variant: "count",

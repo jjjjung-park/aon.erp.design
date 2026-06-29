@@ -47,10 +47,13 @@ import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader,
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/ui/carousel'
 import { Progress } from '@/ui/progress'
 import { RadioGroup, RadioGroupItem } from '@/ui/radio-group'
+import { Switch } from '@/ui/switch'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/ui/resizable'
 import { Toaster } from '@/ui/sonner'
 import YearPicker from '@/ui/aon/year-picker/index.vue'
 import YearRange from '@/ui/aon/year-range/index.vue'
+import Tags from '@/markup/components/tag/Tags.vue'
+import FormItem from '@/markup/components/form/FormItem.vue'
 
 // ✅ Storybook Vue3의 setup() 호출 — 전역 컴포넌트 등록
 // export const setup = ... 방식은 Storybook 8+ 에서 작동 안 함
@@ -182,12 +185,15 @@ setup((app) => {
   app.component('UiProgress', Progress)
   app.component('UiRadioGroup', RadioGroup)
   app.component('UiRadioGroupItem', RadioGroupItem)
+  app.component('UiSwitch', Switch)
   app.component('UiResizableHandle', ResizableHandle)
   app.component('UiResizablePanel', ResizablePanel)
   app.component('UiResizablePanelGroup', ResizablePanelGroup)
   app.component('UiToaster', Toaster)
   app.component('UiDatePicker', YearPicker)
   app.component('UiYearRange', YearRange)
+  app.component('Tags', Tags)
+  app.component('FormItem', FormItem)
 
   // Lucide 아이콘 전체를 Lucide prefix로 전역 등록 (대문자로 시작하는 것만)
   Object.entries(LucideIcons).forEach(([name, component]) => {
@@ -210,11 +216,12 @@ const preview: Preview = {
     },
     options: {
       storySort: (a, b) => {
-        const categoryOrder = ['액션', '데이터 입력', '데이터 표시', '피드백', '오버레이', '내비게이션', '레이아웃']
+        const categoryOrder = ['기초', '액션', '데이터 입력', '데이터 표시', '피드백', '오버레이', '내비게이션', '레이아웃']
         const itemOrder = {
+          '기초':        ['Typography'],
           '액션':        ['Button', 'Dropdown'],
           '데이터 입력':  ['Input', 'Checkbox', 'RadioGroup', 'Select', 'DatePicker'],
-          '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'ListBlockItem', 'Table'],
+          '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'Table', '리스트'],
           '피드백':      ['Alert', 'Toast', 'Empty'],
           '오버레이':    ['Tooltip', 'Modal', 'Sheet'],
           '내비게이션':  ['Tabs', 'Pagination'],

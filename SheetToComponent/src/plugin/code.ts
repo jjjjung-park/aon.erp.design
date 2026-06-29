@@ -748,12 +748,24 @@ function safeComponentProperties(inst: InstanceNode): ComponentProperties | null
   }
 }
 
+/**
+ * COMPONENT 노드의 `componentPropertyDefinitions` 안전 접근.
+ * variant 컴포넌트(컴포넌트 셋 소속)에 접근하면 Figma가 throw하므로 try-catch로 래핑.
+ */
+function safeComponentPropertyDefinitions(comp: ComponentNode): ComponentPropertyDefinitions | null {
+  try {
+    return comp.componentPropertyDefinitions ?? null
+  } catch {
+    return null
+  }
+}
+
 /** label / value / description 중 TEXT로 시트 매핑 가능한 항목이 있는지 (깊이 무관 수집과 함께 사용) */
 function hasMappableTextSheetPropsInTarget(t: InstanceNode | ComponentNode): boolean {
   const props =
     t.type === 'INSTANCE'
       ? safeComponentProperties(t as InstanceNode)
-      : (t as ComponentNode).componentPropertyDefinitions
+      : safeComponentPropertyDefinitions(t as ComponentNode)
   if (!props) return false
   const cp = props as ComponentProperties
   for (const base of ['label', 'value', 'description'] as const) {
@@ -818,7 +830,7 @@ function extractTextPropNames(targets: (InstanceNode | ComponentNode)[]): { name
   const seenBase = new Set<string>()
 
   for (const t of targets) {
-    const props = t.type === 'INSTANCE' ? safeComponentProperties(t as InstanceNode) : t.componentPropertyDefinitions
+    const props = t.type === 'INSTANCE' ? safeComponentProperties(t as InstanceNode) : safeComponentPropertyDefinitions(t as ComponentNode)
     if (!props) continue
     for (const propName of Object.keys(props)) {
       const def: any = (props as any)[propName]

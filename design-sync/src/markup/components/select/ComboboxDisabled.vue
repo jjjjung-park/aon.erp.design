@@ -8,7 +8,7 @@
   >
     <template v-if="multiple">
       <UiTagsInput v-slot="{ modelValue: tags }" v-model="selectValue" :disabled="true"
-                   class="w-full min-h-8 gap-1 py-1 items-center bg-gray-100'" >
+                   class="w-full min-h-8 gap-1 py-1 items-center bg-surface-muted'" >
         <template v-if="selectValue.length == 0">
           <span class="text-disabled-text">{{ placeholder }}</span>
           <div class="ml-auto">
@@ -44,8 +44,8 @@
       </UiTagsInput>
     </template>
     <template v-else>
-      <UiTagsInput class="w-full min-h-8 gap-1 py-1 items-center" :class="readonly?'bg-gray-100':'bg-disabled'" :disabled="true" >
-        <span :class="readonly?'text-default-text':'text-disabled-text'">{{ placeholder }}</span>
+      <UiTagsInput class="w-full min-h-8 gap-1 py-1 items-center" :class="readonly?'bg-surface-muted':'bg-disabled'" :disabled="true" >
+        <span :class="readonly?'text-default':'text-disabled-text'">{{ placeholder }}</span>
         <!--   clear 버튼     -->
         <div class="ml-auto flex items-center pl-2">
           <TagsInputClear v-if="selectValue.length > 0">

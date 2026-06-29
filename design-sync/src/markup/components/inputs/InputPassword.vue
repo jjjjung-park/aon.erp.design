@@ -3,7 +3,7 @@
     <UiInputGroupInput :placeholder="placeholder" v-model="value" :disabled="props.disabled" :type="show?'text':'password'" :aria-invalid="props.ariaInvalid"/>
     <UiInputGroupAddon align="inline-end">
       <slot name="button">
-        <UiInputGroupButton size="icon-sm" variant="ghost" class=" rounded-full text-secondary hover:text-default-text hover:bg-transparent" @click="show = !show">
+        <UiInputGroupButton size="icon-sm" variant="ghost" class=" rounded-full text-muted hover:text-default hover:bg-transparent" @click="show = !show">
           <template v-if="show">
             <LucideEye/>
           </template>

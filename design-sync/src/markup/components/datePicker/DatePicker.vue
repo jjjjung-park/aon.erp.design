@@ -8,11 +8,11 @@
       <div class="flex gap-2 justify-between items-center border-1 border-border rounded-sm h-8 px-padding-md bg-background w-full" >
         <p :class="['flex items-center gap-2', {'text-disabled-text': !isValue}]"
         >
-          <LucideCalendar class="size-4 text-secondary flex-none"/>
+          <LucideCalendar class="size-4 text-muted flex-none"/>
           {{ value ?? props.placeholder }}
         </p>
         <UiButton variant="ghost" class="hover:bg-transparent" size="icon-sm" @click.prevent.stop="clear" :disabled="!isValue">
-          <LucideX class="size-4" :class="!isValue ? 'text-transparent':'text-secondary'"/>
+          <LucideX class="size-4" :class="!isValue ? 'text-transparent':'text-muted'"/>
         </UiButton>
       </div>
     </UiPopoverTrigger>
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import {parseDate} from '@internationalized/date'
 import {type DateValue} from 'reka-ui'
-import type {HTMLAttributes} from "vue";
+import type {HTMLAttributes} from "vue"
 
 const model = defineModel<string>({required: true})
 const props = withDefaults(

@@ -27,7 +27,7 @@ export default meta
 type Story = StoryObj<typeof LineTabs>
 
 export const Line: Story = {
-  name: 'LineTabs — 인터랙티브',
+  name: 'LineTabs — primary',
   render: (args) => ({
     components: { LineTabs },
     setup() {
@@ -39,7 +39,26 @@ export const Line: Story = {
     },
     template: `
       <div class="border-b border-border">
-        <LineTabs :tab-list="tabs" @change="onChange" />
+        <LineTabs :tab-list="tabs" type="primary" @change="onChange" />
+      </div>
+    `,
+  }),
+}
+
+export const LineDefault: Story = {
+  name: 'LineTabs — secondary',
+  render: (args) => ({
+    components: { LineTabs },
+    setup() {
+      const tabs = ref(args.tabList.map((t: any, i: number) => ({ ...t, active: i === 0 })))
+      const onChange = (val: string) => {
+        tabs.value = tabs.value.map((t: any) => ({ ...t, active: t.value === val }))
+      }
+      return { tabs, onChange }
+    },
+    template: `
+      <div class="border-b border-border">
+        <LineTabs :tab-list="tabs" type="secondary" @change="onChange" />
       </div>
     `,
   }),

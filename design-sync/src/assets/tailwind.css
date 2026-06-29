@@ -2,93 +2,73 @@
 @import 'tw-animate-css';
 
 @theme inline {
-  --font-sans: "Pretendard", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  /* font */
+  --font-sans: var(--font-family-base), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
   "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
-  --color-primary: var(--color-background-primary);
-  --color-primary-foreground: var(--color-text-inverse);
-  --color-primary-light: var(--color-background-inverse);
+  --font-weight-bold: var(--font-weight-bold);
 
-  --color-border: var(--color-border-default);
-  --color-background: var(--color-background-default);
-  --color-surface:var(--color-background-surface);
-  --color-subtle:var(--color-border-subtle);
-
-
-  --color-danger:var(--color-system-danger-deep);
-  --color-danger-light:var(--color-system-danger-bright);
-  --color-success:var(--color-system-success-deep);
-  --color-success-light:var(--color-system-success-bright);
-  --color-info:var(--color-system-info-deep);
-  --color-info-light:var(--color-system-info-bright);
-  --color-warning:var(--color-system-warning-deep);
-  --color-warning-light:var(--color-system-warning-bright);
-  --color-default:var(--color-text-default);
-  --color-default-light:var(--color-text-inverse);
-
-
-  --color-disabled:var(--color-background-disabled);
-  --color-disabled-text:var(--color-text-disabled);
-  --color-muted:var(--color-text-muted);
-  --color-default-text:var(--color-text-default);
-  --color-secondary:var(--color-text-secondary);
-
-  --radius-sm: var(--radius-sm);
-  --radius-lg: var(--radius-lg);
-  --radius-full: var(--radius-capsule);
-  --radius-button: var(--radius-button);
-  --radius-input: var(--radius-input);
-  --radius-panel: var(--radius-panel);
-  --radius-chip: var(--radius-chip);
-
-  --spacing-padding-sm:var(--spacing-sm);
-  --spacing-padding-md:var(--spacing-md);
-  --spacing-padding-lg:var(--spacing-lg);
-  --spacing-padding-xl:var(--spacing-xl);
-  --spaing-gap: var(--spacing-lg);
-
-  --text-xs: var(--font-size-xs);
-  --text-sm: var(--font-size-sm);
+  /* font-size */
   --text-md: var(--font-size-md);
   --text-lg: var(--font-size-lg);
   --text-xl: var(--font-size-xl);
 
-  --text-xs--line-height: var(--font-lineHeight-tighter);
-  --text-sm--line-height: var(--font-lineHeight-tight);
-  --text-md--line-height: var(--font-lineHeight-tight);
-  --text-lg--line-height: var(--font-lineHeight-normal);
+  /* line-height (md 이상은 Figma title 기준 1.5, xs/sm은 body 상속 1.4) */
+  --text-md--line-height: 1.5;
+  --text-lg--line-height: 1.5;
+  --text-xl--line-height: 1.5;
 
+  /* color — semantic */
+  --color-primary: var(--surface-brand);
 
+  --color-primary-light: var(--surface-brand-subtle);
 
-  --leading-tighter: var(--font-lineHeight-tighter);
-  --leading-tight: var(--font-lineHeight-tight);
-  --leading-normal: var(--font-lineHeight-normal);
+  --color-danger: var(--surface-danger);
+  --color-danger-light: var(--surface-danger-subtle);
+  --color-success: var(--surface-success);
+  --color-success-light: var(--surface-success-subtle);
+  --color-warning: var(--surface-warning);
+  --color-warning-light: var(--surface-warning-subtle);
 
-  --color-gray-100: var(--color-neutral-gray-100);
-  --color-gray-200: var(--color-neutral-gray-200);
-  --color-gray-300: var(--color-neutral-gray-300);
-  --color-gray-400: var(--color-neutral-gray-400);
-  --color-gray-500: var(--color-neutral-gray-500);
-  --color-gray-600: var(--color-neutral-gray-600);
+  --color-disabled: var(--surface-disabled);
+  --color-disabled-text: var(--text-disabled);
 
+  --color-subtle: var(--surface-disabled);
+  --color-subtle-text: var(--text-disabled);
 
+  --color-default: var(--color-gray-900);
+  --color-muted: var(--text-muted);
+  --color-surface-muted: var(--surface-muted);
 
+  --color-neutral: var(--surface-neutral);
+  --color-border: var(--border-default);
+  --color-background: var(--surface-neutral);
 
+  --color-ring: var(--border-brand);
+  --color-ring-offset: var(--surface-neutral);
+
+  /* color — gray scale */
+  --color-gray-100: var(--color-gray-100);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-300: var(--color-gray-300);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-500: var(--color-gray-500);
+  --color-gray-900: var(--color-gray-900);
+
+  /* spacing */
+  --spacing-padding-sm: var(--spacing-padding-xxs);
+  --spacing-padding-md: var(--spacing-padding-xs);
+  --spacing-padding-lg: var(--spacing-padding-sm);
+  --spacing-padding-xl: var(--unit-20);
+
+  /* animation */
   @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--reka-accordion-content-height);
-    }
+    from { height: 0; }
+    to { height: var(--reka-accordion-content-height); }
   }
   @keyframes accordion-up {
-    from {
-      height: var(--reka-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
+    from { height: var(--reka-accordion-content-height); }
+    to { height: 0; }
   }
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -98,50 +78,43 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0 50%; }
   }
-
-
 }
+
 .gradient-animate {
-  @apply bg-gradient-to-r to-blue-800 via-primary  from-cyan-100;
+  @apply bg-gradient-to-r to-blue-800 via-primary from-cyan-100;
   background-size: 200% 200%;
   animation: gradient 10s ease infinite;
 }
-/* 전역 */
+
 @layer base {
   ::-webkit-scrollbar-thumb {
     background: var(--color-gray-300);
     border-radius: 9999px;
   }
-  /*
 
-  html {
-    scrollbar-track-color: var(--color-gray-300) var(--color-gray-300);
-  }
-  */
-
+  /* typo-body: 14 / 400 / 1.4 */
   body {
-    font-size: var(--text-sm);
-    font-weight: var(--font-weight-normal);
-    line-height: var(--typography-body-regular-lineHeight);
-    color:var(--color-text-default);
-
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+    color: var(--text-default);
   }
 
+  /* typo-h1-bold: 24 / 600 / 1.5 */
   h1 {
-    font-size: var(--typography-h1-fontSize);
-    font-weight: var(--typography-h1-fontWeight);
-    line-height: var(--typography-h1-lineHeight);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.5;
   }
 
+  /* typo-h2-bold: 20 / 600 / 1.5 */
   h2 {
-    font-size: var(--typography-h2-fontSize);
-    font-weight: var(--typography-h2-fontWeight);
-    line-height: var(--typography-h2-lineHeight);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.5;
   }
 
-  strong{
+  strong {
     font-weight: var(--font-weight-bold);
   }
-
-
 }

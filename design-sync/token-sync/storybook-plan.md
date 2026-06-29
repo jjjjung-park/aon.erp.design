@@ -11,39 +11,50 @@
 
 ## 현재 상태
 
-경로: `markup/views/components/`
+실제 경로: `design-sync/src/markup/components/` (기존 문서의 `markup/views/components/`는 존재하지 않음)
 
-| 파일 | 내용 | 기획자용 여부 |
-|------|------|------------|
-| `Atomic.vue` | 개별 컴포넌트 나열 | ❌ 개발 참고용 |
-| `Molecule.vue` | 컴포넌트 조합 | ❌ 개발 참고용 |
-| `Organism.vue` | Sheet, Drawer 등 복합 컴포넌트 | ❌ 개발 참고용 |
-| `Skeleton.vue` | 로딩 상태 | ❌ 개발 참고용 |
-| `Structures.vue` | 테이블 최소 스펙 (페이지네이션 없음) | ✅ 근접 |
-| `Structures2.vue` | 테이블 최대 스펙 (탭+검색+페이지네이션) | ✅ 근접 |
-| `Table.vue` | 편집 가능 테이블 | ✅ 근접 |
-| `index.vue` | Structures만 보여줌 (진입점 역할 못 함) | ❌ 개선 필요 |
+폴더 단위로 마크업 컴포넌트가 정리되어 있음:
+
+| 폴더 | 주요 파일 | 기획자용 여부 |
+|------|----------|------------|
+| `inputs/` | InputBase, InputPassword, InputFile | ❌ 코어 컴포넌트 |
+| `select/` | SelectBase, ComboboxBase, ComboboxTag, ComboboxDisabled | ❌ 코어 컴포넌트 |
+| `form/` | FormItem | ❌ 코어 컴포넌트 |
+| `tag/` | Tags | ❌ 코어 컴포넌트 |
+| `tabs/` | Tabs, PageTabs, LineTabs, BoxTabs | 🟡 패턴 |
+| `table/` | TableLayout, Th, Td | ✅ 템플릿 근접 |
+| `pagination/` | TablePagination, InputPagination, DotPagination | 🟡 패턴 |
+| `modal/` | ModalBase, ConfirmModal, DeleteModal, tableLayout/* | ✅ 템플릿 근접 |
+| `sheet/` | SheetBase, PushAlert | ✅ 템플릿 근접 |
+| `popover/` | PopoverBase | 🟡 패턴 |
+| `datePicker/` | DatePicker, DateRange | 🟡 패턴 |
+| `loading/` | PageSkeleton, LoadingFull | ❌ 상태 표시 |
+| `empty/` | EmptyPage, EmptyData | ❌ 상태 표시 |
+| `layout/` | MarkupDefault, MarkupLogin, MarkupEmpty, Header, sideMenu/* | ✅ 템플릿 근접 |
+
+> 별도 진입점(`index.vue`)이나 기획자용 템플릿 카탈로그 페이지는 아직 없음.
+> Storybook 스토리는 `design-sync/src/stories/`에서 관리 (실프로젝트 동기화 금지 폴더).
 
 ---
 
 ## 해야 할 것
 
-### 1. index.vue → 템플릿 카탈로그 네비게이션으로 개선
-- 현재는 Structures.vue 하나만 렌더링
-- 전체 템플릿 목록을 카드/리스트 형태로 보여주는 진입 페이지로 변경
+### 1. 템플릿 카탈로그 진입점 만들기
+- 전체 템플릿 목록을 카드/리스트 형태로 보여주는 진입 페이지 신규 작성
 - 각 항목에 이름 + 한 줄 설명 + 미리보기 링크 제공
+- Storybook의 "템플릿" 레벨 스토리로 구성하는 방안 우선 검토
 
 ### 2. 추가가 필요한 템플릿
 
 **화면 구성 타입**
 - `Layout-A` : 1단 (전체 너비 콘텐츠)
-- `Layout-B` : 2단 좌우 (사이드바 + 콘텐츠)
+- `Layout-B` : 2단 좌우 (사이드바 + 콘텐츠) ← `layout/sideMenu/*` 활용
 - `Layout-C` : 리스트 + 상세 (마스터-디테일)
 
-**테이블 타입** (Structures.vue, Structures2.vue, Table.vue 기반으로 정리)
-- `Table-A` : 기본 테이블 (헤더 + 행, 페이지네이션 없음) ← Structures.vue
-- `Table-B` : 풀스펙 테이블 (탭 + 검색 + 페이지네이션) ← Structures2.vue
-- `Table-C` : 편집 가능 테이블 ← Table.vue
+**테이블 타입** (`table/`, `pagination/`, `tabs/` 조합으로 정리)
+- `Table-A` : 기본 테이블 (헤더 + 행, 페이지네이션 없음) ← `table/TableLayout.vue`
+- `Table-B` : 풀스펙 테이블 (탭 + 검색 + 페이지네이션) ← table + tabs + pagination 조합
+- `Table-C` : 편집 가능 테이블
 - `Table-D` : 그룹 헤더 테이블 (신규)
 - `Table-E` : 행 고정(pin) 테이블 (신규)
 
@@ -64,5 +75,9 @@
 
 ## 참고
 
-- Storybook 도입은 추후 검토. 현재는 기존 `markup/views/components/` 구조 그대로 활용.
-- 기획자가 외부에서 접근할 수 있도록 추후 GitHub Pages 또는 Vercel 배포 연동 필요.
+- Storybook(`@storybook/vue3-vite`)은 이미 도입됨. 스토리는 `design-sync/src/stories/`에서 관리.
+- 마크업 컴포넌트는 `design-sync/src/markup/components/` 구조를 그대로 활용.
+- 기획자용 템플릿은 Storybook "템플릿" 레벨 스토리로 분리해 공유 링크 제공 권장
+  (자세한 스토리 레벨 구분은 `meeting-design-system-refactoring.md` 6번 참고).
+- GitHub Pages 자동 배포 워크플로(`storybook-deploy.yml`)는 구성되어 있으나
+  `paths` 필터(vars.css/ui/markup)는 추가 필요.

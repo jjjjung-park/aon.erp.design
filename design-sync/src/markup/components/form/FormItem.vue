@@ -7,7 +7,7 @@
       <InputBase :aria-invalid="ariaInvalid" :placeholder="placeholder" :disabled="disabled" :readonly="readonly" v-model="modelValue" :type="type"/>
 
     </slot>
-    <span class="caption text-secondary" v-if="validateText">{{ validateText }}</span>
+    <span class="caption text-muted" v-if="validateText">{{ validateText }}</span>
   </div>
 
 </template>

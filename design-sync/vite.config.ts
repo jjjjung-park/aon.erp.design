@@ -59,6 +59,7 @@ export default defineConfig({
     // Vue Composition API 자동 임포트 (ref, computed, watch 등)
     AutoImport({
       imports: ['vue', 'vue-router', '@vueuse/core'],
+      dirs: ['src/composables'],
       dts: 'src/auto-imports.d.ts',
     }),
 

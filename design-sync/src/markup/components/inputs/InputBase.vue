@@ -9,8 +9,8 @@
     <UiInputGroupAddon align="inline-end" :class="size == 'sm' ? 'size-4':''" >
       <slot name="suffix">
         <UiInputGroupButton variant="ghost"  tabindex="-1"
-                            class=" rounded-full hover:text-default-text hover:bg-transparent"
-                            :class="[(modelValue && (!readonly && !disabled))?'text-secondary':'text-transparent hover:text-transparent hover:cursor-default focus:bg-transparent', size == 'sm'?'!size-4 !min-w-4':'']" @click="modelValue=''">
+                            class=" rounded-full hover:text-default hover:bg-transparent"
+                            :class="[(modelValue && (!readonly && !disabled))?'text-muted':'text-transparent hover:text-transparent hover:cursor-default focus:bg-transparent', size == 'sm'?'!size-4 !min-w-4':'']" @click="modelValue=''">
           <LucideX :class="size == 'sm' ? 'size-3':''" />
         </UiInputGroupButton>
       </slot>
