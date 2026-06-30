@@ -40,7 +40,7 @@ export const Default: Story = {
               size="icon"
               class="z-10 rounded-full shrink-0"
               :class="[
-                steps.indexOf(step) + 1 < args.step ? 'bg-primary text-white border-primary' : '',
+                steps.indexOf(step) + 1 < args.step ? 'bg-primary text-neutral border-primary' : '',
                 steps.indexOf(step) + 1 === args.step ? 'border-primary text-primary' : '',
               ]"
             >

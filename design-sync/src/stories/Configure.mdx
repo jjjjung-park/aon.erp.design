@@ -9,7 +9,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
     margin: 0 auto;
     padding: 48px 24px;
     font-family: 'Pretendard Variable', sans-serif;
-    color: #192030;
+    color: var(--text-default);
   }
 
   .intro-header {
@@ -24,15 +24,15 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   .intro-header p {
     font-size: 15px;
-    color: #6B7280;
+    color: var(--text-muted);
     margin: 0;
     line-height: 1.6;
   }
 
   .intro-badge {
     display: inline-block;
-    background: #EEF3FF;
-    color: #4F6CFF;
+    background: var(--surface-brand-subtle);
+    color: var(--text-brand);
     font-size: 12px;
     font-weight: 600;
     padding: 3px 10px;
@@ -42,8 +42,8 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   .intro-version {
     display: inline-block;
-    background: #F3F4F6;
-    color: #6B7280;
+    background: var(--surface-muted);
+    color: var(--text-muted);
     font-size: 12px;
     font-weight: 600;
     padding: 3px 10px;
@@ -61,7 +61,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
     font-weight: 700;
     margin: 0 0 16px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid var(--border-default);
   }
 
   .card-grid {
@@ -71,10 +71,10 @@ import { Meta } from "@storybook/addon-docs/blocks";
   }
 
   .card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--border-default);
     border-radius: 8px;
     padding: 16px;
-    background: #FAFAFA;
+    background: var(--surface-muted);
   }
 
   .card-title {
@@ -85,7 +85,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   .card-desc {
     font-size: 13px;
-    color: #6B7280;
+    color: var(--text-muted);
     margin: 0;
     line-height: 1.5;
   }
@@ -105,7 +105,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
     align-items: flex-start;
     font-size: 14px;
     line-height: 1.6;
-    color: #374151;
+    color: var(--text-default);
   }
 
   .tip-icon {
@@ -115,7 +115,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
   }
 
   .tip-list strong {
-    color: #192030;
+    color: var(--text-default);
   }
 
   .rule-table {
@@ -125,23 +125,23 @@ import { Meta } from "@storybook/addon-docs/blocks";
   }
 
   .rule-table th {
-    background: #F3F4F6;
+    background: var(--surface-muted);
     text-align: left;
     padding: 8px 12px;
     font-weight: 600;
-    color: #374151;
-    border: 1px solid #E5E7EB;
+    color: var(--text-default);
+    border: 1px solid var(--border-default);
   }
 
   .rule-table td {
     padding: 8px 12px;
-    border: 1px solid #E5E7EB;
-    color: #374151;
+    border: 1px solid var(--border-default);
+    color: var(--text-default);
     vertical-align: top;
   }
 
-  .tag-sync { color: #059669; font-weight: 600; }
-  .tag-no   { color: #DC2626; font-weight: 600; }
+  .tag-sync { color: var(--text-success); font-weight: 600; }
+  .tag-no   { color: var(--text-danger);  font-weight: 600; }
   `}
 </style>
 

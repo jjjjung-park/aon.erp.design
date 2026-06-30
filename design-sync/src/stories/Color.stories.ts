@@ -99,7 +99,7 @@ export const Text: Story = {
           { label: 'default',  token: '--text-default',  hex: '#192030' },
           { label: 'muted',    token: '--text-muted',    hex: '#798089' },
           { label: 'disabled', token: '--text-disabled', hex: '#BBC0C7' },
-          { label: 'neutral',  token: '--text-neutral',  hex: '#FFFFFF', bg: 'var(--color-gray-900)' },
+          { label: 'neutral',  token: '--text-neutral',  hex: '#FFFFFF', bg: 'var(--text-default)' },
         ],
         system: [
           { label: 'brand',   token: '--text-brand',   hex: '#007BFF' },

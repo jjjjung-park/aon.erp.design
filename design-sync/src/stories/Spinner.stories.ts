@@ -33,7 +33,7 @@ export const WithText: Story = {
           <span>로딩 중...</span>
         </div>
         <UiButton disabled class="flex items-center gap-2">
-          <UiSpinner class="text-white" />
+          <UiSpinner class="text-neutral" />
           처리 중
         </UiButton>
       </div>
