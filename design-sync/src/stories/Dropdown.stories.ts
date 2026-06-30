@@ -27,9 +27,11 @@ export const Default: Story = {
     setup() { return { args } },
     template: `
       <UiDropdownMenu>
-        <UiDropdownMenuTrigger as-child>
-          <Button v-if="args.iconTrigger" variant="ghost" size="icon"><LucideEllipsis /></Button>
-          <Button v-else variant="outline" :size="args.size">메뉴 열기 <LucideChevronDown class="ml-1" /></Button>
+        <UiDropdownMenuTrigger v-if="args.iconTrigger" as-child>
+          <Button variant="ghost" size="icon"><LucideEllipsis /></Button>
+        </UiDropdownMenuTrigger>
+        <UiDropdownMenuTrigger v-else as-child>
+          <Button variant="outline" :size="args.size">메뉴 열기 <LucideChevronDown class="ml-1" /></Button>
         </UiDropdownMenuTrigger>
         <UiDropdownMenuContent class="w-48">
           <template v-if="args.withLabel">
