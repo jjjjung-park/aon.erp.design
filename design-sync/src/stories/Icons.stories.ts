@@ -34,25 +34,9 @@ const meta: Meta = {
   title: 'Foundation/Icons',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
-  argTypes: {
-    icon: {
-      control: 'select',
-      options: iconList,
-      description: '아이콘',
-    },
-    size: {
-      control: 'radio',
-      options: Object.keys(sizeStrokeMap),
-      description: '사이즈',
-    },
-  },
-  args: {
-    icon: 'LucidePlus',
-    size: 'size-4',
-  },
 }
 export default meta
-type Story = StoryObj<{ icon: string; size: string }>
+type Story = StoryObj
 
 export const SizeRule: Story = {
   name: '사이즈 규칙',
@@ -88,10 +72,3 @@ export const SizeRule: Story = {
   }),
 }
 
-export const Default: Story = {
-  name: '인터랙티브',
-  render: (args) => ({
-    setup() { return { args, sizeStrokeMap } },
-    template: `<component :is="args.icon" :class="args.size" :style="'stroke-width: var(' + sizeStrokeMap[args.size] + ')'" />`,
-  }),
-}
