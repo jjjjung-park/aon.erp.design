@@ -78,7 +78,7 @@ export const WithThumbnail: Story = {
         </UiCarousel>
 
         <!-- 썸네일 스트립 -->
-        <div class="p-2 bg-surface-muted border border-border border-dashed rounded-sm relative h-28">
+        <div class="p-2 bg-surface-muted border border-border border-dashed rounded-sm relative">
           <UiCarousel class="relative w-full" @init-api="(val) => emblaThumbnailApi = val">
             <UiCarouselContent class="flex gap-1 ml-0">
               <UiCarouselItem
