@@ -16,8 +16,9 @@ export const WithImage: Story = {
     template: `
       <div class="flex items-center gap-4">
         <UiAvatar>
-          <UiAvatarImage :src="avatarDefault" alt="user" />
-          <UiAvatarFallback>CN</UiAvatarFallback>
+          <UiAvatarFallback>
+            <img :src="avatarDefault" alt="avatar" class="size-full" />
+          </UiAvatarFallback>
         </UiAvatar>
       </div>
     `,
@@ -27,13 +28,10 @@ export const WithImage: Story = {
 export const Fallback: Story = {
   name: 'Avatar — 폴백 (이미지 없음)',
   render: () => ({
-    setup() { return { avatarDefault } },
     template: `
       <div class="flex items-center gap-4">
         <UiAvatar>
-          <UiAvatarFallback>
-            <img :src="avatarDefault" alt="avatar" class="size-full" />
-          </UiAvatarFallback>
+          <UiAvatarFallback>홍길</UiAvatarFallback>
         </UiAvatar>
       </div>
     `,
@@ -48,29 +46,25 @@ export const Sizes: Story = {
       <div class="flex items-end gap-4">
         <div class="flex flex-col items-center gap-2">
           <UiAvatar class="size-6">
-            <UiAvatarImage :src="avatarDefault" alt="user" />
-            <UiAvatarFallback class="text-xs">CN</UiAvatarFallback>
+            <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
           <span class="caption text-muted">24px</span>
         </div>
         <div class="flex flex-col items-center gap-2">
           <UiAvatar class="size-8">
-            <UiAvatarImage :src="avatarDefault" alt="user" />
-            <UiAvatarFallback>CN</UiAvatarFallback>
+            <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
           <span class="caption text-muted">32px</span>
         </div>
         <div class="flex flex-col items-center gap-2">
           <UiAvatar class="size-10">
-            <UiAvatarImage :src="avatarDefault" alt="user" />
-            <UiAvatarFallback class="text-md">CN</UiAvatarFallback>
+            <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
           <span class="caption text-muted">40px</span>
         </div>
         <div class="flex flex-col items-center gap-2">
           <UiAvatar class="size-12">
-            <UiAvatarImage :src="avatarDefault" alt="user" />
-            <UiAvatarFallback class="text-lg">CN</UiAvatarFallback>
+            <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
           <span class="caption text-muted">48px</span>
         </div>
