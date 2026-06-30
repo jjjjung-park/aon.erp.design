@@ -19,15 +19,15 @@ const iconList = [
 ]
 
 const sizeRules = [
-  { label: '캡션',       desc: '12px 텍스트 옆 인라인', sizeClass: 'size-3', strokeVar: '--shape-stroke-md', strokeLabel: 'shape-stroke-md (2px)',   px: 12 },
+  { label: '캡션',       desc: '12px 텍스트 옆 인라인', sizeClass: 'size-3', strokeVar: '--shape-stroke-xs', strokeLabel: 'shape-stroke-xs (1.4px)', px: 12 },
   { label: '바디',       desc: '16px 텍스트 옆 기본',   sizeClass: 'size-4', strokeVar: '--shape-stroke-sm', strokeLabel: 'shape-stroke-sm (1.6px)', px: 16 },
-  { label: '스탠드얼론', desc: '한 줄에 아이콘만',       sizeClass: 'size-6', strokeVar: '--shape-stroke-xs', strokeLabel: 'shape-stroke-xs (1.4px)', px: 24 },
+  { label: '스탠드얼론', desc: '한 줄에 아이콘만',       sizeClass: 'size-6', strokeVar: '--shape-stroke-md', strokeLabel: 'shape-stroke-md (2px)',   px: 24 },
 ]
 
 const sizeStrokeMap: Record<string, string> = {
-  'size-3': '--shape-stroke-md',
+  'size-3': '--shape-stroke-xs',
   'size-4': '--shape-stroke-sm',
-  'size-6': '--shape-stroke-xs',
+  'size-6': '--shape-stroke-md',
 }
 
 const meta: Meta = {
