@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import InputBase from '@/markup/components/inputs/InputBase.vue'
 import InputPassword from '@/markup/components/inputs/InputPassword.vue'
+import InputFile from '@/markup/components/inputs/InputFile.vue'
 import { LucideSearch, LucideUser } from 'lucide-vue-next'
 import { ref } from 'vue'
 
@@ -75,6 +76,31 @@ export const WithAffix: Story = {
           <template #prefix><LucideUser class="size-3 stroke-3" /></template>
           <template #suffix><span class="text-xs text-muted">@aon.com</span></template>
         </InputBase>
+      </div>
+    `,
+  }),
+}
+
+export const File: StoryObj = {
+  name: 'InputFile — 파일 첨부',
+  render: () => ({
+    components: { InputFile },
+    template: `
+      <div class="flex flex-col gap-4">
+        <div class="w-80 h-32 rounded-sm border border-dashed border-border bg-surface-muted">
+          <InputFile />
+        </div>
+        <div class="w-80 h-32 rounded-sm border border-dashed border-border bg-surface-muted">
+          <InputFile>
+            <template #default>
+              <p class="flex items-center gap-1 font-bold text-sm">
+                <LucidePaperclip :size="14" />
+                파일 첨부
+              </p>
+              <p class="caption text-muted text-center px-4">드래그 또는 클릭하여 업로드<br/>(10mb 이하)</p>
+            </template>
+          </InputFile>
+        </div>
       </div>
     `,
   }),
