@@ -9,8 +9,8 @@ addons.setConfig({
     brandUrl: '/',
   }),
   sidebar: {
-    renderLabel: ({ name, tags }: { name: string; tags?: string[] }) => {
-      if (tags?.includes('done')) {
+    renderLabel: ({ name, tags, type }: { name: string; tags?: string[]; type?: string }) => {
+      if (tags?.includes('done') && type === 'component') {
         return React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '6px' } }, [
           React.createElement('span', { key: 'name' }, name),
           React.createElement('span', {
