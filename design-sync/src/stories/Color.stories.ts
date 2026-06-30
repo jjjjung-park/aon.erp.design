@@ -12,7 +12,7 @@ export const Surface: Story = {
   name: 'Surface — 배경색',
   render: () => ({
     template: `
-      <div class="flex flex-col gap-8 max-w-2xl">
+      <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
           <p class="caption text-muted font-bold uppercase tracking-wide">neutral</p>
           <div class="flex gap-3">
@@ -63,7 +63,7 @@ export const Text: Story = {
   name: 'Text — 텍스트색',
   render: () => ({
     template: `
-      <div class="flex flex-col gap-8 max-w-2xl">
+      <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
           <p class="caption text-muted font-bold uppercase tracking-wide">neutral</p>
           <div class="flex gap-3">
@@ -116,7 +116,7 @@ export const Border: Story = {
   name: 'Border — 테두리색',
   render: () => ({
     template: `
-      <div class="flex flex-col gap-8 max-w-2xl">
+      <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
           <p class="caption text-muted font-bold uppercase tracking-wide">neutral</p>
           <div class="flex gap-3">
@@ -130,8 +130,8 @@ export const Border: Story = {
         </div>
         <div class="flex flex-col gap-2">
           <p class="caption text-muted font-bold uppercase tracking-wide">system</p>
-          <div class="grid grid-cols-4 gap-3">
-            <div v-for="item in system" :key="item.token" class="flex flex-col gap-1">
+          <div class="flex gap-3">
+            <div v-for="item in system" :key="item.token" class="flex flex-col gap-1 flex-1">
               <div class="h-16 rounded-sm border-2" :style="'border-color: var(' + item.token + ')'"></div>
               <p class="text-sm font-bold">{{ item.label }}</p>
               <p class="caption text-muted">{{ item.token }}</p>
