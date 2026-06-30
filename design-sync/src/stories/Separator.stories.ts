@@ -44,9 +44,9 @@ export const Horizontal: Story = {
     template: `
       <div class="w-80 flex flex-col gap-3">
         <p>섹션 A</p>
-        <UiSeparator class="h-8 bg-surface-muted" />
+        <UiSeparator class="!h-2 bg-surface-muted" />
         <p>섹션 B</p>
-        <UiSeparator class="h-8 bg-surface-muted" />
+        <UiSeparator class="!h-2 bg-surface-muted" />
         <p>섹션 C</p>
       </div>
     `,
