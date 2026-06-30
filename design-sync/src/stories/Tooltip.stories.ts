@@ -5,49 +5,36 @@ import { Button } from '@/ui/button'
 const meta: Meta = {
   title: 'UI 패턴/Tooltip',
   tags: ['autodocs'],
-  argTypes: {
-    variant: {
-      control: 'select',
-      options: ['light', 'dark', 'primary'],
-    },
-  },
 }
-
 export default meta
 type Story = StoryObj
 
-export const AllVariants: Story = {
-  name: '모든 Variant',
+export const Variants: Story = {
+  name: 'Variants — 스타일',
   render: () => ({
     components: { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Button },
     template: `
       <TooltipProvider>
-        <div class="flex gap-6 items-center p-10">
+        <div class="flex gap-10 items-center p-10">
           <Tooltip :default-open="true">
             <TooltipTrigger as-child>
               <Button variant="outline">Light</Button>
             </TooltipTrigger>
-            <TooltipContent variant="light">
-              라이트 툴팁입니다.
-            </TooltipContent>
+            <TooltipContent variant="light">라이트 툴팁입니다.</TooltipContent>
           </Tooltip>
 
           <Tooltip :default-open="true">
             <TooltipTrigger as-child>
               <Button variant="outline">Dark</Button>
             </TooltipTrigger>
-            <TooltipContent variant="dark">
-              다크 툴팁입니다.
-            </TooltipContent>
+            <TooltipContent variant="dark">다크 툴팁입니다.</TooltipContent>
           </Tooltip>
 
           <Tooltip :default-open="true">
             <TooltipTrigger as-child>
               <Button variant="default">Primary</Button>
             </TooltipTrigger>
-            <TooltipContent variant="primary">
-              프라이머리 툴팁입니다.
-            </TooltipContent>
+            <TooltipContent variant="primary">프라이머리 툴팁입니다.</TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>
@@ -55,13 +42,13 @@ export const AllVariants: Story = {
   }),
 }
 
-export const CountTooltip: Story = {
-  name: 'CountTooltip — 카운트 툴팁',
+export const TriggerCount: Story = {
+  name: 'Trigger — 카운트',
   render: () => ({
     components: { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger },
     template: `
       <TooltipProvider>
-        <div class="flex gap-8 items-center p-10">
+        <div class="flex gap-12 items-center p-10">
           <Tooltip :default-open="true">
             <TooltipTrigger class="flex items-center gap-1">
               <span class="text-sm font-bold truncate max-w-32">홍길동</span>
@@ -97,20 +84,32 @@ export const CountTooltip: Story = {
   }),
 }
 
-export const Interactive: Story = {
-  name: '인터랙티브',
+export const TriggerIcon: Story = {
+  name: 'Trigger — 아이콘',
   render: () => ({
-    components: { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, Button },
+    components: { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger },
     template: `
       <TooltipProvider>
-        <div class="flex gap-4 p-10">
-          <Tooltip>
-            <TooltipTrigger as-child>
-              <Button variant="outline">호버해보세요</Button>
+        <div class="flex gap-10 items-center p-10">
+          <Tooltip :default-open="true">
+            <TooltipTrigger class="text-muted hover:text-default">
+              <LucideInfo :size="16" />
             </TooltipTrigger>
-            <TooltipContent>
-              툴팁 내용이 여기 표시됩니다.
-            </TooltipContent>
+            <TooltipContent variant="light" side="top">항목에 대한 설명입니다.</TooltipContent>
+          </Tooltip>
+
+          <Tooltip :default-open="true">
+            <TooltipTrigger class="text-muted hover:text-default">
+              <LucideCircleHelp :size="16" />
+            </TooltipTrigger>
+            <TooltipContent variant="dark" side="top">도움말 내용이 표시됩니다.</TooltipContent>
+          </Tooltip>
+
+          <Tooltip :default-open="true">
+            <TooltipTrigger class="text-muted hover:text-default">
+              <LucideAlertCircle :size="16" />
+            </TooltipTrigger>
+            <TooltipContent variant="primary" side="top">주의사항을 안내합니다.</TooltipContent>
           </Tooltip>
         </div>
       </TooltipProvider>
