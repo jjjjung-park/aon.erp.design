@@ -8,7 +8,7 @@
                            @mouseenter="hoverAction(item)">
         <component :is="item.icon" v-if="item.icon" class="stroke-2"/>
         <!--  하위메뉴 있음 표시 아이콘  -->
-        <LucideEllipsisVertical class="absolute right-0 size-4"/>
+        <LucideEllipsisVertical class="absolute right-0 size-5"/>
       </UiSidebarMenuButton>
     </template>
   </UiSidebarGroup>

@@ -7,7 +7,7 @@
           <UiComboboxInput class="" :placeholder="placeholder" :disabled="props.disabled"
                            v-model="modelValue"/>
           <span class="absolute end-2 inset-y-0 flex items-center justify-center">
-            <LucideChevronDown class="size-4 text-muted"/>
+            <LucideChevronDown class="size-5 text-muted"/>
           </span>
         </div>
       </UiComboboxTrigger>
