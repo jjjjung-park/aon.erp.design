@@ -28,7 +28,9 @@ export const Fallback: Story = {
     template: `
       <div class="flex items-center gap-4">
         <UiAvatar>
-          <UiAvatarFallback>홍길</UiAvatarFallback>
+          <UiAvatarFallback>
+            <img src="/src/assets/images/ico/avatar-default.svg" alt="avatar" class="size-full" />
+          </UiAvatarFallback>
         </UiAvatar>
       </div>
     `,
