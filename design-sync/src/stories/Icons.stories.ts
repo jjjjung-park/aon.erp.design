@@ -32,7 +32,7 @@ const sizeStrokeMap: Record<string, string> = {
 
 const meta: Meta = {
   title: 'Foundation/Icons',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
 }
 export default meta
