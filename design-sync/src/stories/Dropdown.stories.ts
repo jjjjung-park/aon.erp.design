@@ -53,6 +53,44 @@ export const WithLabel: Story = {
   }),
 }
 
+export const Sizes: Story = {
+  name: 'Dropdown — 버튼 사이즈',
+  render: () => ({
+    components: { Button },
+    template: `
+      <div class="flex items-center gap-4">
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <Button variant="outline" size="sm">sm <LucideChevronDown class="ml-1" /></Button>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent class="w-36">
+            <UiDropdownMenuItem>항목 1</UiDropdownMenuItem>
+            <UiDropdownMenuItem>항목 2</UiDropdownMenuItem>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <Button variant="outline" size="default">default <LucideChevronDown class="ml-1" /></Button>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent class="w-36">
+            <UiDropdownMenuItem>항목 1</UiDropdownMenuItem>
+            <UiDropdownMenuItem>항목 2</UiDropdownMenuItem>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
+        <UiDropdownMenu>
+          <UiDropdownMenuTrigger as-child>
+            <Button variant="outline" size="lg">lg <LucideChevronDown class="ml-1" /></Button>
+          </UiDropdownMenuTrigger>
+          <UiDropdownMenuContent class="w-36">
+            <UiDropdownMenuItem>항목 1</UiDropdownMenuItem>
+            <UiDropdownMenuItem>항목 2</UiDropdownMenuItem>
+          </UiDropdownMenuContent>
+        </UiDropdownMenu>
+      </div>
+    `,
+  }),
+}
+
 export const IconTrigger: Story = {
   name: 'Dropdown — 아이콘 트리거',
   render: () => ({
