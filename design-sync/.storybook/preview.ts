@@ -219,8 +219,8 @@ const preview: Preview = {
         const categoryOrder = ['Foundation', '기초', 'UI 패턴', '레이아웃']
         const itemOrder = {
           'Foundation': ['Typography', 'Icons'],
-          '기초':       ['Button', 'Input', 'Select', 'DatePicker', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Progress', 'Separator', 'Avatar', 'Skeleton', 'Spinner', 'ButtonGroup'],
-          'UI 패턴':    ['FormItem', 'Dropdown', 'Combobox', 'Card', 'Carousel', 'Accordion', 'Collapsible', 'Table', '리스트', 'Modal', 'Sheet', 'Drawer', 'Stepper', 'Tabs', 'Pagination', 'Alert', 'Toast', 'Empty', 'Tooltip'],
+          '기초':       ['Button', 'Input', 'Select', 'DatePicker', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Progress', 'Separator', 'Avatar', 'Skeleton', 'Spinner'],
+          'UI 패턴':    ['FormItem', 'Dropdown', 'Combobox', 'ButtonGroup', 'Card', 'Carousel', 'Accordion', 'Collapsible', 'Table', '리스트', 'Modal', 'Sheet', 'Drawer', 'Stepper', 'Tabs', 'Pagination', 'Alert', 'Toast', 'Empty', 'Tooltip'],
           '레이아웃':   ['Layout', 'TableLayout', 'Resizable'],
         }
         if (a.title === '소개') return -1

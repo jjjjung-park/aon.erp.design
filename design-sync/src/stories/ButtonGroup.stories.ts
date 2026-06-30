@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '기초/ButtonGroup',
+  title: 'UI 패턴/ButtonGroup',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }
