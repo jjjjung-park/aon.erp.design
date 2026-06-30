@@ -19,15 +19,15 @@ const iconList = [
 ]
 
 const sizeRules = [
-  { label: '캡션',       desc: '12px 텍스트 옆 인라인', sizeClass: 'size-3', stroke: 3, px: 12 },
-  { label: '바디',       desc: '16px 텍스트 옆 기본',   sizeClass: 'size-4', stroke: 2, px: 16 },
-  { label: '스탠드얼론', desc: '한 줄에 아이콘만',       sizeClass: 'size-6', stroke: 2, px: 24 },
+  { label: '캡션',       desc: '12px 텍스트 옆 인라인', sizeClass: 'size-3', strokeVar: '--shape-stroke-md', strokeLabel: 'shape-stroke-md (2px)',   px: 12 },
+  { label: '바디',       desc: '16px 텍스트 옆 기본',   sizeClass: 'size-4', strokeVar: '--shape-stroke-sm', strokeLabel: 'shape-stroke-sm (1.6px)', px: 16 },
+  { label: '스탠드얼론', desc: '한 줄에 아이콘만',       sizeClass: 'size-6', strokeVar: '--shape-stroke-xs', strokeLabel: 'shape-stroke-xs (1.4px)', px: 24 },
 ]
 
-const sizeStrokeMap: Record<string, number> = {
-  'size-3': 3,
-  'size-4': 2,
-  'size-6': 2,
+const sizeStrokeMap: Record<string, string> = {
+  'size-3': '--shape-stroke-md',
+  'size-4': '--shape-stroke-sm',
+  'size-6': '--shape-stroke-xs',
 }
 
 const meta: Meta = {
@@ -71,13 +71,16 @@ export const SizeRule: Story = {
               :key="icon"
               :is="icon"
               :class="rule.sizeClass"
-              :stroke-width="rule.stroke"
+              :style="'stroke-width: var(' + rule.strokeVar + ')'"
               class="text-default"
             />
           </div>
-          <div class="flex items-center gap-1 text-muted shrink-0">
-            <component :is="'LucideInfo'" :class="rule.sizeClass" :stroke-width="rule.stroke" />
-            <span :style="'font-size:' + rule.px + 'px'">텍스트 예시</span>
+          <div class="flex flex-col gap-0.5 shrink-0 text-right">
+            <div class="flex items-center gap-1 text-muted justify-end">
+              <component :is="'LucideInfo'" :class="rule.sizeClass" :style="'stroke-width: var(' + rule.strokeVar + ')'" />
+              <span :style="'font-size:' + rule.px + 'px'">텍스트 예시</span>
+            </div>
+            <p class="caption text-muted">{{ rule.strokeLabel }}</p>
           </div>
         </div>
       </div>
@@ -89,6 +92,6 @@ export const Default: Story = {
   name: '인터랙티브',
   render: (args) => ({
     setup() { return { args, sizeStrokeMap } },
-    template: `<component :is="args.icon" :class="args.size" :stroke-width="sizeStrokeMap[args.size]" />`,
+    template: `<component :is="args.icon" :class="args.size" :style="'stroke-width: var(' + sizeStrokeMap[args.size] + ')'" />`,
   }),
 }
