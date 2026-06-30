@@ -10,7 +10,7 @@ const sampleItems = [
 ]
 
 const meta: Meta = {
-  title: '기초/Select',
+  title: 'UI 패턴/Select',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
