@@ -24,7 +24,7 @@ export const Default: Story = {
       const emblaMainApi = ref<CarouselApi>()
       const emblaThumbnailApi = ref<CarouselApi>()
       const selectedIndex = ref(0)
-      const imagesList = ref<string[]>(['deleted', 'success', 'error', 'default', 'default'])
+      const imagesList = ref<string[]>([1, 2, 3, 4, 5])
 
       function onSelect() {
         if (!emblaMainApi.value || !emblaThumbnailApi.value) return
@@ -71,16 +71,9 @@ export const Default: Story = {
                 class="p-1 basis-1/4 cursor-pointer"
                 @click="onThumbClick(index)"
               >
-                <div :class="['aspect-video border border-border flex items-center justify-center overflow-hidden rounded-sm relative group bg-surface-neutral',
-                              index === selectedIndex ? 'ring-1 ring-primary !border-primary' : '',
-                              val === 'deleted' ? 'opacity-50' : '']">
+                <div :class="['aspect-video border border-border flex items-center justify-center overflow-hidden rounded-sm bg-surface-neutral',
+                              index === selectedIndex ? 'ring-1 ring-primary !border-primary' : '']">
                   <span class="text-xs text-muted">{{ index + 1 }}</span>
-                  <div class="absolute right-1 top-1 size-4 flex items-center justify-center bg-surface-neutral/70 rounded-full">
-                    <LucideCircleMinus v-if="val === 'deleted'" class="size-3 text-muted" />
-                    <LucideCheckCheck v-else-if="val === 'success'" class="size-3 text-success" />
-                    <LucideAlertTriangle v-else-if="val === 'error'" class="size-3 text-danger" />
-                    <LucideCheck v-else class="size-3 text-success" />
-                  </div>
                 </div>
               </UiCarouselItem>
             </UiCarouselContent>
