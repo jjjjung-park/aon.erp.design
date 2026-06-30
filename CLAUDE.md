@@ -49,11 +49,11 @@ npm run storybook       # 개발 서버
 npm run build-storybook # 정적 빌드
 ```
 
-### 스토리 카테고리 순서 (작은 UI → 큰 UI)
-`액션` → `데이터 입력` → `데이터 표시` → `피드백` → `오버레이` → `내비게이션` → `레이아웃`
-
-### 데이터 표시 항목 순서
-Tag → Badge → Progress → Card → Carousel → Accordion → ListBlockItem → Table
+### 스토리 카테고리 구조
+- **Foundation** — Typography, Icons (디자인 기반 요소)
+- **기초** — Button, Input, Select, DatePicker, Checkbox, RadioGroup, Switch, Badge, Tag, Progress (원자 컴포넌트, 트리거 없이 항상 존재)
+- **UI 패턴** — FormItem, Dropdown, Card, Carousel, Accordion, Table, 리스트, Modal, Sheet, Tabs, Pagination, Alert, Toast, Empty, Tooltip (사용자 행동 또는 이벤트에 의해 나타나는 패턴)
+- **레이아웃** — Layout, TableLayout, Resizable (전체 화면 구조)
 
 ### 전역 컴포넌트 등록
 `.storybook/preview.ts`에서 모든 `Ui*` 컴포넌트와 `Lucide*` 아이콘 전역 등록됨  
