@@ -55,28 +55,21 @@ export const Sizes: Story = {
             <UiAvatarImage :src="logoSrc" alt="user" />
             <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
-          <span class="caption text-muted">24px</span>
-        </div>
-        <div class="flex flex-col items-center gap-2">
-          <UiAvatar class="size-8">
-            <UiAvatarImage :src="logoSrc" alt="user" />
-            <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
-          </UiAvatar>
-          <span class="caption text-muted">32px</span>
+          <span class="caption text-muted">sm · 24px</span>
         </div>
         <div class="flex flex-col items-center gap-2">
           <UiAvatar class="size-10">
             <UiAvatarImage :src="logoSrc" alt="user" />
             <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
-          <span class="caption text-muted">40px</span>
+          <span class="caption text-muted">md · 40px</span>
         </div>
         <div class="flex flex-col items-center gap-2">
-          <UiAvatar class="size-12">
+          <UiAvatar class="size-20">
             <UiAvatarImage :src="logoSrc" alt="user" />
             <UiAvatarFallback><img :src="avatarDefault" alt="avatar" class="size-full" /></UiAvatarFallback>
           </UiAvatar>
-          <span class="caption text-muted">48px</span>
+          <span class="caption text-muted">lg · 80px</span>
         </div>
       </div>
     `,
