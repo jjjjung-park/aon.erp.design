@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
+import avatarDefault from '@/assets/images/ico/avatar-default.svg'
 
 const meta: Meta = {
   title: '기초/Avatar',
@@ -25,11 +26,12 @@ export const WithImage: Story = {
 export const Fallback: Story = {
   name: 'Avatar — 폴백 (이미지 없음)',
   render: () => ({
+    setup() { return { avatarDefault } },
     template: `
       <div class="flex items-center gap-4">
         <UiAvatar>
           <UiAvatarFallback>
-            <img src="/src/assets/images/ico/avatar-default.svg" alt="avatar" class="size-full" />
+            <img :src="avatarDefault" alt="avatar" class="size-full" />
           </UiAvatarFallback>
         </UiAvatar>
       </div>
