@@ -12,19 +12,36 @@ export const Default: Story = {
   name: 'Collapsible — 트리형',
   render: () => ({
     template: `
-      <div class="w-64 border border-border rounded-sm overflow-hidden">
-        <UiCollapsible default-open>
-          <UiCollapsibleTrigger class="flex w-full items-center justify-between px-4 h-10 bg-surface-muted hover:bg-subtle font-bold text-sm">
-            <span>권한 관리</span>
-            <LucideChevronUp class="size-4 text-muted" />
-          </UiCollapsibleTrigger>
-          <UiCollapsibleContent>
-            <ul class="flex flex-col">
-              <li class="px-6 h-9 flex items-center text-sm cursor-pointer hover:bg-surface-muted">컴포넌트 관리</li>
-              <li class="px-6 h-9 flex items-center text-sm cursor-pointer hover:bg-surface-muted">메뉴 관리</li>
-              <li class="px-6 h-9 flex items-center text-sm cursor-pointer hover:bg-surface-muted">권한 그룹 관리</li>
-              <li class="px-6 h-9 flex items-center text-sm cursor-pointer hover:bg-surface-muted">사용자 권한 관리</li>
-            </ul>
+      <div class="w-[360px] flex flex-col gap-1">
+        <UiCollapsible :default-open="true">
+          <UiCollapsibleContent class="flex flex-col gap-2">
+
+            <!-- 자식 있는 항목 -->
+            <UiCollapsible class="flex flex-col gap-1">
+              <div class="list-block-item">
+                <div class="list-block-item__collapse-label">
+                  <UiCollapsibleTrigger class="size-3 justify-center" />
+                  <p class="list-block-item__label">자식 있는 항목</p>
+                </div>
+              </div>
+              <UiCollapsibleContent class="flex flex-col gap-1">
+                <div class="list-block-item" v-for="n in 3" :key="n">
+                  <div class="list-block-item__collapse-label pl-5">
+                    <p class="list-block-item__label">자식 항목 {{ n }}</p>
+                  </div>
+                </div>
+              </UiCollapsibleContent>
+            </UiCollapsible>
+
+            <!-- 자식 없는 항목 -->
+            <UiCollapsible class="flex flex-col gap-1">
+              <div class="list-block-item">
+                <div class="list-block-item__collapse-label pl-1">
+                  <p class="list-block-item__label">자식 없는 항목</p>
+                </div>
+              </div>
+            </UiCollapsible>
+
           </UiCollapsibleContent>
         </UiCollapsible>
       </div>
