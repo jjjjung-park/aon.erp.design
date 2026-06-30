@@ -7,39 +7,23 @@ const meta: Meta = {
   title: 'UI 패턴/Carousel',
   tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
+  argTypes: {
+    thumbnail: { control: 'boolean', description: '썸네일 연동 표시' },
+  },
+  args: {
+    thumbnail: false,
+  },
 }
 export default meta
-type Story = StoryObj
+type Story = StoryObj<{ thumbnail: boolean }>
 
 export const Default: Story = {
-  name: 'Carousel — 기본',
-  render: () => ({
-    template: `
-      <UiCarousel class="relative w-72">
-        <UiCarouselContent>
-          <UiCarouselItem v-for="i in 5" :key="i">
-            <UiCard>
-              <UiCardContent class="flex items-center justify-center h-40">
-                <span class="text-3xl font-bold text-muted">{{ i }}</span>
-              </UiCardContent>
-            </UiCard>
-          </UiCarouselItem>
-        </UiCarouselContent>
-        <UiCarouselPrevious class="absolute top-1/2 -translate-y-1/2 left-3" />
-        <UiCarouselNext class="absolute top-1/2 -translate-y-1/2 right-3" />
-      </UiCarousel>
-    `,
-  }),
-}
-
-export const WithThumbnail: Story = {
-  name: 'Carousel — 썸네일 연동',
-  render: () => ({
+  name: 'Carousel — 인터랙티브',
+  render: (args) => ({
     setup() {
       const emblaMainApi = ref<CarouselApi>()
       const emblaThumbnailApi = ref<CarouselApi>()
       const selectedIndex = ref(0)
-
       const imagesList = ref<string[]>(['deleted', 'success', 'error', 'default', 'default'])
 
       function onSelect() {
@@ -60,7 +44,7 @@ export const WithThumbnail: Story = {
         api.on('reInit', onSelect)
       })
 
-      return { emblaMainApi, emblaThumbnailApi, selectedIndex, imagesList, onThumbClick }
+      return { args, emblaMainApi, emblaThumbnailApi, selectedIndex, imagesList, onThumbClick }
     },
     template: `
       <div class="w-80 flex flex-col gap-2">
@@ -78,7 +62,7 @@ export const WithThumbnail: Story = {
         </UiCarousel>
 
         <!-- 썸네일 스트립 -->
-        <div class="p-2 bg-surface-muted border border-border border-dashed rounded-sm relative">
+        <div v-if="args.thumbnail" class="p-2 bg-surface-muted border border-border border-dashed rounded-sm relative">
           <UiCarousel class="relative w-full" @init-api="(val) => emblaThumbnailApi = val">
             <UiCarouselContent class="flex gap-1 ml-0">
               <UiCarouselItem
@@ -91,8 +75,6 @@ export const WithThumbnail: Story = {
                               index === selectedIndex ? 'ring-1 ring-primary !border-primary' : '',
                               val === 'deleted' ? 'opacity-50' : '']">
                   <span class="text-xs text-muted">{{ index + 1 }}</span>
-
-                  <!-- 상태 아이콘 -->
                   <div class="absolute right-1 top-1 size-4 flex items-center justify-center bg-surface-neutral/70 rounded-full">
                     <LucideCircleMinus v-if="val === 'deleted'" class="size-3 text-muted" />
                     <LucideCheckCheck v-else-if="val === 'success'" class="size-3 text-success" />
