@@ -216,16 +216,12 @@ const preview: Preview = {
     },
     options: {
       storySort: (a, b) => {
-        const categoryOrder = ['기초', '액션', '데이터 입력', '데이터 표시', '피드백', '오버레이', '내비게이션', '레이아웃']
-        const itemOrder = {
-          '기초':        ['Typography'],
-          '액션':        ['Button', 'Dropdown'],
-          '데이터 입력':  ['Input', 'Checkbox', 'RadioGroup', 'Select', 'DatePicker'],
-          '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'Table', '리스트'],
-          '피드백':      ['Alert', 'Toast', 'Empty'],
-          '오버레이':    ['Tooltip', 'Modal', 'Sheet'],
-          '내비게이션':  ['Tabs', 'Pagination'],
-          '레이아웃':    ['Layout', 'TableLayout', 'Resizable'],
+        const categoryOrder = ['Foundation', '기초', 'UI 패턴', '레이아웃']
+        const itemOrder: Record<string, string[]> = {
+          'Foundation': ['Typography', 'Icons'],
+          '기초':       ['Button', 'Input', 'Select', 'DatePicker', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Progress', 'Separator', 'Avatar', 'Skeleton', 'Spinner', 'ButtonGroup'],
+          'UI 패턴':    ['FormItem', 'Dropdown', 'Combobox', 'Card', 'Carousel', 'Accordion', 'Collapsible', 'Table', '리스트', 'Modal', 'Sheet', 'Drawer', 'Stepper', 'Tabs', 'Pagination', 'Alert', 'Toast', 'Empty', 'Tooltip'],
+          '레이아웃':   ['Layout', 'TableLayout', 'Resizable'],
         }
         if (a.title === '소개') return -1
         if (b.title === '소개') return 1
