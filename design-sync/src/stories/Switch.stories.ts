@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 입력/Switch',
+  title: '기초/Switch',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {

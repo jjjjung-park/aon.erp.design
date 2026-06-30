@@ -5,7 +5,7 @@ import { LucideSearch, LucideUser } from 'lucide-vue-next'
 import { ref } from 'vue'
 
 const meta: Meta<typeof InputBase> = {
-  title: '데이터 입력/Input',
+  title: '기초/Input',
   component: InputBase,
   tags: ['autodocs'],
   argTypes: {

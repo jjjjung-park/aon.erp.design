@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '기초/Typography',
+  title: 'Foundation/Typography',
   tags: ['autodocs'],
 }
 

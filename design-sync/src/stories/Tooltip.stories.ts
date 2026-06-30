@@ -3,7 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/ui/t
 import { Button } from '@/ui/button'
 
 const meta: Meta = {
-  title: '오버레이/Tooltip',
+  title: 'UI 패턴/Tooltip',
   tags: ['autodocs'],
   argTypes: {
     variant: {

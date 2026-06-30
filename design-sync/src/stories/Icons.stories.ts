@@ -27,7 +27,7 @@ const sizeStrokeMap: Record<string, number> = {
 }
 
 const meta: Meta = {
-  title: '기초/Icons',
+  title: 'Foundation/Icons',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {

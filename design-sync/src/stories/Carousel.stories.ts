@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 표시/Carousel',
+  title: 'UI 패턴/Carousel',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }

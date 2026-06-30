@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 입력/Checkbox',
+  title: '기초/Checkbox',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {

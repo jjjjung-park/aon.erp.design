@@ -3,7 +3,7 @@ import Th from '@/markup/components/table/Th.vue'
 import Td from '@/markup/components/table/Td.vue'
 
 const meta: Meta = {
-  title: '데이터 표시/Table',
+  title: 'UI 패턴/Table',
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
 }

@@ -5,7 +5,7 @@ import PageTabs from '@/markup/components/tabs/PageTabs.vue'
 import { ref } from 'vue'
 
 const meta: Meta<typeof LineTabs> = {
-  title: '내비게이션/Tabs',
+  title: 'UI 패턴/Tabs',
   component: LineTabs,
   tags: ['autodocs'],
   argTypes: {

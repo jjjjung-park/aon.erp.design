@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { Button } from '@/ui/button'
 
 const meta: Meta = {
-  title: '액션/Dropdown',
+  title: 'UI 패턴/Dropdown',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }
