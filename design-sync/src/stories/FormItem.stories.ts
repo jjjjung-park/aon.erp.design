@@ -12,7 +12,7 @@ const sampleItems = [
 
 const meta: Meta = {
   title: 'UI 패턴/FormItem',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     label: { control: 'text', description: '라벨 텍스트' },

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
   title: 'Foundation/Color',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'padded' },
 }
 export default meta

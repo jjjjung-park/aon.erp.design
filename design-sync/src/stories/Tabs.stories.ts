@@ -7,7 +7,7 @@ import { ref } from 'vue'
 const meta: Meta<typeof LineTabs> = {
   title: 'UI 패턴/Tabs',
   component: LineTabs,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     tabList: {
       control: 'object',

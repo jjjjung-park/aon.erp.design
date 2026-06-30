@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
   title: '기초/Switch',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     disabled: { control: 'boolean', description: '비활성화' },

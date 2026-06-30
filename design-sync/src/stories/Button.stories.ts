@@ -6,7 +6,7 @@ import { h } from 'vue'
 const meta: Meta<typeof Button> = {
   title: '기초/Button',
   component: Button,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     variant: {
       control: 'select',

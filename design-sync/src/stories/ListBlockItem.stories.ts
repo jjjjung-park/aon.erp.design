@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
   title: 'UI 패턴/리스트/ListBlockItem',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     collapsible: {

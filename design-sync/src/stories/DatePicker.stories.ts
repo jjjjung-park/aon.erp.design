@@ -5,7 +5,7 @@ import DateRange from '@/markup/components/datePicker/DateRange.vue'
 
 const meta: Meta = {
   title: '기초/DatePicker',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     pickerType: {
