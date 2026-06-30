@@ -9,12 +9,12 @@ export default meta
 type Story = StoryObj
 
 export const Vertical: Story = {
-  name: 'Vertical — 타입별',
+  name: 'Vertical — 사이즈별',
   render: () => ({
     template: `
       <div class="flex flex-col gap-6">
         <div class="flex items-center gap-2">
-          <span class="caption text-muted w-16">list</span>
+          <span class="caption text-muted w-16">12px</span>
           <div class="flex h-10 items-center gap-2">
             <span>항목 A</span>
             <UiSeparator orientation="vertical" class="h-3 bg-border" />
@@ -24,22 +24,12 @@ export const Vertical: Story = {
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <span class="caption text-muted w-16">divider</span>
+          <span class="caption text-muted w-16">16px</span>
           <div class="flex h-10 items-center gap-2">
             <span>항목 A</span>
             <UiSeparator orientation="vertical" class="h-4 bg-border" />
             <span>항목 B</span>
             <UiSeparator orientation="vertical" class="h-4 bg-border" />
-            <span>항목 C</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <span class="caption text-muted w-16">section</span>
-          <div class="flex h-10 items-center gap-2">
-            <span>항목 A</span>
-            <UiSeparator orientation="vertical" class="h-6 bg-border" />
-            <span>항목 B</span>
-            <UiSeparator orientation="vertical" class="h-6 bg-border" />
             <span>항목 C</span>
           </div>
         </div>
@@ -54,9 +44,9 @@ export const Horizontal: Story = {
     template: `
       <div class="w-80 flex flex-col gap-3">
         <p>섹션 A</p>
-        <UiSeparator class="h-2 bg-surface-muted" />
+        <UiSeparator class="h-8 bg-surface-muted" />
         <p>섹션 B</p>
-        <UiSeparator class="h-2 bg-surface-muted" />
+        <UiSeparator class="h-8 bg-surface-muted" />
         <p>섹션 C</p>
       </div>
     `,
