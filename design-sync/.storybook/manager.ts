@@ -16,16 +16,14 @@ addons.setConfig({
           React.createElement('span', {
             key: 'badge',
             style: {
-              fontSize: '10px',
-              background: '#dcfce7',
-              color: '#15803d',
-              padding: '1px 7px',
-              borderRadius: '999px',
-              fontWeight: 700,
-              lineHeight: '1.6',
+              width: '6px',
+              height: '6px',
+              borderRadius: '50%',
+              background: '#22c55e',
               flexShrink: 0,
+              display: 'inline-block',
             }
-          }, '완료')
+          })
         ])
       }
       return name
