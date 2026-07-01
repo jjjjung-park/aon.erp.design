@@ -3,7 +3,7 @@
     <UiDialogContent :class="[fullSize?'full-size':'min-w-120', props.class]" :style="props.style">
         <UiDialogHeader class="px-4 ">
           <!--    -mx-2 추가      -->
-          <div :class="['flex justify-between items-center bg-background rounded-t-lg h-14']">
+          <div :class="['flex justify-between items-center bg-background rounded-t-md h-14']">
             <UiDialogTitle v-if="title">
               <slot name="title">{{title}}</slot>
             </UiDialogTitle>
