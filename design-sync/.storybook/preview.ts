@@ -219,8 +219,9 @@ const preview: Preview = {
         const categoryOrder = ['Foundation', '기초', 'UI 패턴', '레이아웃']
         const itemOrder = {
           'Foundation': ['Typography', 'Color', 'Icons'],
-          '기초':       ['Button', 'Input', 'DatePicker', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Progress', 'Separator', 'Avatar', 'Skeleton', 'Spinner'],
-          'UI 패턴':    ['FormItem', 'Dropdown', 'Select', 'ButtonGroup', 'FileDropZone', 'Card', 'Carousel', 'Accordion', 'Collapsible', 'Table', '리스트', 'Modal', 'Sheet', 'Drawer', 'Stepper', 'Tabs', 'Pagination', 'Alert', 'Toast', 'Empty', 'Tooltip'],
+          '기초':       ['Button', 'Input', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Spinner', 'Progress', 'Avatar', 'Skeleton', 'Separator'],
+          'UI 패턴':    ['FormItem', 'Dropdown', 'Select', 'DatePicker', 'ButtonGroup', 'FileDropZone', 'Card', 'Collapsible', '리스트', 'Accordion', 'Alert', 'Toast', 'Tooltip', 'Tabs', 'Stepper', 'Pagination', 'Carousel', 'Table', 'Empty', 'Modal', 'Sheet'],
+          // 그룹: 폼(FormItem~ButtonGroup) / 콘텐츠(FileDropZone~Accordion) / 피드백(Alert,Toast,Tooltip) / 네비게이션(Tabs~Carousel) / 데이터상태(Table,Empty) / 오버레이(Modal,Sheet)
           '레이아웃':   ['Layout', 'TableLayout', 'Resizable'],
         }
         if (a.title === '소개') return -1

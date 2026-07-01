@@ -4,7 +4,7 @@ import DatePicker from '@/markup/components/datePicker/DatePicker.vue'
 import DateRange from '@/markup/components/datePicker/DateRange.vue'
 
 const meta: Meta = {
-  title: '기초/DatePicker',
+  title: 'UI 패턴/DatePicker',
   tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
