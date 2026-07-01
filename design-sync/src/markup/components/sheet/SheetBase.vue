@@ -4,7 +4,7 @@
     <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120 bottom-0 ', props.class]" :style="props.style">
 
       <UiSheetHeader class="px-padding-lg min-h-14 gap-0">
-        <div class="flex justify-between items-center bg-background rounded-t-lg gap-0.5">
+        <div class="flex justify-between items-center bg-background rounded-t-md gap-0.5">
           <UiSheetTitle>
             <slot name="title">{{title}}</slot>
           </UiSheetTitle>
