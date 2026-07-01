@@ -30,11 +30,11 @@
   --color-warning: var(--surface-warning);
   --color-warning-light: var(--surface-warning-subtle);
 
-  --color-disabled: var(--surface-disabled);
-  --color-disabled-text: var(--text-disabled);
+  --color-disabled: var(--surface-subtle);
+  --color-disabled-text: var(--text-subtle);
 
-  --color-subtle: var(--surface-disabled);
-  --color-subtle-text: var(--text-disabled);
+  --color-subtle: var(--surface-subtle);
+  --color-subtle-text: var(--text-subtle);
 
   --color-default: var(--color-gray-900);
   --color-muted: var(--text-muted);

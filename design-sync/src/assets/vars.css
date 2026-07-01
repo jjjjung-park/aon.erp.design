@@ -71,7 +71,7 @@
   --surface-brand: var(--color-blue-500);
   --surface-brand-subtle: var(--color-blue-50);
   --surface-muted: var(--color-gray-100);
-  --surface-disabled: var(--color-gray-200);
+  --surface-subtle: var(--color-gray-200);
   --surface-danger: var(--color-red-500);
   --surface-danger-subtle: var(--color-red-50);
   --surface-success: var(--color-green-500);
@@ -84,8 +84,7 @@
   --text-brand: var(--color-blue-500);
   --text-neutral: var(--color-gray-0);
   --text-muted: var(--color-gray-500);
-  --text-disabled: var(--color-gray-400);
-  --text-danger: var(--color-red-500);
+  --text-subtle: var(--color-gray-400);
   --text-success: var(--color-green-500);
   --text-warning: var(--color-orange-500);
 
@@ -105,6 +104,7 @@
   --icon-brand: var(--text-brand);
   --icon-muted: var(--text-muted);
   --icon-disabled: var(--text-disabled);
+  --icon-subtle: var(--text-subtle);
   --icon-danger: var(--text-danger);
   --icon-success: var(--text-success);
   --icon-warning: var(--text-warning);
