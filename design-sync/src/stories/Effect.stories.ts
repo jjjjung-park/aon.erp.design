@@ -85,10 +85,10 @@ export const Shadow: Story = {
         <div v-for="item in items" :key="item.label" class="flex flex-col gap-2 flex-1">
           <div
             class="h-24 rounded-sm bg-surface-neutral"
-            :style="'box-shadow: ' + item.shadow"
+            :class="item.cls"
           ></div>
           <p class="text-sm font-bold">{{ item.label }}</p>
-          <p class="caption text-muted">effects/shadow/{{ item.label }}</p>
+          <p class="caption text-muted">{{ item.token }}</p>
           <p class="caption text-muted">{{ item.desc }}</p>
         </div>
       </div>
@@ -98,12 +98,14 @@ export const Shadow: Story = {
         items: [
           {
             label: 'left',
-            shadow: '-4px 0 4px 0 rgba(187,192,199,0.2)',
+            cls: 'shadow-left',
+            token: '--effects-shadow-left',
             desc: 'x:-4 y:0 blur:4 #BBC0C7 20%',
           },
           {
             label: 'bottom',
-            shadow: '0 6px 12px 0 rgba(220,224,229,0.5)',
+            cls: 'shadow-bottom',
+            token: '--effects-shadow-bottom',
             desc: 'x:0 y:6 blur:12 #DCE0E5 50%',
           },
         ],

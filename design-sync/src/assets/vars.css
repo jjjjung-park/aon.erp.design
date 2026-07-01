@@ -146,5 +146,9 @@
   --shape-stroke-sm: 1.6px;
   --shape-stroke-md: var(--unit-2);
 
+  /* effects / shadow */
+  --effects-shadow-left: -4px 0px 4px 0px rgba(187, 192, 199, 0.2);
+  --effects-shadow-bottom: 0px 6px 12px 0px rgba(220, 224, 229, 0.5);
+
 
 }
