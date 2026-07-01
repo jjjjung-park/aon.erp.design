@@ -55,6 +55,9 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-900: var(--color-gray-900);
 
+  /* radius */
+  --radius-md: var(--shape-radius-md);
+
   /* spacing */
   --spacing-padding-xxs: var(--padding-xxs);
   --spacing-padding-xs: var(--padding-xs);

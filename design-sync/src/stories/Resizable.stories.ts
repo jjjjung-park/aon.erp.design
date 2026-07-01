@@ -12,7 +12,7 @@ export const Default: Story = {
   name: 'Resizable — 좌우 분할',
   render: () => ({
     template: `
-      <UiResizablePanelGroup direction="horizontal" class="w-full h-80 rounded-lg border">
+      <UiResizablePanelGroup direction="horizontal" class="w-full h-80 rounded-md border">
         <UiResizablePanel :default-size="50">
           <div class="flex h-full items-center justify-center p-6">
             <UiSkeleton class="h-4 w-3/4" />
@@ -34,7 +34,7 @@ export const Vertical: Story = {
   render: () => ({
     template: `
       <div style="height:400px">
-        <UiResizablePanelGroup direction="vertical" class="w-full h-[600px] rounded-lg border">
+        <UiResizablePanelGroup direction="vertical" class="w-full h-[600px] rounded-md border">
           <UiResizablePanel :default-size="50">
             <div class="flex h-full items-center justify-center p-6">
               <UiSkeleton class="h-4 w-3/4" />

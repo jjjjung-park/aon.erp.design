@@ -14,7 +14,7 @@ export const emptyMediaVariants = cva(
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: "bg-subtle text-default flex shrink-0 items-center justify-center rounded-lg ",
+        icon: "bg-subtle text-default flex shrink-0 items-center justify-center rounded-md ",
       },
     },
     defaultVariants: {

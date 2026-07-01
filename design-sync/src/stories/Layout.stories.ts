@@ -64,7 +64,7 @@ export const MainLayout: Story = {
                   <UiSkeleton class="h-4 w-24" />
                   <UiSkeleton class="h-3 w-40" />
                 </div>
-                <div class="flex flex-col gap-3 p-4 bg-surface-muted rounded-lg">
+                <div class="flex flex-col gap-3 p-4 bg-surface-muted rounded-md">
                   <UiSkeleton class="h-8 w-full" />
                   <UiSkeleton class="h-8 w-full" />
                   <UiSkeleton class="h-9 w-full" />
