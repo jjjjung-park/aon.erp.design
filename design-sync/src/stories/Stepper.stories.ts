@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
   title: 'UI 패턴/Stepper',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'unused'],
   parameters: { layout: 'centered' },
   argTypes: {
     step: {

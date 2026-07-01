@@ -10,8 +10,11 @@ addons.setConfig({
   }),
   sidebar: {
     renderLabel: ({ name, tags, type }: { name: string; tags?: string[]; type?: string }) => {
-      if (tags?.includes('done') && type === 'component') {
-        return React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '6px' } }, [
+      const isUnused = tags?.includes('unused')
+      const isDone = tags?.includes('done') && type === 'component'
+
+      if (isDone) {
+        return React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '6px', opacity: isUnused ? 0.5 : 1 } }, [
           React.createElement('span', { key: 'name' }, name),
           React.createElement('span', {
             key: 'badge',
@@ -26,6 +29,11 @@ addons.setConfig({
           })
         ])
       }
+
+      if (isUnused) {
+        return React.createElement('span', { style: { opacity: 0.5 } }, name)
+      }
+
       return name
     }
   }
