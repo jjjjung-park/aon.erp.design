@@ -31,14 +31,10 @@
         </div>
         <UiDropdownMenu>
           <UiDropdownMenuTrigger class="flex items-center text-left gap-2 hover:cursor-pointer">
-            <!--  프로필 이미지가 없는 경우   -->
-            <div class=" rounded-full overflow-hidden text-center ">
-              <img src="@/assets/images/ico/avatar-default.svg" alt="avatar" class="size-6 object-cover"/>
-            </div>
-            <!--  프로필 이미지가 있는 경우   -->
-            <div class=" rounded-full overflow-hidden text-center ">
-              <img src="@/assets/images/logo.svg" alt="avatar" class="size-6 object-cover"/>
-            </div>
+            <UiAvatar class="size-6">
+              <UiAvatarImage src="@/assets/images/logo.svg" alt="avatar" />
+              <UiAvatarFallback>홍길</UiAvatarFallback>
+            </UiAvatar>
             <div class="h-8 flex flex-col">
               <p class="caption__bold">홍길동님</p>
               <span class="caption text-muted">안녕하시와요</span>

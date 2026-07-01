@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 표시/Progress',
-  tags: ['autodocs'],
+  title: '기초/Progress',
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     modelValue: { control: { type: 'range', min: 0, max: 100 }, description: '진행률 (0~100)' },

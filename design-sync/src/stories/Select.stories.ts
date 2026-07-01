@@ -10,7 +10,7 @@ const sampleItems = [
 ]
 
 const meta: Meta = {
-  title: '데이터 입력/Select',
+  title: 'UI 패턴/Select',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {

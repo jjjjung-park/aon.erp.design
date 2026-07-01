@@ -377,7 +377,7 @@
   /*모달, 시트에서 사용*/
   .full-size {
     container-type: inline-size;
-    @apply !left-5 !right-5 !top-5 !bottom-5 !w-auto !translate-0 rounded-lg;
+    @apply !left-5 !right-5 !top-5 !bottom-5 !w-auto !translate-0 !shadow-lg rounded-md;
   }
 
   .file-dragging {

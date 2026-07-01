@@ -11,8 +11,8 @@ const sampleItems = [
 ]
 
 const meta: Meta = {
-  title: '데이터 입력/FormItem',
-  tags: ['autodocs'],
+  title: 'UI 패턴/FormItem',
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     label: { control: 'text', description: '라벨 텍스트' },

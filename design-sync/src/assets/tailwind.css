@@ -55,6 +55,18 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-900: var(--color-gray-900);
 
+  /* radius */
+  --radius-md: var(--shape-radius-md);
+
+  /* shadow */
+  --shadow-left: var(--effects-shadow-left);
+  --shadow-bottom: var(--effects-shadow-bottom);
+  --shadow-2xs: 0 1px rgb(187 192 199 / 0.1);
+  --shadow-xs: 0 1px 2px 0 rgb(187 192 199 / 0.15);
+  --shadow-sm: 0 1px 3px 0 rgb(187 192 199 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(187 192 199 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(187 192 199 / 0.5);
+
   /* spacing */
   --spacing-padding-xxs: var(--padding-xxs);
   --spacing-padding-xs: var(--padding-xs);

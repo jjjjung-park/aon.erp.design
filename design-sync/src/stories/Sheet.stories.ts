@@ -4,7 +4,7 @@ import { Button } from '@/ui/button'
 // import { ref } from 'vue' // 버튼 트리거 방식 원복 시 주석 해제
 
 const meta: Meta<typeof SheetBase> = {
-  title: '오버레이/Sheet',
+  title: 'UI 패턴/Sheet',
   component: SheetBase,
   // tags: ['autodocs'], // 항상 열린 상태 유지를 위해 비활성화 (원복 시 주석 해제)
   parameters: { layout: 'fullscreen' },

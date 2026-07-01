@@ -18,7 +18,7 @@
                     <LucideMinimize-2/>
                   </template>
                 </UiButton>
-                <UiSeparator orientation="vertical" class="h-5"/>
+                <UiSeparator orientation="vertical" class="h-4"/>
               </template>
               <UiDialogClose as-child>
                 <!--      사이즈 원복          -->
