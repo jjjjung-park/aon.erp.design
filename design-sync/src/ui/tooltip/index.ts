@@ -26,7 +26,7 @@ export const tooltipContentVariants = cva(
 export type TooltipContentVariants = VariantProps<typeof tooltipContentVariants>
 
 export const tooltipArrowVariants = cva(
-  "shadow-[2px_2px_2px_0_rgba(11,21,33,0.1)] z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" +
+  "shadow-bottom z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" +
   "group-[.sidebar-tooltip]:bg-primary group-[.sidebar-tooltip]:fill-primary group-[.tooltip--dark]:bg-default group-[.tooltip--dark]:fill-gray-900 ", //variant 추가하고 지워야됨
   {
     variants: {
