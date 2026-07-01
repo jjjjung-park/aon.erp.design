@@ -63,7 +63,10 @@
     "VariableID:188:1190",
     "VariableID:188:1189",
     "VariableID:194:22",
-    "VariableID:194:23"
+    "VariableID:194:23",
+    "VariableID:220:1",
+    "VariableID:220:2",
+    "VariableID:220:3"
   ],
   "variables": [
     {
@@ -1661,6 +1664,93 @@
           "resolvedValue": 12,
           "alias": "VariableID:189:4",
           "aliasName": "unit/12"
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:220:1",
+      "name": "surface/subtle",
+      "description": "",
+      "type": "COLOR",
+      "valuesByMode": {
+        "30:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:24:7"
+        }
+      },
+      "resolvedValuesByMode": {
+        "30:0": {
+          "resolvedValue": {
+            "r": 0.9215686321258545,
+            "g": 0.9254902005195618,
+            "b": 0.9333333373069763,
+            "a": 1
+          },
+          "alias": "VariableID:24:7",
+          "aliasName": "color/gray/200"
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:220:2",
+      "name": "text/subtle",
+      "description": "",
+      "type": "COLOR",
+      "valuesByMode": {
+        "30:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:24:9"
+        }
+      },
+      "resolvedValuesByMode": {
+        "30:0": {
+          "resolvedValue": {
+            "r": 0.7333333492279053,
+            "g": 0.7529411911964417,
+            "b": 0.7803921699523926,
+            "a": 1
+          },
+          "alias": "VariableID:24:9",
+          "aliasName": "color/gray/400"
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:220:3",
+      "name": "icon/subtle",
+      "description": "",
+      "type": "COLOR",
+      "valuesByMode": {
+        "30:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:220:2"
+        }
+      },
+      "resolvedValuesByMode": {
+        "30:0": {
+          "resolvedValue": {
+            "r": 0.7333333492279053,
+            "g": 0.7529411911964417,
+            "b": 0.7803921699523926,
+            "a": 1
+          },
+          "alias": "VariableID:220:2",
+          "aliasName": "text/subtle"
         }
       },
       "scopes": [
