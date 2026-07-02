@@ -39,7 +39,8 @@
     "VariableID:189:17",
     "VariableID:371:1280",
     "VariableID:517:7056",
-    "VariableID:517:7054"
+    "VariableID:517:7054",
+    "VariableID:531:13744"
   ],
   "variables": [
     {
@@ -933,6 +934,26 @@
       "resolvedValuesByMode": {
         "24:0": {
           "resolvedValue": 128,
+          "alias": null
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:531:13744",
+      "name": "unit/48",
+      "description": "",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "24:0": 48
+      },
+      "resolvedValuesByMode": {
+        "24:0": {
+          "resolvedValue": 48,
           "alias": null
         }
       },
