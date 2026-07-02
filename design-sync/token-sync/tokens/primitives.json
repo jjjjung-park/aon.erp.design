@@ -944,6 +944,20 @@
       "codeSyntax": {}
     },
     {
+      "id": "VariableID:601:4608",
+      "name": "unit/999",
+      "resolvedType": "FLOAT",
+      "valuesByMode": {
+        "24:0": 999
+      },
+      "resolvedValuesByMode": {
+        "24:0": {
+          "resolvedValue": 999,
+          "alias": null
+        }
+      }
+    },
+    {
       "id": "VariableID:531:13744",
       "name": "unit/48",
       "description": "",
