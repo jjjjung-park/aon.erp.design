@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import type { InputGroupButtonProps } from "."
+import type { HTMLAttributes } from "vue"
+import type { ButtonVariants } from "@/ui/button"
 import { cn } from "@/lib/utils"
 import { Button } from '@/ui/button'
-import { inputGroupButtonVariants } from "."
 
-const props = withDefaults(defineProps<InputGroupButtonProps>(), {
-  size: "icon-sm",
+const props = withDefaults(defineProps<{
+  variant?: ButtonVariants["variant"]
+  size?: ButtonVariants["size"]
+  class?: HTMLAttributes["class"]
+}>(), {
   variant: "ghost",
+  size: "inline-icon",
 })
 </script>
 
 <template>
-  <Button
-    :size="props.size"
-    :data-size="props.size"
-    :variant="props.variant"
-    :class="cn(inputGroupButtonVariants({ size: props.size }), props.class)"
-  >
+  <Button :variant="variant" :size="size" :class="cn('shadow-none', props.class)">
     <slot />
   </Button>
 </template>
