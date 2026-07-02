@@ -3,7 +3,7 @@ name: 디자인 토큰 업데이트 알림
 on:
   push:
     branches:
-      - 'token_v*'
+      - 'tokens/token_v*'
     paths:
       - 'design-sync/token-sync/tokens/**'
 
