@@ -35,48 +35,6 @@ export const Border: Story = {
   }),
 }
 
-export const Stroke: Story = {
-  name: 'Stroke — 아이콘 선 굵기',
-  render: () => ({
-    template: `
-      <div class="flex gap-6">
-        <div v-for="item in items" :key="item.token" class="flex flex-col gap-2 flex-1">
-          <div class="h-16 rounded-sm bg-surface-muted border border-border flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24" height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              :stroke-width="item.value"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="text-default"
-            >
-              <circle cx="12" cy="12" r="8"/>
-              <line x1="12" y1="8" x2="12" y2="12"/>
-              <line x1="12" y1="12" x2="15" y2="15"/>
-            </svg>
-          </div>
-          <p class="text-sm font-bold">{{ item.label }}</p>
-          <p class="caption text-muted">{{ item.token }}</p>
-          <p class="caption text-muted">{{ item.value }}</p>
-        </div>
-      </div>
-    `,
-    setup() {
-      return {
-        items: [
-          { label: 'xs', token: '--shape-stroke-xs', value: '1.4' },
-          { label: 'sm', token: '--shape-stroke-sm', value: '1.6' },
-          { label: 'md', token: 'Lucide 기본값',     value: '2' },
-          { label: 'lg', token: 'Lucide 기본값 ×2',  value: '4' },
-        ],
-      }
-    },
-  }),
-}
-
 export const Shadow: Story = {
   name: 'Shadow — 그림자',
   render: () => ({
