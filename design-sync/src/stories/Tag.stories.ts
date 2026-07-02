@@ -20,7 +20,7 @@ const meta: Meta = {
     },
     chipVariant: {
       control: 'select',
-      options: ['secondary', 'outline', 'disabled'],
+      options: ['default', 'secondary', 'outline', 'disabled'],
       description: 'variant',
       if: { arg: 'type', eq: 'chip' },
     },
@@ -50,63 +50,39 @@ export const Default: Story = {
   }),
 }
 
-export const AllVariants: Story = {
-  name: '모든 Variant',
-  render: () => ({
-    components: { Tags },
-    template: `
-      <div class="flex flex-col gap-3">
-        <div class="flex flex-wrap gap-2 items-center">
-          <span class="text-xs text-muted w-10">tag</span>
-          <Tags type="tag" variant="default"   title="Default" />
-          <Tags type="tag" variant="secondary" title="Secondary" />
-          <Tags type="tag" variant="outline"   title="Outline" />
-          <Tags type="tag" variant="info"      title="Info" />
-        </div>
-        <div class="flex flex-wrap gap-2 items-center">
-          <span class="text-xs text-muted w-10">chip</span>
-          <Tags type="chip" variant="secondary" title="Secondary" />
-          <Tags type="chip" variant="outline"   title="Outline" />
-          <Tags type="chip" variant="disabled"  title="Disabled" />
-        </div>
-      </div>
-    `,
-  }),
-}
-
-export const Types: Story = {
-  name: 'Tag vs Chip',
-  render: () => ({
-    components: { Tags },
-    template: `
-      <div class="flex flex-col gap-3">
-        <div class="flex flex-wrap gap-2 items-center">
-          <span class="text-xs text-muted w-10">tag</span>
-          <Tags type="tag" variant="default"   title="Default" />
-          <Tags type="tag" variant="secondary" title="Secondary" />
-          <Tags type="tag" variant="outline"   title="Outline" />
-          <Tags type="tag" variant="info"      title="Info" />
-        </div>
-        <div class="flex flex-wrap gap-2 items-center">
-          <span class="text-xs text-muted w-10">chip</span>
-          <Tags type="chip" variant="secondary" title="Secondary" />
-          <Tags type="chip" variant="outline"   title="Outline" />
-          <Tags type="chip" variant="disabled"  title="Disabled" />
-        </div>
-      </div>
-    `,
-  }),
-}
-
-export const Closeable: Story = {
-  name: '닫기 버튼',
+export const Chip: Story = {
+  name: 'Chip — 선택 상태',
   render: () => ({
     components: { Tags },
     template: `
       <div class="flex flex-wrap gap-2 items-center">
-        <Tags variant="default"   title="삭제 가능" :closeable="true" />
-        <Tags variant="secondary" title="삭제 가능" :closeable="true" />
-        <Tags variant="outline"   title="삭제 가능" :closeable="true" />
+        <Tags type="chip" variant="default"   title="선택완료된 태그" :closeable="true">
+          <template #default><LucideCheck class="size-3 shrink-0"/><p class="truncate">선택완료된 태그</p></template>
+        </Tags>
+        <Tags type="chip" variant="secondary" title="선택한 태그" :closeable="true">
+          <template #default><LucideCheck class="size-3 shrink-0"/><p class="truncate">선택한 태그</p></template>
+        </Tags>
+        <Tags type="chip" variant="outline"   title="미선택 태그"  :closeable="true"/>
+        <Tags type="chip" variant="disabled"  title="비활성 태그" :closeable="true">
+          <template #default><LucideCheck class="size-3 shrink-0"/><p class="truncate">비활성 태그</p></template>
+        </Tags>
+      </div>
+    `,
+  }),
+}
+
+export const TagLevel: Story = {
+  name: 'Tag — 레벨',
+  render: () => ({
+    components: { Tags },
+    template: `
+      <div class="flex flex-wrap gap-2 items-center">
+        <Tags type="tag" variant="outline"   title="Low Level" />
+        <Tags type="tag" variant="info"      title="Middle level" />
+        <Tags type="tag" variant="default"   title="High Level" />
+        <Tags type="tag" variant="secondary">
+          <template #default><LucideCheck class="size-3 shrink-0"/><p class="truncate">Checked</p></template>
+        </Tags>
       </div>
     `,
   }),
