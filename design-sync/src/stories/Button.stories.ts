@@ -103,6 +103,7 @@ export const Disabled: Story = {
         <Button variant="outline" disabled>Outline</Button>
         <Button variant="secondary" disabled>Secondary</Button>
         <Button variant="ghost" disabled>Ghost</Button>
+        <Button variant="link" disabled>link</Button>
       </div>
     `,
   }),
