@@ -8,15 +8,15 @@ const meta: Meta<typeof Badge> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['default', 'secondary', 'destructive', 'info', 'outline', 'process', 'accept', 'reject', 'hold', 'count'],
+      options: ['info', 'outline', 'process', 'accept', 'reject', 'hold'],
     },
     size: {
       control: 'select',
-      options: ['sm', 'default', 'dot'],
+      options: ['count', 'default', 'dot'],
     },
   },
   args: {
-    variant: 'default',
+    variant: 'info',
     size: 'default',
   },
 }
@@ -28,56 +28,22 @@ export const Default: Story = {
   render: (args) => ({
     components: { Badge },
     setup() { return { args } },
-    template: `<Badge v-bind="args">뱃지</Badge>`,
+    template: `<Badge v-bind="args" >뱃지</Badge>`,
   }),
 }
 
 export const StatusVariants: Story = {
-  name: '상태 Variant',
+  name: '상태 배지',
   render: () => ({
     components: { Badge },
     template: `
       <div class="flex flex-wrap gap-2 items-center">
-        <Badge variant="process">처리중</Badge>
-        <Badge variant="accept">승인</Badge>
+        <Badge variant="outline">시작/미진행</Badge>
+        <Badge variant="process">처리중/진행중</Badge>
+        <Badge variant="accept">승인/완료</Badge>
         <Badge variant="reject">반려</Badge>
         <Badge variant="hold">보류</Badge>
         <Badge variant="info">정보</Badge>
-      </div>
-    `,
-  }),
-}
-
-export const AllVariants: Story = {
-  name: '모든 Variant',
-  render: () => ({
-    components: { Badge },
-    template: `
-      <div class="flex flex-wrap gap-2 items-center">
-        <Badge variant="default">Default</Badge>
-        <Badge variant="secondary">Secondary</Badge>
-        <Badge variant="destructive">Destructive</Badge>
-        <Badge variant="outline">Outline</Badge>
-        <Badge variant="process">Process</Badge>
-        <Badge variant="accept">Accept</Badge>
-        <Badge variant="reject">Reject</Badge>
-        <Badge variant="hold">Hold</Badge>
-        <Badge variant="info">Info</Badge>
-        <Badge variant="count">12</Badge>
-      </div>
-    `,
-  }),
-}
-
-export const AllSizes: Story = {
-  name: '모든 Size',
-  render: () => ({
-    components: { Badge },
-    template: `
-      <div class="flex flex-wrap gap-3 items-center">
-        <Badge size="default">Default</Badge>
-        <Badge size="sm">Small</Badge>
-        <Badge size="dot" variant="destructive" />
       </div>
     `,
   }),
@@ -89,8 +55,23 @@ export const CountVariant: Story = {
     components: { Badge },
     template: `
       <div class="flex gap-3 items-center">
-        <Badge variant="count" tone="default">3</Badge>
-        <Badge variant="count" tone="important">12</Badge>
+        <Badge size="count">3</Badge>
+        <Badge size="count" class="bg-danger text-neutral">12</Badge>
+        <Badge size="count" class="bg-danger text-neutral"><LucideThumbsDown />999+</Badge>
+      </div>
+    `,
+  }),
+}
+
+export const DotVariant: Story = {
+  name: 'Dot (알림 표시)',
+  render: () => ({
+    components: { Badge },
+    template: `
+      <div class="flex gap-3 items-center">
+        <Badge size="dot" class="bg-danger" />
+        <Badge size="dot" class="bg-success" />
+        <Badge size="dot" class="bg-primary" />
       </div>
     `,
   }),

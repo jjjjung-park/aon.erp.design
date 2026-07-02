@@ -20,12 +20,12 @@
         <div class="gap-2 flex items-center">
           <UiButton class="text-muted relative " variant="ghost" size="icon" @click="openAlert = true">
             <LucideBell />
-            <UiBadge variant="destructive" size="dot" class="absolute top-1 right-1" />
+            <UiBadge size="dot" class="bg-danger absolute top-1 right-1" />
           </UiButton>
           <UiSeparator orientation="vertical" class="h-4"/>
           <UiButton class="text-muted relative " variant="ghost" size="icon">
             <LucideSettings class=""/>
-            <UiBadge variant="destructive" size="dot" class="bg-success absolute top-1 right-1" />
+            <UiBadge size="dot" class="bg-success absolute top-1 right-1" />
           </UiButton>
           <UiSeparator orientation="vertical" class="h-4"/>
         </div>
