@@ -13,11 +13,9 @@ export const Default: Story = {
   render: () => ({
     template: `
       <div class="flex items-center gap-6">
-        <UiSpinner class="size-3" />
         <UiSpinner class="size-4" />
-        <UiSpinner class="size-5" />
         <UiSpinner class="size-6" />
-        <UiSpinner class="size-8" />
+        <UiSpinner class="size-14" />
       </div>
     `,
   }),
@@ -32,8 +30,8 @@ export const WithText: Story = {
           <UiSpinner />
           <span>로딩 중...</span>
         </div>
-        <UiButton disabled class="flex items-center gap-2">
-          <UiSpinner class="text-neutral" />
+        <UiButton disabled>
+          <UiSpinner class="text-disabled-text" />
           처리 중
         </UiButton>
       </div>

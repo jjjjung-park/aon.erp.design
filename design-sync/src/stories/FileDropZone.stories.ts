@@ -26,7 +26,7 @@ export const Default: Story = {
         <InputFile>
           <template #default>
             <p class="flex items-center gap-1 font-bold text-sm">
-              <LucidePaperclip class="size-4" style="stroke-width: var(--shape-stroke-sm)" />
+              <LucidePaperclip class="size-4" />
               파일 첨부
             </p>
             <p class="caption text-muted text-center px-4">드래그 또는 클릭하여 업로드<br/>(10mb 이하)</p>
