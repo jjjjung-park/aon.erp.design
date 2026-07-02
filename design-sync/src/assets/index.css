@@ -84,10 +84,6 @@
     @apply cursor-pointer;
   }
 
-  svg.size-4 {
-    @apply !stroke-[2.6];
-  }
-
   /*table*/
   table.row-link tbody tr {
     cursor: pointer;
