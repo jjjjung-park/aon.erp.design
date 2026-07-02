@@ -1,0 +1,135 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@theme inline {
+  /* font */
+  --font-sans: var(--font-family-base), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+  --font-weight-bold: var(--font-weight-bold);
+
+  /* font-size */
+  --text-md: var(--font-size-md);
+  --text-lg: var(--font-size-lg);
+  --text-xl: var(--font-size-xl);
+
+  /* line-height (md 이상은 Figma title 기준 1.5, xs/sm은 body 상속 1.4) */
+  --text-md--line-height: 1.5;
+  --text-lg--line-height: 1.5;
+  --text-xl--line-height: 1.5;
+
+  /* color — semantic */
+  --color-primary: var(--surface-brand);
+
+  --color-primary-light: var(--surface-brand-subtle);
+
+  --color-danger: var(--surface-danger);
+  --color-danger-light: var(--surface-danger-subtle);
+  --color-success: var(--surface-success);
+  --color-success-light: var(--surface-success-subtle);
+  --color-warning: var(--surface-warning);
+  --color-warning-light: var(--surface-warning-subtle);
+
+  --color-disabled: var(--surface-subtle);
+  --color-disabled-text: var(--text-subtle);
+
+  --color-subtle: var(--surface-subtle);
+  --color-subtle-text: var(--text-subtle);
+
+  --color-default: var(--color-gray-900);
+  --color-muted: var(--text-muted);
+  --color-surface-muted: var(--surface-muted);
+
+  --color-neutral: var(--surface-neutral);
+  --color-border: var(--border-default);
+  --color-background: var(--surface-neutral);
+
+  --color-ring: var(--border-brand);
+  --color-ring-offset: var(--surface-neutral);
+
+  /* color — gray scale */
+  --color-gray-100: var(--color-gray-100);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-300: var(--color-gray-300);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-500: var(--color-gray-500);
+  --color-gray-900: var(--color-gray-900);
+
+  /* radius */
+  --radius-md: var(--shape-radius-md);
+
+  /* shadow */
+  --shadow-left: var(--effects-shadow-left);
+  --shadow-bottom: var(--effects-shadow-bottom);
+  --shadow-2xs: 0 1px rgb(187 192 199 / 0.1);
+  --shadow-xs: 0 1px 2px 0 rgb(187 192 199 / 0.15);
+  --shadow-sm: 0 1px 3px 0 rgb(187 192 199 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(187 192 199 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(187 192 199 / 0.5);
+
+  /* spacing */
+  --spacing-padding-xxs: var(--padding-xxs);
+  --spacing-padding-xs: var(--padding-xs);
+  --spacing-padding-sm: var(--padding-sm);
+  --spacing-padding-md: var(--padding-md);
+  --spacing-padding-lg: var(--padding-lg);
+  --spacing-padding-xl: var(--padding-xl);
+  --spacing-padding-xxl: var(--padding-xxl);
+
+  /* animation */
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--reka-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--reka-accordion-content-height); }
+    to { height: 0; }
+  }
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes gradient {
+    0% { background-position: 0 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+  }
+}
+
+.gradient-animate {
+  @apply bg-gradient-to-r to-blue-800 via-primary from-cyan-100;
+  background-size: 200% 200%;
+  animation: gradient 10s ease infinite;
+}
+
+@layer base {
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-gray-300);
+    border-radius: 9999px;
+  }
+
+  /* typo-body: 14 / 400 / 1.4 */
+  body {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.4;
+    color: var(--text-default);
+  }
+
+  /* typo-h1-bold: 24 / 600 / 1.5 */
+  h1 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.5;
+  }
+
+  /* typo-h2-bold: 20 / 600 / 1.5 */
+  h2 {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    line-height: 1.5;
+  }
+
+  strong {
+    font-weight: var(--font-weight-bold);
+  }
+}

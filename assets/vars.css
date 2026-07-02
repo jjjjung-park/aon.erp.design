@@ -1,0 +1,155 @@
+:root {
+
+  /* ===========================
+     PRIMITIVES
+     =========================== */
+
+  /* color / blue */
+  --color-blue-50: #EFF7FF;
+  --color-blue-200: #C8E4FF;
+  --color-blue-300: #9BCDFF;
+  --color-blue-500: #007BFF;
+  --color-blue-600: #0069DA;
+  --color-blue-700: #005ABB;
+
+  /* color / gray */
+  --color-gray-0: #FFFFFF;
+  --color-gray-100: #FAFAFA;
+  --color-gray-200: #EBECEE;
+  --color-gray-300: #DBDDE0;
+  --color-gray-400: #BBC0C7;
+  --color-gray-500: #798089;
+  --color-gray-900: #192030;
+  --color-gray-1000: #000000;
+
+  /* color / red */
+  --color-red-50: #FFEFEF;
+  --color-red-500: #F13C31;
+
+  /* color / green */
+  --color-green-50: #F0FFEF;
+  --color-green-500: #00A035;
+
+  /* color / orange */
+  --color-orange-50: #FFF6E8;
+  --color-orange-500: #F36D00;
+
+  /* font */
+  --font-family-base: Pretendard;
+  --font-size-xl: 24px;
+  --font-size-lg: 20px;
+  --font-size-md: 16px;
+  --font-size-sm: 14px;
+  --font-size-xs: 12px;
+  --font-weight-bold: 600;
+  --font-weight-regular: 400;
+
+  /* unit */
+  --unit-0: 0px;
+  --unit-1: 1px;
+  --unit-2: 2px;
+  --unit-4: 4px;
+  --unit-8: 8px;
+  --unit-12: 12px;
+  --unit-16: 16px;
+  --unit-20: 20px;
+  --unit-24: 24px;
+  --unit-32: 32px;
+  --unit-40: 40px;
+  --unit-48: 48px;
+  --unit-64: 64px;
+  --unit-80: 80px;
+  --unit-104: 104px;
+  --unit-128: 128px;
+
+
+  /* ===========================
+     SEMANTIC
+     =========================== */
+
+  /* surface */
+  --surface-neutral: var(--color-gray-0);
+  --surface-brand: var(--color-blue-500);
+  --surface-brand-subtle: var(--color-blue-50);
+  --surface-muted: var(--color-gray-100);
+  --surface-subtle: var(--color-gray-200);
+  --surface-danger: var(--color-red-500);
+  --surface-danger-subtle: var(--color-red-50);
+  --surface-success: var(--color-green-500);
+  --surface-success-subtle: var(--color-green-50);
+  --surface-warning: var(--color-orange-500);
+  --surface-warning-subtle: var(--color-orange-50);
+
+  /* text */
+  --text-default: var(--color-gray-900);
+  --text-brand: var(--color-blue-500);
+  --text-neutral: var(--color-gray-0);
+  --text-muted: var(--color-gray-500);
+  --text-subtle: var(--color-gray-400);
+  --text-success: var(--color-green-500);
+  --text-warning: var(--color-orange-500);
+
+  /* border */
+  --border-default: var(--color-gray-300);
+  --border-strong: var(--color-gray-900);
+  --border-muted: var(--color-gray-500);
+  --border-danger: var(--color-red-500);
+  --border-success: var(--color-green-500);
+  --border-warning: var(--color-orange-500);
+  --border-brand: var(--color-blue-500);
+  --border-brand-subtle: var(--color-blue-50);
+
+  /* icon */
+  --icon-default: var(--text-default);
+  --icon-neutral: var(--text-neutral);
+  --icon-brand: var(--text-brand);
+  --icon-muted: var(--text-muted);
+  --icon-disabled: var(--text-disabled);
+  --icon-subtle: var(--text-subtle);
+  --icon-danger: var(--text-danger);
+  --icon-success: var(--text-success);
+  --icon-warning: var(--text-warning);
+
+  /* size */
+  --size-xxs: var(--unit-12);
+  --size-xs: var(--unit-16);
+  --size-sm: var(--unit-24);
+  --size-md: var(--unit-32);
+  --size-lg: var(--unit-40);
+  --size-xl: var(--unit-64);
+  --size-xxl: var(--unit-80);
+
+  /* spacing / padding */
+  --padding-xxs: var(--unit-4);
+  --padding-xs: var(--unit-8);
+  --padding-sm: var(--unit-12);
+  --padding-md: var(--unit-16);
+  --padding-lg: var(--unit-20);
+  --padding-xl: var(--unit-24);
+  --padding-xxl: var(--unit-32);
+
+  /* spacing / gap */
+  --spacing-gap-xs: var(--unit-4);
+  --spacing-gap-sm: var(--unit-8);
+  --spacing-gap-md: var(--unit-12);
+  --spacing-gap-lg: var(--unit-16);
+
+  /* shape / radius */
+  --shape-radius-sm: var(--unit-4);
+  --shape-radius-md: var(--unit-8);
+  --shape-radius-full: 999px;
+
+  /* shape / border */
+  --shape-border-default: var(--unit-1);
+  --shape-border-strong: var(--unit-2);
+
+  /* shape / stroke — 소형 아이콘 보정값 (루시드 기본 stroke-width: 2 기준) */
+  --shape-stroke-xs: 1.4px;  /* 12px 아이콘: 루시드 자동값 1px → 보정 */
+  --shape-stroke-sm: 1.6px;  /* 16px 아이콘: 루시드 자동값 1.33px → 보정 */
+
+  /* effects / shadow */
+  --effects-shadow-left: -4px 0px 4px 0px rgba(187, 192, 199, 0.2);
+  --effects-shadow-bottom: 0px 6px 12px 0px rgba(220, 224, 229, 0.5);
+
+
+}
