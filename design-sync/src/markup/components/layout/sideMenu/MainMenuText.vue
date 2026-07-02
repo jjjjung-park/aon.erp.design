@@ -15,7 +15,7 @@
               <UiCollapsibleTrigger as-child class="pl-6 hover:bg-surface-muted mb-1">
                 <UiSidebarMenuButton :tooltip="false" class=" h-10 ">
                   <span>{{ subItem.title }}</span>
-                  <LucideChevronDown class="ml-auto text-muted transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180 size-5"/>
+                  <LucideChevronDown class="ml-auto text-muted transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180 size-4"/>
                 </UiSidebarMenuButton>
               </UiCollapsibleTrigger>
               <!--  CollapsibleContent : 3depth -->

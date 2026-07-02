@@ -1253,6 +1253,30 @@
       "codeSyntax": {}
     },
     {
+      "id": "VariableID:433:3379",
+      "name": "spacing/padding/lg",
+      "description": "",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "30:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:189:6"
+        }
+      },
+      "resolvedValuesByMode": {
+        "30:0": {
+          "resolvedValue": 20,
+          "alias": "VariableID:189:6",
+          "aliasName": "unit/20"
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
       "id": "VariableID:194:11",
       "name": "spacing/padding/xl",
       "description": "",

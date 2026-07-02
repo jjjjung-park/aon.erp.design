@@ -3,7 +3,7 @@
     <UiDialogContent :class="[fullSize?'full-size':'min-w-120', props.class]" :style="props.style">
         <UiDialogHeader class="px-4 ">
           <!--    -mx-2 추가      -->
-          <div :class="['flex justify-between items-center bg-background rounded-t-lg h-14']">
+          <div :class="['flex justify-between items-center bg-background rounded-t-md h-14']">
             <UiDialogTitle v-if="title">
               <slot name="title">{{title}}</slot>
             </UiDialogTitle>
@@ -18,7 +18,7 @@
                     <LucideMinimize-2/>
                   </template>
                 </UiButton>
-                <UiSeparator orientation="vertical" class="h-5"/>
+                <UiSeparator orientation="vertical" class="h-4"/>
               </template>
               <UiDialogClose as-child>
                 <!--      사이즈 원복          -->

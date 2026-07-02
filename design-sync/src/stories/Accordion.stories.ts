@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 표시/Accordion',
+  title: 'UI 패턴/Accordion',
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
 }

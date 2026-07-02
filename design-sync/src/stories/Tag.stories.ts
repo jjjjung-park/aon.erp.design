@@ -3,9 +3,9 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Tags from '@/markup/components/tag/Tags.vue'
 
 const meta: Meta = {
-  title: '데이터 표시/Tag',
+  title: '기초/Tag',
   component: Tags,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     type: {
       control: 'radio',

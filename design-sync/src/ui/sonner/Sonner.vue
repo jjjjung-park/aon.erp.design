@@ -14,7 +14,7 @@ const props = defineProps<ToasterProps>()
       '--normal-bg': 'var(--color-background)',
       '--normal-text': 'var(--color-default)',
       '--border-radius': 'var(--radius-sm)',
-      '--padding':'var(--spacing-padding-lg)',
+      '--padding':'var(--padding-lg)',
       '--success-bg':'var(--color-success-light)',
       '--success-text':'var(--color-success)',
       '--info-bg':'var(--color-info-light)',

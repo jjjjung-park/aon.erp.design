@@ -3,7 +3,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/ui/alert'
 import { LucideInfo, LucideCheck, LucideAlertTriangle, LucideCircleAlert } from 'lucide-vue-next'
 
 const meta: Meta<typeof Alert> = {
-  title: '피드백/Alert',
+  title: 'UI 패턴/Alert',
   component: Alert,
   tags: ['autodocs'],
   argTypes: {

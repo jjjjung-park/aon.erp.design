@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 입력/RadioGroup',
-  tags: ['autodocs'],
+  title: '기초/RadioGroup',
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
 }
 export default meta

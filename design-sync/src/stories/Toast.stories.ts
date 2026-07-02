@@ -3,7 +3,7 @@ import { Toaster } from '@/ui/sonner'
 import { toast } from 'vue-sonner'
 
 const meta: Meta = {
-  title: '피드백/Toast',
+  title: 'UI 패턴/Toast',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {

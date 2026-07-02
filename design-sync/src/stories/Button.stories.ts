@@ -4,9 +4,9 @@ import { LucidePlus, LucideTrash2, LucideSearch } from 'lucide-vue-next'
 import { h } from 'vue'
 
 const meta: Meta<typeof Button> = {
-  title: '액션/Button',
+  title: '기초/Button',
   component: Button,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     variant: {
       control: 'select',

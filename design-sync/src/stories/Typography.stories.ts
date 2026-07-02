@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '기초/Typography',
-  tags: ['autodocs'],
+  title: 'Foundation/Typography',
+  tags: ['autodocs', 'done'],
 }
 
 export default meta
@@ -115,7 +115,7 @@ export const ColorVariants: Story = {
           <p class="w-32 caption text-muted">--text-brand</p>
           <p style="color: var(--text-brand)">Brand — 브랜드 강조</p>
         </div>
-        <div class="flex items-center gap-4 py-2 border-b border-border bg-gray-900 rounded-sm">
+        <div class="flex items-center gap-4 py-2 border-b border-border bg-default rounded-sm">
           <p class="w-32 caption" style="color: var(--text-brand)">--text-neutral</p>
           <p style="color: var(--text-neutral)">Neutral — 반전 텍스트 (dark bg)</p>
         </div>

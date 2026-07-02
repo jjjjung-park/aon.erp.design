@@ -49,11 +49,11 @@ npm run storybook       # 개발 서버
 npm run build-storybook # 정적 빌드
 ```
 
-### 스토리 카테고리 순서 (작은 UI → 큰 UI)
-`액션` → `데이터 입력` → `데이터 표시` → `피드백` → `오버레이` → `내비게이션` → `레이아웃`
-
-### 데이터 표시 항목 순서
-Tag → Badge → Progress → Card → Carousel → Accordion → ListBlockItem → Table
+### 스토리 카테고리 구조
+- **Foundation** — Typography, Icons (디자인 기반 요소)
+- **기초** — Button, Input, Select, DatePicker, Checkbox, RadioGroup, Switch, Badge, Tag, Progress (원자 컴포넌트, 트리거 없이 항상 존재)
+- **UI 패턴** — FormItem, Dropdown, Card, Carousel, Accordion, Table, 리스트, Modal, Sheet, Tabs, Pagination, Alert, Toast, Empty, Tooltip (사용자 행동 또는 이벤트에 의해 나타나는 패턴)
+- **레이아웃** — Layout, TableLayout, Resizable (전체 화면 구조)
 
 ### 전역 컴포넌트 등록
 `.storybook/preview.ts`에서 모든 `Ui*` 컴포넌트와 `Lucide*` 아이콘 전역 등록됨  
@@ -107,6 +107,18 @@ hotfix/dev_v0.0.2
 | `storybook/` | design-sync (Storybook) | `storybook/dev_v1.0.1` |
 | `hotfix/` | 긴급 버그 수정 (프로젝트 무관) | `hotfix/dev_v0.0.2` |
 | `token_` | design-sync 디자인 토큰 작업 | `token_v0.0.3` |
+
+### 버전 규칙 (Semantic Versioning)
+
+버전은 PR/배포 횟수가 아닌 **작업 내용**을 기준으로 결정한다.
+
+| 버전 | 기준 | 예시 |
+|------|------|------|
+| **마이너** (`v0.X.0`) | 구조 수정 — 토큰 추가/변경, 스토리 카테고리 구조 변경 등 | shadow 토큰 추가, 스토리 순서 전면 개편 |
+| **패치** (`v0.0.X`) | 구조 내 작업 — 스토리 내용 수정, 컴포넌트 스토리 추가 | 기초/UI 패턴 스토리 보완 |
+
+- 하나의 마이너 작업 중 디자이너에게 중간 배포가 필요하면 패치 버전으로 먼저 배포
+- 예: `v0.0.8` (패치) → `v0.0.9` (패치) → 전체 완료 시 `v0.1.0` (마이너)
 
 ### 🎨 토큰 작업 시작 규칙 (중요)
 디자인 토큰 작업(`design-sync/token-sync/tokens/*.json` 수정)을 **새로 시작할 때는 반드시 먼저 `/token-branch` 를 실행**해, 최신 `main` 기준의 토큰 전용 브랜치(`token_v0.0.x`)를 만든 뒤 작업한다.

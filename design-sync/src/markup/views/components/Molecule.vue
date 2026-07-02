@@ -181,8 +181,8 @@
               <LucidePaperclip :size="16"/>
               파일 첨부
             </p>
-            <p class="text-secondary caption text-center px-6">첨부할 파일을 드래그 또는 클릭하여 추가<br/>(300px, 300mb)</p>
-            <span class="text-secondary caption text-center">(기존행의 내용은 수정, 신규행의 내용은 신규 등록으로 진행됩니다.)</span>
+            <p class="text-muted caption text-center px-6">첨부할 파일을 드래그 또는 클릭하여 추가<br/>(300px, 300mb)</p>
+            <span class="text-muted caption text-center">(기존행의 내용은 수정, 신규행의 내용은 신규 등록으로 진행됩니다.)</span>
           </InputFile>
         </div>
       </div>

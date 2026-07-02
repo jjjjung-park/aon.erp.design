@@ -9,7 +9,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
     margin: 0 auto;
     padding: 48px 24px;
     font-family: 'Pretendard Variable', sans-serif;
-    color: #192030;
+    color: var(--text-default);
   }
 
   .intro-header {
@@ -24,15 +24,15 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   .intro-header p {
     font-size: 15px;
-    color: #6B7280;
+    color: var(--text-muted);
     margin: 0;
     line-height: 1.6;
   }
 
   .intro-badge {
     display: inline-block;
-    background: #EEF3FF;
-    color: #4F6CFF;
+    background: var(--surface-brand-subtle);
+    color: var(--text-brand);
     font-size: 12px;
     font-weight: 600;
     padding: 3px 10px;
@@ -42,8 +42,8 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   .intro-version {
     display: inline-block;
-    background: #F3F4F6;
-    color: #6B7280;
+    background: var(--surface-muted);
+    color: var(--text-muted);
     font-size: 12px;
     font-weight: 600;
     padding: 3px 10px;
@@ -61,7 +61,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
     font-weight: 700;
     margin: 0 0 16px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid var(--border-default);
   }
 
   .card-grid {
@@ -71,10 +71,10 @@ import { Meta } from "@storybook/addon-docs/blocks";
   }
 
   .card {
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--border-default);
     border-radius: 8px;
     padding: 16px;
-    background: #FAFAFA;
+    background: var(--surface-muted);
   }
 
   .card-title {
@@ -85,7 +85,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   .card-desc {
     font-size: 13px;
-    color: #6B7280;
+    color: var(--text-muted);
     margin: 0;
     line-height: 1.5;
   }
@@ -105,7 +105,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
     align-items: flex-start;
     font-size: 14px;
     line-height: 1.6;
-    color: #374151;
+    color: var(--text-default);
   }
 
   .tip-icon {
@@ -115,7 +115,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
   }
 
   .tip-list strong {
-    color: #192030;
+    color: var(--text-default);
   }
 
   .rule-table {
@@ -125,23 +125,23 @@ import { Meta } from "@storybook/addon-docs/blocks";
   }
 
   .rule-table th {
-    background: #F3F4F6;
+    background: var(--surface-muted);
     text-align: left;
     padding: 8px 12px;
     font-weight: 600;
-    color: #374151;
-    border: 1px solid #E5E7EB;
+    color: var(--text-default);
+    border: 1px solid var(--border-default);
   }
 
   .rule-table td {
     padding: 8px 12px;
-    border: 1px solid #E5E7EB;
-    color: #374151;
+    border: 1px solid var(--border-default);
+    color: var(--text-default);
     vertical-align: top;
   }
 
-  .tag-sync { color: #059669; font-weight: 600; }
-  .tag-no   { color: #DC2626; font-weight: 600; }
+  .tag-sync { color: var(--text-success); font-weight: 600; }
+  .tag-no   { color: var(--text-danger);  font-weight: 600; }
   `}
 </style>
 
@@ -149,7 +149,7 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
   <div className="intro-header">
     <div className="intro-badge">AON ERP Design System</div>
-    <div className="intro-version">v0.0.5</div>
+    <div className="intro-version">v0.0.8</div>
     <h1>컴포넌트 라이브러리 소개</h1>
     <p>
       AON ERP에서 사용하는 UI 컴포넌트와 패턴을 모아둔 공간입니다.<br />
@@ -161,32 +161,20 @@ import { Meta } from "@storybook/addon-docs/blocks";
     <h2>📁 카테고리 구성</h2>
     <div className="card-grid">
       <div className="card">
-        <p className="card-title">액션</p>
-        <p className="card-desc">Button, Dropdown 등 사용자가 직접 조작하는 요소</p>
+        <p className="card-title">Foundation</p>
+        <p className="card-desc">타이포그래피, 컬러, 아이콘 등 디자인 시스템의 가장 기본이 되는 스타일 요소. 모든 컴포넌트는 이 기반 위에 구성됩니다.</p>
       </div>
       <div className="card">
-        <p className="card-title">데이터 입력</p>
-        <p className="card-desc">Input, Checkbox, Select, DatePicker 등 폼 요소</p>
+        <p className="card-title">기초</p>
+        <p className="card-desc">Button, Input, Badge 등 단독으로 존재하며 트리거 없이 화면에 항상 노출되는 원자 단위 컴포넌트.</p>
       </div>
       <div className="card">
-        <p className="card-title">데이터 표시</p>
-        <p className="card-desc">Tag, Badge, Card, Table, ListBlockItem 등 정보 표시 요소</p>
-      </div>
-      <div className="card">
-        <p className="card-title">피드백</p>
-        <p className="card-desc">Alert, Toast, Empty 등 상태 안내 요소</p>
-      </div>
-      <div className="card">
-        <p className="card-title">오버레이</p>
-        <p className="card-desc">Tooltip, Modal, Sheet 등 레이어 위에 노출되는 요소</p>
-      </div>
-      <div className="card">
-        <p className="card-title">내비게이션</p>
-        <p className="card-desc">Tabs, Pagination 등 페이지 이동 요소</p>
+        <p className="card-title">UI 패턴</p>
+        <p className="card-desc">사용자 행동이나 특정 이벤트에 의해 나타나거나, 여러 기초 컴포넌트를 조합해 만든 실사용 패턴. Modal, FormItem, Toast 등이 포함됩니다.</p>
       </div>
       <div className="card">
         <p className="card-title">레이아웃</p>
-        <p className="card-desc">Layout, TableLayout, Resizable 등 화면 구조 요소</p>
+        <p className="card-desc">Header, Sidebar, Layout 등 화면 전체의 구조를 구성하는 요소. 기획 단계에서 페이지 뼈대를 설계할 때 참고합니다.</p>
       </div>
     </div>
   </div>

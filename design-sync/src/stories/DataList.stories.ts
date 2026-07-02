@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
-  title: '데이터 표시/리스트/DataList',
-  tags: ['autodocs'],
+  title: 'UI 패턴/리스트/DataList',
+  tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
     active: {
@@ -46,7 +46,7 @@ export const Default: Story = {
     },
     template: `
       <ul class="data-list w-80">
-        <li class="data-list__item" :class="[{ active: args.active }, args.clickable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default']">
+        <li class="data-list__item" :class="[{ active: args.active }, args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default']">
           <div class="data-list__cont data-list__cont-left">
             <p v-if="args.countBadge" class="flex items-center gap-1">
               <strong class="truncate">홍길동</strong>
@@ -61,7 +61,7 @@ export const Default: Story = {
           </div>
           <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
         </li>
-        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default'">
+        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default'">
           <div class="data-list__cont data-list__cont-left">
             <p v-if="args.countBadge" class="flex items-center gap-1">
               <strong class="truncate">김철수</strong>
@@ -75,7 +75,7 @@ export const Default: Story = {
             <span v-if="args.desc" class="data-list__desc">등록일</span>
           </div>
         </li>
-        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-gray-100' : 'cursor-default'">
+        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default'">
           <div class="data-list__cont data-list__cont-left">
             <p v-if="args.countBadge" class="flex items-center gap-1">
               <strong class="truncate">이영희</strong>

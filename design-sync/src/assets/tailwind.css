@@ -30,11 +30,11 @@
   --color-warning: var(--surface-warning);
   --color-warning-light: var(--surface-warning-subtle);
 
-  --color-disabled: var(--surface-disabled);
-  --color-disabled-text: var(--text-disabled);
+  --color-disabled: var(--surface-subtle);
+  --color-disabled-text: var(--text-subtle);
 
-  --color-subtle: var(--surface-disabled);
-  --color-subtle-text: var(--text-disabled);
+  --color-subtle: var(--surface-subtle);
+  --color-subtle-text: var(--text-subtle);
 
   --color-default: var(--color-gray-900);
   --color-muted: var(--text-muted);
@@ -55,11 +55,26 @@
   --color-gray-500: var(--color-gray-500);
   --color-gray-900: var(--color-gray-900);
 
+  /* radius */
+  --radius-md: var(--shape-radius-md);
+
+  /* shadow */
+  --shadow-left: var(--effects-shadow-left);
+  --shadow-bottom: var(--effects-shadow-bottom);
+  --shadow-2xs: 0 1px rgb(187 192 199 / 0.1);
+  --shadow-xs: 0 1px 2px 0 rgb(187 192 199 / 0.15);
+  --shadow-sm: 0 1px 3px 0 rgb(187 192 199 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(187 192 199 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(187 192 199 / 0.5);
+
   /* spacing */
-  --spacing-padding-sm: var(--spacing-padding-xxs);
-  --spacing-padding-md: var(--spacing-padding-xs);
-  --spacing-padding-lg: var(--spacing-padding-sm);
-  --spacing-padding-xl: var(--unit-20);
+  --spacing-padding-xxs: var(--padding-xxs);
+  --spacing-padding-xs: var(--padding-xs);
+  --spacing-padding-sm: var(--padding-sm);
+  --spacing-padding-md: var(--padding-md);
+  --spacing-padding-lg: var(--padding-lg);
+  --spacing-padding-xl: var(--padding-xl);
+  --spacing-padding-xxl: var(--padding-xxl);
 
   /* animation */
   @keyframes accordion-down {

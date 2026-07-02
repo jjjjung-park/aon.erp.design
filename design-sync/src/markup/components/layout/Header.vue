@@ -10,7 +10,7 @@
             <!--     평소엔 안보이고 hover, 기본 설정된 브랜드일 때만 보이게 처리       -->
             <UiButton variant="ghost" :class="['hover:bg-transparent ml-auto  group-hover:inline-flex', item.value === settingBrand?'inline-flex':'hidden']" size="icon" @click.prevent.stop="defaultSet(item)">
               <!--     기본 설정되면 색상 변경       -->
-              <LucideStar :fill="item.value === settingBrand?'var(--color-primary)':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-gray-400'"/>
+              <LucideStar :fill="item.value === settingBrand?'var(--color-primary)':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-subtle-text'"/>
             </UiButton>
           </div>
         </template>
@@ -31,14 +31,10 @@
         </div>
         <UiDropdownMenu>
           <UiDropdownMenuTrigger class="flex items-center text-left gap-2 hover:cursor-pointer">
-            <!--  프로필 이미지가 없는 경우   -->
-            <div class=" rounded-full overflow-hidden text-center ">
-              <img src="@/assets/images/ico/avatar-default.svg" alt="avatar" class="size-6 object-cover"/>
-            </div>
-            <!--  프로필 이미지가 있는 경우   -->
-            <div class=" rounded-full overflow-hidden text-center ">
-              <img src="@/assets/images/logo.svg" alt="avatar" class="size-6 object-cover"/>
-            </div>
+            <UiAvatar class="size-6">
+              <UiAvatarImage src="@/assets/images/logo.svg" alt="avatar" />
+              <UiAvatarFallback>홍길</UiAvatarFallback>
+            </UiAvatar>
             <div class="h-8 flex flex-col">
               <p class="caption__bold">홍길동님</p>
               <span class="caption text-muted">안녕하시와요</span>

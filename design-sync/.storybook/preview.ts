@@ -49,6 +49,7 @@ import { Progress } from '@/ui/progress'
 import { RadioGroup, RadioGroupItem } from '@/ui/radio-group'
 import { Switch } from '@/ui/switch'
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/ui/resizable'
+import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@/ui/button-group'
 import { Toaster } from '@/ui/sonner'
 import YearPicker from '@/ui/aon/year-picker/index.vue'
 import YearRange from '@/ui/aon/year-range/index.vue'
@@ -189,6 +190,9 @@ setup((app) => {
   app.component('UiResizableHandle', ResizableHandle)
   app.component('UiResizablePanel', ResizablePanel)
   app.component('UiResizablePanelGroup', ResizablePanelGroup)
+  app.component('UiButtonGroup', ButtonGroup)
+  app.component('UiButtonGroupSeparator', ButtonGroupSeparator)
+  app.component('UiButtonGroupText', ButtonGroupText)
   app.component('UiToaster', Toaster)
   app.component('UiDatePicker', YearPicker)
   app.component('UiYearRange', YearRange)
@@ -216,16 +220,13 @@ const preview: Preview = {
     },
     options: {
       storySort: (a, b) => {
-        const categoryOrder = ['기초', '액션', '데이터 입력', '데이터 표시', '피드백', '오버레이', '내비게이션', '레이아웃']
+        const categoryOrder = ['Foundation', '기초', 'UI 패턴', '레이아웃']
         const itemOrder = {
-          '기초':        ['Typography'],
-          '액션':        ['Button', 'Dropdown'],
-          '데이터 입력':  ['Input', 'Checkbox', 'RadioGroup', 'Select', 'DatePicker'],
-          '데이터 표시':  ['Tag', 'Badge', 'Progress', 'Card', 'Carousel', 'Accordion', 'Table', '리스트'],
-          '피드백':      ['Alert', 'Toast', 'Empty'],
-          '오버레이':    ['Tooltip', 'Modal', 'Sheet'],
-          '내비게이션':  ['Tabs', 'Pagination'],
-          '레이아웃':    ['Layout', 'TableLayout', 'Resizable'],
+          'Foundation': ['Typography', 'Color', 'Icons'],
+          '기초':       ['Button', 'Input', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Spinner', 'Progress', 'Avatar', 'Skeleton', 'Separator'],
+          'UI 패턴':    ['FormItem', 'Dropdown', 'Select', 'DatePicker', 'ButtonGroup', 'ButtonSet', 'FileDropZone', 'Card', 'Collapsible', '리스트', 'Accordion', 'Alert', 'Toast', 'Tooltip', 'Tabs', 'Stepper', 'Pagination', 'Carousel', 'Table', 'Empty', 'Modal', 'Sheet'],
+          // 그룹: 폼(FormItem~ButtonGroup) / 콘텐츠(FileDropZone~Accordion) / 피드백(Alert,Toast,Tooltip) / 네비게이션(Tabs~Carousel) / 데이터상태(Table,Empty) / 오버레이(Modal,Sheet)
+          '레이아웃':   ['Layout', 'TableLayout', 'Resizable'],
         }
         if (a.title === '소개') return -1
         if (b.title === '소개') return 1

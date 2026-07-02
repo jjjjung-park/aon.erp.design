@@ -1,10 +1,10 @@
 <template>
   <UiSheet :modal="false" v-model:open="open">
     <!--  router tab 있는 경우 top-21 / 없는 경우 top-10  // 전체화면 정책 변경 시 fullsize : left-5 top-5 w-auto  -->
-    <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120 shadow-gray-400 bottom-0 ', props.class]" :style="props.style">
+    <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120 bottom-0 ', props.class]" :style="props.style">
 
-      <UiSheetHeader class="px-padding-xl min-h-14 gap-0">
-        <div class="flex justify-between items-center bg-background rounded-t-lg gap-0.5">
+      <UiSheetHeader class="px-padding-lg min-h-14 gap-0">
+        <div class="flex justify-between items-center bg-background rounded-t-md gap-0.5">
           <UiSheetTitle>
             <slot name="title">{{title}}</slot>
           </UiSheetTitle>
@@ -18,7 +18,7 @@
                   <LucideMinimize-2/>
                 </template>
               </UiButton>
-              <UiSeparator orientation="vertical" class="h-5"/>
+              <UiSeparator orientation="vertical" class="h-4"/>
             </template>
             <UiSheetClose as-child>
               <UiButton variant="ghost" size="icon"><LucideX/></UiButton>

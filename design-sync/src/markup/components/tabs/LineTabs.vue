@@ -7,7 +7,7 @@
              :data-state="tab.active"
              @click="$emit('change', tab.value)"
              :class="cn(
-       'flex min-w-fit items-center justify-center px-padding-lg gap-1 h-8 text-sm bg-background font-bold cursor-pointer text-muted relative',
+       'flex min-w-fit items-center justify-center px-padding-sm gap-1 h-10 text-sm bg-background font-bold cursor-pointer text-muted relative',
                'data-[disabled=true]:cursor-not-allowed data-[disabled=true]:text-disabled-text',
                'data-[state=true]:text-default data-[state=true]:after:content-[\'\'] data-[state=true]:after:absolute data-[state=true]:after:bottom-0 data-[state=true]:after:left-0 data-[state=true]:after:w-full data-[state=true]:after:h-[2px]',
                props.type === 'secondary'

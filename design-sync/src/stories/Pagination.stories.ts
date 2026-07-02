@@ -7,7 +7,7 @@ import { ref } from 'vue'
 // meta는 TablePagination 기준으로 바인딩
 // (각 스토리에서 argTypes/args를 개별 override)
 const meta: Meta = {
-  title: '내비게이션/Pagination',
+  title: 'UI 패턴/Pagination',
   tags: ['autodocs'],
 }
 export default meta

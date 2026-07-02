@@ -1,5 +1,5 @@
 <template>
-  <UiAccordion class="w-full border-1 border-border rounded-lg px-6 py-3" collapsible default-value="accordion">
+  <UiAccordion class="w-full border-1 border-border rounded-md px-6 py-3" collapsible default-value="accordion">
     <UiAccordionItem value="accordion" class="grid gap-3 ">
       <UiAccordionTrigger class="leading-[1.5]">조회 조건</UiAccordionTrigger>
       <UiAccordionContent class="grid gap-4">
@@ -7,7 +7,7 @@
           content
         </slot>
         <!--   클래스 bg-surface-muted/50 -> bg-surface-muted 변경     -->
-        <div class="rounded-lg bg-surface-muted px-4 py-3 flex  items-center gap-3" v-if="filter">
+        <div class="rounded-md bg-surface-muted px-4 py-3 flex  items-center gap-3" v-if="filter">
           <p class="flex items-center flex-none">
             <LucideBookmark class="size-4 mr-1"/>
             <span class="caption__bold">조회 저장</span>

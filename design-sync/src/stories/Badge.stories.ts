@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { Badge } from '@/ui/badge'
 
 const meta: Meta<typeof Badge> = {
-  title: '데이터 표시/Badge',
+  title: '기초/Badge',
   component: Badge,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     variant: {
       control: 'select',
