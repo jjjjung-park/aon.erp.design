@@ -56,6 +56,7 @@
   --unit-24: 24px;
   --unit-32: 32px;
   --unit-40: 40px;
+  --unit-48: 48px;
   --unit-64: 64px;
   --unit-80: 80px;
   --unit-104: 104px;
@@ -115,6 +116,8 @@
   --size-sm: var(--unit-24);
   --size-md: var(--unit-32);
   --size-lg: var(--unit-40);
+  --size-xl: var(--unit-64);
+  --size-xxl: var(--unit-80);
 
   /* spacing / padding */
   --padding-xxs: var(--unit-4);
@@ -139,12 +142,12 @@
   /* shape / border */
   --shape-border-default: var(--unit-1);
   --shape-border-strong: var(--unit-2);
-  --shape-border-heavy: var(--unit-4);
 
   /* shape / stroke */
   --shape-stroke-xs: 1.4px;
   --shape-stroke-sm: 1.6px;
   --shape-stroke-md: var(--unit-2);
+  --shape-stroke-lg: var(--unit-4);
 
   /* effects / shadow */
   --effects-shadow-left: -4px 0px 4px 0px rgba(187, 192, 199, 0.2);

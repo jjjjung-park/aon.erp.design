@@ -29,7 +29,6 @@ export const Border: Story = {
         items: [
           { label: 'default', token: '--shape-border-default', value: '1px' },
           { label: 'strong',  token: '--shape-border-strong',  value: '2px' },
-          { label: 'heavy',   token: '--shape-border-heavy',   value: '4px' },
         ],
       }
     },
@@ -71,6 +70,7 @@ export const Stroke: Story = {
           { label: 'xs', token: '--shape-stroke-xs', value: '1.4' },
           { label: 'sm', token: '--shape-stroke-sm', value: '1.6' },
           { label: 'md', token: '--shape-stroke-md', value: '2' },
+          { label: 'lg', token: '--shape-stroke-lg', value: '4' },
         ],
       }
     },
