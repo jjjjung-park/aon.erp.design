@@ -35,7 +35,7 @@ export const FullTable: Story = {
             <Td><UiSkeleton class="h-4 w-full" /></Td>
             <Td><UiSkeleton class="h-4 w-3/4" /></Td>
             <Td><UiSkeleton class="h-4 w-1/2" /></Td>
-            <Td><UiBadge variant="secondary">처리중</UiBadge></Td>
+            <Td><UiBadge variant="process">처리중</UiBadge></Td>
             <Td type="function">
               <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
             </Td>
@@ -164,7 +164,7 @@ export const TdTypes: Story = {
           <UiTableRow v-for="i in 3" :key="i">
             <Td type="checkbox" />
             <Td data="텍스트 데이터" />
-            <Td><UiBadge variant="secondary">처리중</UiBadge></Td>
+            <Td><UiBadge variant="process">처리중</UiBadge></Td>
             <Td type="function">
               <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
             </Td>

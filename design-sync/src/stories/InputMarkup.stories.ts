@@ -13,6 +13,11 @@ const meta: Meta = {
       options: ['text', 'password'],
       description: '입력 타입',
     },
+    size: {
+      control: 'radio',
+      options: ['default', 'sm'],
+      description: '사이즈',
+    },
     placeholder: { control: 'text', description: '플레이스홀더' },
     disabled:    { control: 'boolean', description: '비활성화' },
     ariaInvalid: { control: 'boolean', description: '에러 상태' },
@@ -24,6 +29,7 @@ const meta: Meta = {
   },
   args: {
     type: 'text',
+    size: 'default',
     placeholder: '내용을 입력해 주세요',
     disabled: false,
     readonly: false,
@@ -31,7 +37,7 @@ const meta: Meta = {
   },
 }
 export default meta
-type Story = StoryObj<{ type: string; placeholder: string; disabled: boolean; readonly: boolean; ariaInvalid: boolean }>
+type Story = StoryObj<{ type: string; size: 'default' | 'sm'; placeholder: string; disabled: boolean; readonly: boolean; ariaInvalid: boolean }>
 
 export const Default: Story = {
   name: 'Input — 인터랙티브',
@@ -54,6 +60,7 @@ export const Default: Story = {
         <InputBase
           v-else
           v-model="value"
+          :size="args.size"
           :placeholder="args.placeholder"
           :disabled="args.disabled"
           :readonly="args.readonly"
@@ -86,11 +93,11 @@ export const WithAffix: Story = {
     template: `
       <div class="flex flex-col gap-3 w-80">
         <InputBase placeholder="검색어 입력">
-          <template #prefix><LucideSearch class="size-3" style="stroke-width: var(--shape-stroke-xs)" /></template>
+          <template #prefix><LucideSearch class="size-4"  /></template>
         </InputBase>
         <InputBase placeholder="사용자명">
-          <template #prefix><LucideUser class="size-3" style="stroke-width: var(--shape-stroke-xs)" /></template>
-          <template #suffix><span class="text-xs text-muted">@aon.com</span></template>
+          <template #prefix><LucideUser class="size-4" /></template>
+          <template #suffix><span>@aon.com</span></template>
         </InputBase>
       </div>
     `,

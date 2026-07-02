@@ -50,7 +50,7 @@ export const Default: Story = {
           <div class="data-list__cont data-list__cont-left">
             <p v-if="args.countBadge" class="flex items-center gap-1">
               <strong class="truncate">홍길동</strong>
-              <UiBadge variant="count" tone="default" size="sm">5</UiBadge>
+              <UiBadge size="count">5</UiBadge>
             </p>
             <strong class="truncate" v-else>홍길동</strong>
             <span v-if="args.desc" class="data-list__desc">개발팀 · 사원</span>
@@ -65,7 +65,7 @@ export const Default: Story = {
           <div class="data-list__cont data-list__cont-left">
             <p v-if="args.countBadge" class="flex items-center gap-1">
               <strong class="truncate">김철수</strong>
-              <UiBadge variant="count" tone="default" size="sm">12</UiBadge>
+              <UiBadge size="count">12</UiBadge>
             </p>
             <strong class="truncate" v-else>김철수</strong>
             <span v-if="args.desc" class="data-list__desc">디자인팀 · 대리</span>
@@ -79,7 +79,7 @@ export const Default: Story = {
           <div class="data-list__cont data-list__cont-left">
             <p v-if="args.countBadge" class="flex items-center gap-1">
               <strong class="truncate">이영희</strong>
-              <UiBadge variant="count" tone="default" size="sm">999+</UiBadge>
+              <UiBadge size="count">999+</UiBadge>
             </p>
             <strong class="truncate" v-else>이영희</strong>
             <span v-if="args.desc" class="data-list__desc">기획팀 · 과장</span>

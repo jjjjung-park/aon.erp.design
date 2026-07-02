@@ -473,10 +473,10 @@
       <tr>
         <th class="bg-slate-100">기본</th>
         <td>
-          <UiBadge>default</UiBadge>
+          <UiBadge variant="info">info</UiBadge>
         </td>
         <td>
-          <UiBadge variant="secondary" class="font-">secondary</UiBadge>
+          <UiBadge variant="process">process</UiBadge>
         </td>
         <td>
           <UiBadge variant="outline">outline</UiBadge>
@@ -521,13 +521,13 @@
       <tr>
         <th class="bg-slate-100">count</th>
         <td>
-          <UiBadge variant="count" tone="default" size="sm">1</UiBadge>
+          <UiBadge size="count">1</UiBadge>
         </td>
         <td>
-          <UiBadge variant="count" tone="important" size="sm"><LucideThumbsDown/>999+</UiBadge>
+          <UiBadge size="count" class="bg-danger text-neutral"><LucideThumbsDown/>999+</UiBadge>
         </td>
         <td>
-          <UiBadge variant="destructive" size="dot"></UiBadge>
+          <UiBadge size="dot" class="bg-danger"></UiBadge>
         </td>
       </tr>
       </tbody>

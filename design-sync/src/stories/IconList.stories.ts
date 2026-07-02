@@ -47,7 +47,7 @@ export const Default: Story = {
             <LucideMessagesSquare v-if="args.iconType === 'default'" />
             <LucideCircleCheckBig v-else-if="args.iconType === 'success'" />
             <LucideAlertTriangle v-else />
-            <UiBadge v-if="args.unread" variant="destructive" size="dot" class="icon-list__notification" />
+            <UiBadge v-if="args.unread" size="dot" class="bg-danger" class="icon-list__notification" />
           </div>
           <div class="icon-list__content">
             <div class="icon-list__title">
