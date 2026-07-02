@@ -143,11 +143,9 @@
   --shape-border-default: var(--unit-1);
   --shape-border-strong: var(--unit-2);
 
-  /* shape / stroke */
-  --shape-stroke-xs: 1.4px;
-  --shape-stroke-sm: 1.6px;
-  --shape-stroke-md: var(--unit-2);
-  --shape-stroke-lg: var(--unit-4);
+  /* shape / stroke — 소형 아이콘 보정값 (루시드 기본 stroke-width: 2 기준) */
+  --shape-stroke-xs: 1.4px;  /* 12px 아이콘: 루시드 자동값 1px → 보정 */
+  --shape-stroke-sm: 1.6px;  /* 16px 아이콘: 루시드 자동값 1.33px → 보정 */
 
   /* effects / shadow */
   --effects-shadow-left: -4px 0px 4px 0px rgba(187, 192, 199, 0.2);

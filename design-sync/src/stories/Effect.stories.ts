@@ -69,8 +69,8 @@ export const Stroke: Story = {
         items: [
           { label: 'xs', token: '--shape-stroke-xs', value: '1.4' },
           { label: 'sm', token: '--shape-stroke-sm', value: '1.6' },
-          { label: 'md', token: '--shape-stroke-md', value: '2' },
-          { label: 'lg', token: '--shape-stroke-lg', value: '4' },
+          { label: 'md', token: 'Lucide 기본값',     value: '2' },
+          { label: 'lg', token: 'Lucide 기본값 ×2',  value: '4' },
         ],
       }
     },
