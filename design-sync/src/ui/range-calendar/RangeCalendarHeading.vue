@@ -25,7 +25,7 @@ const headerStartLabel = computed(() => {
   const startMonth = rootContext.grid.value[0].value.toString()
   const startYear = format(startMonth, 'YYYY')
 
-  return `${startYear}년 ${format(startMonth, 'M')}월`
+  return `${startYear}년 ${parseInt(format(startMonth, 'MM'))}월`
 })
 
 const headerEndLabel = computed(() => {
@@ -34,7 +34,7 @@ const headerEndLabel = computed(() => {
   const endMonth = rootContext.grid.value[rootContext.grid.value.length - 1].value.toString()
   const endYear = format(endMonth, 'YYYY')
 
-  return `${endYear}년 ${format(endMonth, 'M')}월`
+  return `${endYear}년 ${parseInt(format(endMonth, 'MM'))}월`
 })
 
 function pagingFunc(date: DateValue, sign: -1 | 1) {

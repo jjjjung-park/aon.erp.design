@@ -7,6 +7,7 @@ export function useDate() {
     return pattern
       .replace('YYYY', String(y))
       .replace('MM', m)
+      .replace('M', String(date.getMonth() + 1))
       .replace('DD', d)
   }
 
