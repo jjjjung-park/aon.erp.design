@@ -51,8 +51,10 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj<{ type: string; size: 'default' | 'sm'; placeholder: string; disabled: boolean; readonly: boolean; ariaInvalid: boolean; prefix: boolean; suffix: boolean }>
 
+type StoryBase = StoryObj
+
 export const Default: Story = {
-  name: 'Input — 인터랙티브',
+  name: 'Input — Default',
   render: (args) => ({
     components: { InputBase, InputPassword, LucideSearch },
     setup() {
@@ -86,3 +88,60 @@ export const Default: Story = {
   }),
 }
 
+export const States: StoryBase = {
+  name: '상태별',
+  render: () => ({
+    components: { InputBase },
+    template: `
+      <div class="flex flex-col gap-3 w-80">
+        <InputBase placeholder="기본" />
+        <InputBase placeholder="비활성화" :disabled="true" />
+        <InputBase placeholder="읽기 전용" :readonly="true" />
+        <InputBase placeholder="에러" :aria-invalid="true" />
+      </div>
+    `,
+  }),
+}
+
+export const Sizes: StoryBase = {
+  name: '사이즈',
+  render: () => ({
+    components: { InputBase },
+    template: `
+      <div class="flex flex-col gap-3 w-80">
+        <InputBase placeholder="Default (32px)" size="default" />
+        <InputBase placeholder="Small (24px)" size="sm" />
+      </div>
+    `,
+  }),
+}
+
+export const WithAffix: StoryBase = {
+  name: 'Prefix / Suffix',
+  render: () => ({
+    components: { InputBase, LucideSearch, LucideUser },
+    template: `
+      <div class="flex flex-col gap-3 w-80">
+        <InputBase placeholder="검색어 입력">
+          <template #prefix><LucideSearch class="size-4" /></template>
+        </InputBase>
+        <InputBase placeholder="사용자명">
+          <template #prefix><LucideUser class="size-4" /></template>
+          <template #suffix><span class="text-muted">@aon.com</span></template>
+        </InputBase>
+      </div>
+    `,
+  }),
+}
+
+export const Password: StoryBase = {
+  name: 'Password',
+  render: () => ({
+    components: { InputPassword },
+    template: `
+      <div class="w-80">
+        <InputPassword placeholder="비밀번호를 입력해 주세요" />
+      </div>
+    `,
+  }),
+}
