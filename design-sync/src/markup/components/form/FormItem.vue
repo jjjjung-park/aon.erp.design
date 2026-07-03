@@ -1,6 +1,6 @@
 <template>
   <!-- 우측정렬 스타일 추가  [&.text-right_input:not(:placeholder-shown)]:text-right -->
-  <div :class="cn('flex flex-col h-18 gap-1 [&:has([aria-invalid=true])_span.caption]:text-danger w-full [&.text-right_input:not(:placeholder-shown)]:text-right', props.class)">
+  <div :class="cn('flex flex-col h-20 gap-1 [&:has([aria-invalid=true])_span.caption]:text-danger w-full [&.text-right_input:not(:placeholder-shown)]:text-right', props.class)">
     <UiLabel class="text-xs flex gap-0.5 mb-1" v-if="label">{{ label }}<span class="text-danger" v-if="required">*</span></UiLabel>
     <slot name="input-item">
       <!--  div 제거    -->
