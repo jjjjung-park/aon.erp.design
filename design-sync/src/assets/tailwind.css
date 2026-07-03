@@ -13,7 +13,9 @@
   --text-lg: var(--font-size-lg);
   --text-xl: var(--font-size-xl);
 
-  /* line-height (md 이상은 Figma title 기준 1.5, xs/sm은 body 상속 1.4) */
+  /* line-height (md 이상은 Figma title 기준 1.5, xs/sm은 1.4) */
+  --text-xs--line-height: 1.4;
+  --text-sm--line-height: 1.4;
   --text-md--line-height: 1.5;
   --text-lg--line-height: 1.5;
   --text-xl--line-height: 1.5;
