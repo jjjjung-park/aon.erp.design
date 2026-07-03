@@ -12,44 +12,54 @@
       <UiPopoverAnchor class="w-full">
         <UiPopoverTrigger as-child class="" tabindex="0" @keydown.enter="open = true" :disabled="props.disabled">
           <template v-if="multiple">
-            <UiTagsInput v-slot="{ modelValue: tags }" v-model="selectValue" :aria-invalid="ariaInvalid" class="w-full min-h-8 gap-1 items-center">
+            <UiTagsInput v-slot="{ modelValue: tags }"
+                         v-model="selectValue" :aria-invalid="ariaInvalid"
+                         :disabled="props.disabled"
+                         class="w-full min-h-8 gap-1 items-center">
+
               <template v-if="selectValue.length == 0">
                 <span class="!text-disabled-text">{{ placeholder }}</span>
                 <div class="ml-auto pl-2">
-                  <LucideChevronDown class="size-4 text-muted"/>
+                  <LucideChevronDown class="text-muted"/>
                 </div>
               </template>
 
               <!--  태그 영역   -->
               <template v-else>
                 <UiTagsInputItem v-for="item in tags" :key="item.toString()" :value="item.toString()" class="py-0.5">
-                  <span class="py-0.5 text-sm rounded bg-transparent">{{ item }}</span>
-                  <UiButton variant="ghost" size="icon-sm" class="text-primary hover:bg-transparent size-3">
-                    <LucideX :size="9" />
+                  <span class="bg-transparent caption__bold">{{ item }}</span>
+                  <UiButton v-if="!props.disabled" variant="ghost" size="inline-icon-sm" class="text-primary hover:bg-transparent" @click.stop="selectValue = selectValue.filter(v => v !== item)">
+                    <LucideX />
                   </UiButton>
                 </UiTagsInputItem>
 
                 <UiTooltipProvider>
                   <UiTooltip>
-                    <UiTooltipTrigger as-child class="">
-                      <Tags title="+ 3" type="chip" variant="secondary" closeable />
+                    <UiTooltipTrigger as-child>
+                      <Tags
+                        title="+ 3"
+                        type="chip"
+                        v-bind="props.disabled ? { class: 'opacity-50' } : { variant: 'secondary', closeable: true }"
+                        data-reka-collection-item
+                      />
                     </UiTooltipTrigger>
                     <UiTooltipContent side="top" align="center" class="flex flex-wrap gap-1">
                       <UiTagsInputItem v-for="item in tags" :key="item.toString()" :value="item.toString()" class="py-0.5">
-                        <span class="py-0.5 text-sm rounded bg-transparent">{{ item }}</span>
-                        <UiButton variant="ghost" size="icon-sm" class="text-primary hover:bg-transparent size-3">
-                          <LucideX :size="9" />
+                        <span class="py-0.5 rounded bg-transparent">{{ item }}</span>
+                        <UiButton v-if="!props.disabled" variant="ghost" size="inline-icon-sm" class="text-primary hover:bg-transparent" @click.stop="selectValue = selectValue.filter(v => v !== item)">
+                          <LucideX />
                         </UiButton>
                       </UiTagsInputItem>
                     </UiTooltipContent>
                   </UiTooltip>
                 </UiTooltipProvider>
-                <!--   clear 버튼     -->
+
+                <!--   clear 버튼 / disabled 아이콘   -->
                 <div class="ml-auto flex items-center pl-2">
-                  <!--   TODO svg 사이즈 버튼에서 관장하도록 변경     -->
-                  <TagsInputClear v-if="selectValue.length > 0">
-                    <LucideX class="size-4 text-muted"/>
-                  </TagsInputClear>
+                  <UiButton v-if="!props.disabled" variant="ghost" size="inline-icon" class="text-muted hover:bg-transparent" @click.stop="selectValue = []">
+                    <LucideX class="text-muted" />
+                  </UiButton>
+                  <LucideChevronDown v-else class="size-4 text-disabled-text" />
                 </div>
 
               </template>
@@ -57,13 +67,14 @@
           </template>
           <template v-else>
             <UiTagsInput class="w-full min-h-8 gap-1 py-1 items-center" :aria-invalid="ariaInvalid">
-              <!--      w-10/12 클래스 제거        -->
-              <span class="truncate flex-1" :class="[selectValueSingle?'text-default':'text-disabled-text']">{{ selectValueSingle || placeholder }}</span>
+              <span class="truncate flex-1" :class="[selectValueSingle?'text-default':'text-disabled-text', {'text-disabled-text':props.disabled}]">
+                {{ selectValueSingle || placeholder }}
+              </span>
               <!--   clear 버튼     -->
               <div class="ml-auto flex items-center pl-2">
-                <TagsInputClear v-if="selectValue.length > 0">
-                  <LucideX class="size-4 text-muted"/>
-                </TagsInputClear>
+                <UiButton variant="ghost" size="inline-icon" class="text-muted hover:bg-transparent" v-if="selectValueSingle && !props.disabled" @click.stop="selectValueSingle = undefined">
+                  <LucideX class="text-muted"/>
+                </UiButton>
                 <template v-else>
                   <LucideChevronDown class="size-4 text-muted"/>
                 </template>

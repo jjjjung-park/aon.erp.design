@@ -25,18 +25,25 @@ const meta: Meta = {
       description: '선택 모드',
       if: { arg: 'type', eq: 'comboboxTag' },
     },
+    size: {
+      control: 'radio',
+      options: ['sm', 'default'],
+      description: '사이즈',
+      if: { arg: 'type', eq: '기본 셀렉트' },
+    },
     placeholder: { control: 'text', description: '플레이스홀더' },
     disabled: { control: 'boolean', description: '비활성화' },
   },
   args: {
     type: 'comboboxTag',
     multiple: '단일',
+    size: 'default',
     placeholder: '선택하세요',
     disabled: false,
   },
 }
 export default meta
-type Story = StoryObj<{ type: '기본 셀렉트' | 'comboboxTag'; multiple: '단일' | '멀티'; placeholder: string; disabled: boolean }>
+type Story = StoryObj<{ type: '기본 셀렉트' | 'comboboxTag'; multiple: '단일' | '멀티'; size: 'sm' | 'default'; placeholder: string; disabled: boolean }>
 
 export const Default: Story = {
   name: 'Select',
@@ -57,6 +64,7 @@ export const Default: Story = {
           :list-item="sampleItems"
           :placeholder="args.placeholder"
           :disabled="args.disabled"
+          :size="args.size"
         />
       </div>
     `,
@@ -72,7 +80,6 @@ export const Sizes: Story = {
       <div class="flex flex-col gap-3 w-60">
         <SelectBase size="sm"      :list-item="sampleItems" placeholder="Small" />
         <SelectBase size="default" :list-item="sampleItems" placeholder="Default" />
-        <SelectBase size="lg"      :list-item="sampleItems" placeholder="Large" />
       </div>
     `,
   }),

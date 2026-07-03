@@ -2,7 +2,7 @@
   <div :data-slot="props.type ?? 'tag'"
        :class="cn(tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag' }), props.class)">
     <slot>
-      <p class="truncate">{{ title }}</p>
+      <p class="truncate caption__bold">{{ title }}</p>
     </slot>
     <UiButton data-slot="close" v-if="closeable" variant="ghost" size="inline-icon-sm" class="text-inherit hover:bg-transparent"><LucideX/></UiButton>
   </div>

@@ -28,14 +28,15 @@ const props = withDefaults(defineProps<{
     placeholder?: string,
     disabled?: boolean,
     readonly?: boolean,
-    size?: "sm" | "default" | "lg"
+    size?: "sm" | "default"
     class?:HTMLAttributes["class"]
     listItem?: ListItem[]
   }>(),
   {
     placeholder: '선택하세요',
     disabled:false,
-    listItem: () => []
+    listItem: () => [],
+    size:'default',
   }
 )
 const $emits = defineEmits(['click'])
