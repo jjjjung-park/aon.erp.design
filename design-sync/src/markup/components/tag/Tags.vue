@@ -1,10 +1,14 @@
 <template>
   <div :data-slot="props.type ?? 'tag'"
-       :class="cn(tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag' }), props.class)">
+       :class="cn(
+         tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag' }),
+         props.disabled && 'bg-disabled text-disabled-text border-border',
+         props.class
+       )">
     <slot>
       <p class="truncate caption__bold">{{ title }}</p>
     </slot>
-    <UiButton data-slot="close" v-if="closeable" variant="ghost" size="inline-icon-sm" class="text-inherit hover:bg-transparent"><LucideX/></UiButton>
+    <UiButton data-slot="close" v-if="closeable && !props.disabled" variant="ghost" size="inline-icon-sm" class="text-inherit hover:bg-transparent"><LucideX/></UiButton>
   </div>
 </template>
 <script setup lang="ts">
@@ -15,9 +19,10 @@ import { tagsVariants } from "@/lib/cva/tag"
 type TagsProps = {
   class?: HTMLAttributes["class"]
   title?: string
+  disabled?: boolean
 } & (
-  | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info';       closeable?: never }
-  | { type: 'chip'; variant?: 'secondary' | 'outline' | 'disabled'; closeable?: boolean }
+  | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info'; closeable?: never }
+  | { type: 'chip'; variant?: 'secondary' | 'outline'; closeable?: boolean }
 )
 
 const props = defineProps<TagsProps>()
