@@ -26,6 +26,16 @@ const meta: Meta = {
       description: '읽기 전용 (text 전용)',
       if: { arg: 'type', eq: 'text' },
     },
+    prefix: {
+      control: 'boolean',
+      description: '프리픽스 아이콘',
+      if: { arg: 'type', eq: 'text' },
+    },
+    suffix: {
+      control: 'boolean',
+      description: '서픽스 텍스트',
+      if: { arg: 'type', eq: 'text' },
+    },
   },
   args: {
     type: 'text',
@@ -34,15 +44,17 @@ const meta: Meta = {
     disabled: false,
     readonly: false,
     ariaInvalid: false,
+    prefix: false,
+    suffix: false,
   },
 }
 export default meta
-type Story = StoryObj<{ type: string; size: 'default' | 'sm'; placeholder: string; disabled: boolean; readonly: boolean; ariaInvalid: boolean }>
+type Story = StoryObj<{ type: string; size: 'default' | 'sm'; placeholder: string; disabled: boolean; readonly: boolean; ariaInvalid: boolean; prefix: boolean; suffix: boolean }>
 
 export const Default: Story = {
   name: 'Input — 인터랙티브',
   render: (args) => ({
-    components: { InputBase, InputPassword },
+    components: { InputBase, InputPassword, LucideSearch },
     setup() {
       const value = ref('')
       const isPassword = computed(() => args.type === 'password')
@@ -65,41 +77,12 @@ export const Default: Story = {
           :disabled="args.disabled"
           :readonly="args.readonly"
           :aria-invalid="args.ariaInvalid"
-        />
-      </div>
-    `,
-  }),
-}
-
-export const States: Story = {
-  name: 'InputBase — 상태별',
-  render: () => ({
-    components: { InputBase },
-    template: `
-      <div class="flex flex-col gap-3 w-80">
-        <InputBase placeholder="기본" />
-        <InputBase placeholder="비활성화" :disabled="true" />
-        <InputBase placeholder="읽기 전용" :readonly="true" />
-        <InputBase placeholder="에러" :aria-invalid="true" />
-      </div>
-    `,
-  }),
-}
-
-export const WithAffix: Story = {
-  name: 'InputBase — prefix / suffix',
-  render: () => ({
-    components: { InputBase, LucideSearch, LucideUser },
-    template: `
-      <div class="flex flex-col gap-3 w-80">
-        <InputBase placeholder="검색어 입력">
-          <template #prefix><LucideSearch class="size-4"  /></template>
-        </InputBase>
-        <InputBase placeholder="사용자명">
-          <template #prefix><LucideUser class="size-4" /></template>
-          <template #suffix><span>@aon.com</span></template>
+        >
+          <template v-if="args.prefix" #prefix><LucideSearch class="size-4" /></template>
+          <template v-if="args.suffix" #suffix><span class="text-muted">@aon.com</span></template>
         </InputBase>
       </div>
     `,
   }),
 }
+
