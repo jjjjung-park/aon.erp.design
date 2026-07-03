@@ -20,12 +20,13 @@ const meta: Meta = {
     },
     chipVariant: {
       control: 'select',
-      options: ['default', 'secondary', 'outline', 'disabled'],
+      options: ['default', 'secondary', 'outline'],
       description: 'variant',
       if: { arg: 'type', eq: 'chip' },
     },
     title:     { control: 'text',    description: '태그 텍스트' },
     closeable: { control: 'boolean', description: '닫기 버튼 표시', if: { arg: 'type', eq: 'chip' } },
+    disabled:  { control: 'boolean', description: '비활성화',       if: { arg: 'type', eq: 'chip' } },
   },
   args: {
     type: 'tag',
@@ -33,10 +34,11 @@ const meta: Meta = {
     chipVariant: 'secondary',
     title: '태그',
     closeable: false,
+    disabled: false,
   },
 }
 export default meta
-type Story = StoryObj<{ type: string; tagVariant: string; chipVariant: string; title: string; closeable: boolean }>
+type Story = StoryObj<{ type: string; tagVariant: string; chipVariant: string; title: string; closeable: boolean; disabled: boolean }>
 
 export const Default: Story = {
   name: 'Tags — 인터랙티브',
@@ -46,7 +48,7 @@ export const Default: Story = {
       const variant = computed(() => args.type === 'chip' ? args.chipVariant : args.tagVariant)
       return { args, variant }
     },
-    template: `<Tags :type="args.type" :variant="variant" :title="args.title" :closeable="args.closeable" />`,
+    template: `<Tags :type="args.type" :variant="variant" :title="args.title" :closeable="args.closeable" :disabled="args.type === 'chip' ? args.disabled : undefined" />`,
   }),
 }
 
@@ -63,7 +65,7 @@ export const Chip: Story = {
           <template #default><LucideCheck class="size-3 shrink-0"/><p class="truncate">선택한 태그</p></template>
         </Tags>
         <Tags type="chip" variant="outline"   title="미선택 태그"  :closeable="true"/>
-        <Tags type="chip" variant="disabled"  title="비활성 태그" :closeable="true">
+        <Tags type="chip" :disabled="true" title="비활성 태그" :closeable="true">
           <template #default><LucideCheck class="size-3 shrink-0"/><p class="truncate">비활성 태그</p></template>
         </Tags>
       </div>

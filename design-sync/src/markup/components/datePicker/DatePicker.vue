@@ -5,14 +5,15 @@
     :default-open="props.forceOpen"
   >
     <UiPopoverTrigger as-child :class="[{'border-danger':ariaInvalid}, props.class]" :aria-invalid="ariaInvalid">
-      <div class="flex gap-2 justify-between items-center border-1 border-border rounded-sm h-8 px-padding-xs bg-background w-full" >
-        <p :class="['flex items-center gap-2', {'text-disabled-text': !isValue}]"
-        >
+      <div tabindex="0"
+          :class="['flex gap-1 justify-between items-center border-1 rounded-sm px-padding-xs bg-background w-full h-8 focus-visible:outline-0 focus-visible:border-primary',
+          open ? 'border-primary' : 'border-border']">
+        <p :class="['flex items-center gap-1', {'text-disabled-text': !isValue}]">
           <LucideCalendar class="size-4 text-muted flex-none"/>
           {{ value ?? props.placeholder }}
         </p>
-        <UiButton variant="ghost" class="hover:bg-transparent" size="icon-sm" @click.prevent.stop="clear" :disabled="!isValue">
-          <LucideX class="size-4" :class="!isValue ? 'text-transparent':'text-muted'"/>
+        <UiButton variant="ghost" class="hover:bg-transparent" size="inline-icon" @click.prevent.stop="clear" :disabled="!isValue">
+          <LucideX :class="[!isValue ? 'text-transparent' : 'text-muted']"/>
         </UiButton>
       </div>
     </UiPopoverTrigger>
@@ -44,7 +45,7 @@ const props = withDefaults(
   {
     forceOpen: false,
     placeholder: '',
-    ariaInvalid:false
+    ariaInvalid: false,
   }
 )
 
@@ -69,12 +70,12 @@ const toggleOpen = (): void => {
     open.value = true
   }
 }
-const change = (_date: DateValue): void => {
+const change = (_date: DateValue | undefined): void => {
   open.value = false
 }
 
 const clear = (): void => {
-  model.value = null
+  model.value = ''
   if (!props.forceOpen && open.value) {
     open.value = false
   }

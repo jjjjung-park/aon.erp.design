@@ -1,54 +1,45 @@
 <template>
-  <UiPopover>
+  <UiPopover
+      v-model:open="open"
+      @update:open="toggleOpen()"
+      :default-open="props.forceOpen">
     <UiPopoverTrigger as-child :class="cn({'border-danger':ariaInvalid}, props.class)"  :aria-invalid="ariaInvalid">
-      <div class="flex gap-2 justify-between items-center border-1 border-border rounded-sm h-8 min-w-60 pl-2" >
-
-        <p class="flex items-center gap-2" :class="!value && 'text-disabled-text'">
-          <LucideCalendar class="size-4 text-muted"/>
+      <div tabindex="0"
+          :class="['flex gap-1 justify-between items-center border-1 rounded-sm px-padding-xs bg-background w-full h-8 focus-visible:ring-ring/50',
+          open ? 'border-primary' : 'border-border']">
+        <p :class="['flex items-center gap-1', {'text-disabled-text': !value.start && !value.end}]">
+          <LucideCalendar class="size-4 text-muted flex-none"/>
           <template v-if="value.start">
             <template v-if="value.end">
-              {{
-                formatter.custom(toDate(value.start), {
-                  dateStyle: "medium",
-                })
-              }}
+              {{ formatter.custom(toDate(value.start), { dateStyle: 'medium' }) }}
               -
-              {{
-                formatter.custom(toDate(value.end), {
-                  dateStyle: "medium",
-                })
-              }}
+              {{ formatter.custom(toDate(value.end), { dateStyle: 'medium' }) }}
             </template>
-
             <template v-else>
-              {{
-                formatter.custom(toDate(value.start), {
-                  dateStyle: "medium",
-                })
-              }}
+              {{ formatter.custom(toDate(value.start), { dateStyle: 'medium' }) }}
             </template>
           </template>
-
           <template v-else>
             날짜를 선택해 주세요
           </template>
         </p>
-        <UiButton variant="ghost" class="hover:bg-transparent" size="icon-sm">
-          <LucideX class="size-4" :class="!value ? 'text-transparent':'text-muted'"/>
+        <UiButton variant="ghost" class="hover:bg-transparent" size="inline-icon" @click.prevent.stop="clear" :disabled="!value.start && !value.end">
+          <LucideX :class="[(!value.start && !value.end) ? 'text-transparent' : 'text-muted']"/>
         </UiButton>
       </div>
     </UiPopoverTrigger>
     <UiPopoverContent class="w-auto p-0" >
       <UiRangeCalendar
-        locale="ko"
-        v-model="value"
-        class="p-3"
-        :number-of-months="2"
-        :week-starts-on="0"
-        disable-days-outside-current-view
-        :min-value="minDate"
-        :max-value="maxDate"
-        @update:model-value="change"
+          locale="ko"
+          v-model="value"
+          class="p-3"
+          :number-of-months="2"
+          :week-starts-on="0"
+          disable-days-outside-current-view
+          :min-value="minDate"
+          :max-value="maxDate"
+          initial-focus
+          @update:model-value="change"
       >
       </UiRangeCalendar>
     </UiPopoverContent>
@@ -71,25 +62,32 @@ import {  useDateFormatter } from "reka-ui"
 import { createMonth, toDate } from "reka-ui/date"
 import { ref, watch } from "vue"
 const {format} = useDate()
-const props = defineProps<{
-  class?: HTMLAttributes["class"]
-  ariaInvalid?: boolean
-  min?: string | Date
-  max?: string | Date
 
-}>()
+const props = withDefaults(
+    defineProps<{
+      forceOpen?: boolean
+      class?: HTMLAttributes["class"]
+      ariaInvalid?: boolean
+      min?: string | Date
+      max?: string | Date
 
+    }>(),
+      {
+        forceOpen: false,
+        placeholder: '',
+        ariaInvalid: false,
+      }
+    )
+const open = ref<boolean>(props.forceOpen)
 
-const value = ref({
-  start: new CalendarDate(2022, 1, 20),
-  end: new CalendarDate(2022, 1, 20).add({ days: 20 }),
-}) as Ref<DateRange>
+const value = ref<DateRange>({ start: undefined, end: undefined })
 
 const locale = ref("ko")
 const formatter = useDateFormatter(locale.value)
 
-const placeholder = ref(value.value.start) as Ref<DateValue>
-const secondMonthPlaceholder = ref(value.value.end) as Ref<DateValue>
+const today = new CalendarDate(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate())
+const placeholder = ref(today) as Ref<DateValue>
+const secondMonthPlaceholder = ref(today.add({ months: 1 })) as Ref<DateValue>
 
 const firstMonth = ref(
   createMonth({
@@ -120,10 +118,23 @@ const maxDate = computed<DateValue>(() => {
   }
   return null
 })
+const toggleOpen = (): void => {
+  if (props.forceOpen) {
+    open.value = true
+  }
+}
 
 const change = (date: DateRange): void => {
   if (date.start && date.end) {
     open.value = false
+  }
+}
+
+const clear = (): void => {
+  value.value = { start: undefined, end: undefined }
+  if (!props.forceOpen && open.value) {
+    open.value = false;
+
   }
 }
 

@@ -40,9 +40,9 @@ export const Surface: Story = {
     setup() {
       return {
         neutral: [
-          { label: 'neutral',  token: '--surface-neutral',  hex: '#FFFFFF' },
-          { label: 'muted',    token: '--surface-muted',    hex: '#FAFAFA' },
-          { label: 'disabled', token: '--surface-disabled', hex: '#EBECEE' },
+          { label: 'neutral', token: '--surface-neutral', hex: '#FFFFFF' },
+          { label: 'muted',   token: '--surface-muted',   hex: '#F5F5F7' },
+          { label: 'subtle',  token: '--surface-subtle',  hex: '#EBECEE' },
         ],
         system: [
           { label: 'brand',         token: '--surface-brand',         hex: '#007BFF' },
@@ -83,7 +83,7 @@ export const Text: Story = {
           <div class="grid grid-cols-4 gap-3">
             <div v-for="item in system" :key="item.token" class="flex flex-col gap-1">
               <div class="h-16 rounded-sm border border-border bg-surface-muted flex items-center justify-center">
-                <span class="text-2xl font-bold" :style="'color: var(' + item.token + ')'">Aa</span>
+                <span class="text-2xl font-bold" :class="item.cls" :style="!item.cls ? 'color: var(' + item.token + ')' : ''">Aa</span>
               </div>
               <p class="text-sm font-bold">{{ item.label }}</p>
               <p class="caption text-muted">{{ item.token }}</p>
@@ -96,14 +96,14 @@ export const Text: Story = {
     setup() {
       return {
         neutral: [
-          { label: 'default',  token: '--text-default',  hex: '#192030' },
-          { label: 'muted',    token: '--text-muted',    hex: '#798089' },
-          { label: 'disabled', token: '--text-disabled', hex: '#BBC0C7' },
-          { label: 'neutral',  token: '--text-neutral',  hex: '#FFFFFF', bg: 'var(--text-default)' },
+          { label: 'neutral', token: '--text-neutral', hex: '#FFFFFF', bg: 'var(--text-default)' },
+          { label: 'subtle',  token: '--text-subtle',  hex: '#BBC0C7' },
+          { label: 'muted',   token: '--text-muted',   hex: '#798089' },
+          { label: 'default', token: '--text-default', hex: '#192030' },
         ],
         system: [
           { label: 'brand',   token: '--text-brand',   hex: '#007BFF' },
-          { label: 'danger',  token: '--text-danger',  hex: '#F13C31' },
+          { label: 'danger',  token: '--text-danger',  hex: '#F13C31', cls: 'text-danger' },
           { label: 'success', token: '--text-success', hex: '#00A035' },
           { label: 'warning', token: '--text-warning', hex: '#F36D00' },
         ],

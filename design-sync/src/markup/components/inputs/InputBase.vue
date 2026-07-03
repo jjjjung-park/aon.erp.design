@@ -1,6 +1,7 @@
 <template>
   <UiInputGroup :class="size === 'sm' ? 'h-6' : ''">
-    <UiInputGroupAddon v-if="$slots.prefix">
+    <UiInputGroupAddon v-if="$slots.prefix"
+                       :class="size === 'sm' ? '[&_svg]:size-3' : '[&_svg]:size-4'">
       <slot name="prefix"/>
     </UiInputGroupAddon>
 
@@ -14,7 +15,7 @@
       v-model="modelValue"
     />
 
-    <UiInputGroupAddon align="inline-end">
+    <UiInputGroupAddon align="inline-end" :class="size === 'sm' ? 'text-xs' : ''">
       <slot name="suffix">
         <UiInputGroupButton
           :size="size === 'sm' ? 'inline-icon-sm' : 'inline-icon'"

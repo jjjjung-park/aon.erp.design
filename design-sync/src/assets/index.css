@@ -10,17 +10,17 @@
 
 
   .title {
-    @apply text-md;
+    @apply text-md leading-[1.4];
   }
   .title__bold {
-    @apply text-md font-bold;
+    @apply text-md font-bold leading-[1.4];
   }
 
   .caption {
-    @apply text-xs;
+    @apply text-xs leading-[1.4];
   }
   .caption__bold {
-    @apply text-xs font-bold;
+    @apply text-xs font-bold leading-[1.4];
   }
 
   :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
@@ -432,13 +432,13 @@
   }
   /*border-b-1 border-muted pb-2 last:border-b-0*/
   .view-list__item-title {
-    @apply text-xs leading-tight;
+    @apply text-xs;
   }
   .view-list__item--row .view-list__item-title {
     @apply text-sm;
   }
   .view-list__item-cont {
-    @apply text-sm px-2 font-bold min-h-8 inline-flex items-center [&>*]:truncate;
+    @apply text-sm px-padding-xs font-bold min-h-8 inline-flex items-center [&>*]:truncate;
   }
 
   .view-list__item-cont:has(~ .view-list__item-cont),
@@ -552,11 +552,11 @@
   }
 
   .page-tab--active:before {
-    @apply rounded-br-md  border-r-1 -left-4  shadow-[3px_2px_0_1px_#fff];
+    @apply rounded-br-md  border-r-1 -left-4  shadow-[3px_2px_0_1px_var(--color-gray-0)];
   }
 
   .page-tab--active:after {
-    @apply rounded-bl-md border-l-1 -right-4  shadow-[-3px_2px_0_1px_#fff];
+    @apply rounded-bl-md border-l-1 -right-4  shadow-[-3px_2px_0_1px_var(--color-gray-0)];
   }
 
   /*  바코드 관리*/

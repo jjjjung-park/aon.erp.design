@@ -14,7 +14,6 @@ export const tagsVariants = cva(
         secondary: 'bg-primary-light text-primary border-transparent',
         outline:   'bg-background border-border data-[slot=tag]:text-muted [&_[data-slot=close]]:text-muted [&_[data-slot=close]:hover]:text-default',
         info:      'bg-subtle border-transparent',
-        disabled:  'bg-disabled text-disabled-text border-border',
       },
     },
     defaultVariants: {
