@@ -6,7 +6,7 @@ import { ref, computed } from 'vue'
 
 const meta: Meta = {
   title: '기초/Input',
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     type: {
       control: 'radio',
