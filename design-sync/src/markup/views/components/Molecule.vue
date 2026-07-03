@@ -238,7 +238,7 @@ table{
 }
 td{
   padding:12px;
-  border:1px solid #ddd;
+  border:1px solid var(--border-default);
 }
 section{
   margin-bottom: 20px

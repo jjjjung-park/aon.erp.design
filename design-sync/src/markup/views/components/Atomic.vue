@@ -606,7 +606,7 @@ table{
 }
 td{
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-default);
 }
 section{
   margin-bottom: 20px;

@@ -552,11 +552,11 @@
   }
 
   .page-tab--active:before {
-    @apply rounded-br-md  border-r-1 -left-4  shadow-[3px_2px_0_1px_#fff];
+    @apply rounded-br-md  border-r-1 -left-4  shadow-[3px_2px_0_1px_var(--color-gray-0)];
   }
 
   .page-tab--active:after {
-    @apply rounded-bl-md border-l-1 -right-4  shadow-[-3px_2px_0_1px_#fff];
+    @apply rounded-bl-md border-l-1 -right-4  shadow-[-3px_2px_0_1px_var(--color-gray-0)];
   }
 
   /*  바코드 관리*/
