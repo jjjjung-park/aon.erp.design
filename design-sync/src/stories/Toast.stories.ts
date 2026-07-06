@@ -4,7 +4,7 @@ import { toast } from 'vue-sonner'
 
 const meta: Meta = {
   title: 'UI 패턴/Toast',
-  tags: ['autodocs'],
+  tags: ['autodocs','done'],
 
   argTypes: {
     type: {

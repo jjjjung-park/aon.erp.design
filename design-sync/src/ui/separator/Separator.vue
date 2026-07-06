@@ -4,26 +4,23 @@ import type { HTMLAttributes } from "vue"
 import { reactiveOmit } from "@vueuse/core"
 import { Separator } from "reka-ui"
 import { cn } from "@/lib/utils"
+import { separatorVariants } from "."
 
 const props = withDefaults(defineProps<
-  SeparatorProps & { class?: HTMLAttributes["class"] }
+  SeparatorProps & { class?: HTMLAttributes["class"]; size?: 'sm' | 'md' }
 >(), {
   orientation: "horizontal",
   decorative: true,
+  size: "md",
 })
 
-const delegatedProps = reactiveOmit(props, "class")
+const delegatedProps = reactiveOmit(props, "class", "size")
 </script>
 
 <template>
   <Separator
     data-slot="separator-root"
     v-bind="delegatedProps"
-    :class="
-      cn(
-        'bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px',
-        props.class,
-      )
-    "
+    :class="cn(separatorVariants({ size: props.size, orientation: props.orientation }), props.class)"
   />
 </template>
