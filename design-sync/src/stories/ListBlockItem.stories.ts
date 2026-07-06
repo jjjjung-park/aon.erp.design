@@ -58,7 +58,7 @@ type Story = StoryObj<{
 }>
 
 export const Default: Story = {
-  name: 'ListBlockItem',
+  name: 'ListBlockItem — 기본',
   render: (args) => ({
     setup() {
       return { args }
@@ -141,6 +141,115 @@ export const Default: Story = {
           </UiCollapsible>
         </div>
       </template>
+    `,
+  }),
+}
+
+export const Dnd: Story = {
+  name: 'ListBlockItem — DnD',
+  render: () => ({
+    template: `
+      <ul class="w-[360px]">
+        <li class="list-block-item" v-for="n in 3" :key="n">
+          <UiButton variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
+          <p class="list-block-item__label">항목 이름 {{ n }}</p>
+        </li>
+      </ul>
+    `,
+  }),
+}
+
+export const Collapsible: Story = {
+  name: 'ListBlockItem — Collapsible',
+  render: () => ({
+    template: `
+      <div class="w-[360px] flex flex-col gap-1">
+        <UiCollapsible class="flex flex-col gap-1" :default-open="true">
+          <div class="list-block-item">
+            <div class="list-block-item__collapse-label">
+              <UiCollapsibleTrigger class="size-3 justify-center" />
+              <p class="list-block-item__label">자식 있는 항목 1</p>
+            </div>
+          </div>
+          <UiCollapsibleContent class="flex flex-col gap-1">
+            <div class="list-block-item" v-for="n in 3" :key="n">
+              <div class="list-block-item__collapse-label pl-5">
+                <p class="list-block-item__label">자식 항목 {{ n }}</p>
+              </div>
+            </div>
+          </UiCollapsibleContent>
+        </UiCollapsible>
+        <UiCollapsible class="flex flex-col gap-1">
+          <div class="list-block-item">
+            <div class="list-block-item__collapse-label">
+              <UiCollapsibleTrigger class="size-3 justify-center" />
+              <p class="list-block-item__label">자식 있는 항목 2</p>
+            </div>
+          </div>
+          <UiCollapsibleContent class="flex flex-col gap-1">
+            <div class="list-block-item" v-for="n in 2" :key="n">
+              <div class="list-block-item__collapse-label pl-5">
+                <p class="list-block-item__label">자식 항목 {{ n }}</p>
+              </div>
+            </div>
+          </UiCollapsibleContent>
+        </UiCollapsible>
+        <div class="list-block-item">
+          <div class="list-block-item__collapse-label pl-1">
+            <p class="list-block-item__label">자식 없는 항목</p>
+          </div>
+        </div>
+      </div>
+    `,
+  }),
+}
+
+export const DndAndCollapsible: Story = {
+  name: 'ListBlockItem — DnD + Collapsible',
+  render: () => ({
+    template: `
+      <div class="w-[360px] flex flex-col gap-1">
+        <UiCollapsible class="flex flex-col gap-1" :default-open="true">
+          <div class="list-block-item">
+            <UiButton variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
+            <div class="list-block-item__collapse-label">
+              <UiCollapsibleTrigger class="size-3 justify-center" />
+              <p class="list-block-item__label">자식 있는 항목 1</p>
+            </div>
+          </div>
+          <UiCollapsibleContent class="flex flex-col gap-1">
+            <div class="list-block-item" v-for="n in 3" :key="n">
+              <UiButton variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
+              <div class="list-block-item__collapse-label pl-5">
+                <p class="list-block-item__label">자식 항목 {{ n }}</p>
+              </div>
+            </div>
+          </UiCollapsibleContent>
+        </UiCollapsible>
+        <UiCollapsible class="flex flex-col gap-1">
+          <div class="list-block-item">
+            <UiButton variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
+            <div class="list-block-item__collapse-label">
+              <UiCollapsibleTrigger class="size-3 justify-center" />
+              <p class="list-block-item__label">자식 있는 항목 2</p>
+            </div>
+          </div>
+          <UiCollapsibleContent class="flex flex-col gap-1">
+            <div class="list-block-item" v-for="n in 2" :key="n">
+              <UiButton variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
+              <div class="list-block-item__collapse-label pl-5">
+                <p class="list-block-item__label">자식 항목 {{ n }}</p>
+              </div>
+            </div>
+          </UiCollapsibleContent>
+        </UiCollapsible>
+        <div class="list-block-item">
+          <UiButton variant="ghost" size="icon-sm" class="hover:bg-transparent hover:cursor-grab text-muted"><LucideEqual /></UiButton>
+          <div class="list-block-item__collapse-label pl-1">
+            <p class="list-block-item__label">자식 없는 항목</p>
+          </div>
+        </div>
+      </div>
     `,
   }),
 }

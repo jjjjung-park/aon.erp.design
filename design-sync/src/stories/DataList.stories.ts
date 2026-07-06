@@ -38,59 +38,75 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj<{ active: boolean; clickable: boolean; desc: boolean; rightColumn: '없음' | '텍스트' | '상태배지'; countBadge: boolean }>
 
-export const Default: Story = {
-  name: 'DataList',
-  render: (args) => ({
-    setup() {
-      return { args }
-    },
-    template: `
-      <ul class="data-list w-80">
-        <li class="data-list__item" :class="[{ active: args.active }, args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default']">
-          <div class="data-list__cont data-list__cont-left">
-            <p v-if="args.countBadge" class="flex items-center gap-1">
-              <strong class="truncate">홍길동</strong>
-              <UiBadge size="count">5</UiBadge>
-            </p>
-            <strong class="truncate" v-else>홍길동</strong>
-            <span v-if="args.desc" class="data-list__desc">개발팀 · 사원</span>
-          </div>
-          <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
-            <span>2024-01-15</span>
-            <span v-if="args.desc" class="data-list__desc">등록일</span>
-          </div>
-          <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
-        </li>
-        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default'">
-          <div class="data-list__cont data-list__cont-left">
-            <p v-if="args.countBadge" class="flex items-center gap-1">
-              <strong class="truncate">김철수</strong>
-              <UiBadge size="count">12</UiBadge>
-            </p>
-            <strong class="truncate" v-else>김철수</strong>
-            <span v-if="args.desc" class="data-list__desc">디자인팀 · 대리</span>
-          </div>
-          <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
-            <span>2024-03-22</span>
-            <span v-if="args.desc" class="data-list__desc">등록일</span>
-          </div>
-        </li>
-        <li class="data-list__item" :class="args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default'">
-          <div class="data-list__cont data-list__cont-left">
-            <p v-if="args.countBadge" class="flex items-center gap-1">
-              <strong class="truncate">이영희</strong>
-              <UiBadge size="count">999+</UiBadge>
-            </p>
-            <strong class="truncate" v-else>이영희</strong>
-            <span v-if="args.desc" class="data-list__desc">기획팀 · 과장</span>
-          </div>
-          <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
-            <span>2023-11-08</span>
-            <span v-if="args.desc" class="data-list__desc">등록일</span>
-          </div>
-          <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
-        </li>
-      </ul>
-    `,
-  }),
+const items = [
+  { name: '홍길동', desc: '개발팀 · 사원', date: '2024-01-15', count: 5 },
+  { name: '김철수', desc: '디자인팀 · 대리', date: '2024-03-22', count: 12 },
+  { name: '이영희', desc: '기획팀 · 과장', date: '2023-11-08', count: 999 },
+]
+
+const renderTemplate = `
+  <ul class="data-list w-80">
+    <li
+      v-for="(item, i) in items"
+      :key="item.name"
+      class="data-list__item"
+      :class="[{ active: i === 0 && args.active }, args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default']"
+    >
+      <div class="data-list__cont data-list__cont-left">
+        <p v-if="args.countBadge" class="flex items-center gap-1">
+          <strong class="truncate">{{ item.name }}</strong>
+          <UiBadge size="count">{{ item.count > 99 ? '99+' : item.count }}</UiBadge>
+        </p>
+        <strong class="truncate" v-else>{{ item.name }}</strong>
+        <span v-if="args.desc" class="data-list__desc">{{ item.desc }}</span>
+      </div>
+      <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
+        <span>{{ item.date }}</span>
+        <span v-if="args.desc" class="data-list__desc">등록일</span>
+      </div>
+      <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
+    </li>
+  </ul>
+`
+
+export const Base: Story = {
+  name: '기본',
+  args: { desc: false, rightColumn: '없음', countBadge: false },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+}
+
+export const WithDesc: Story = {
+  name: '기본 + 설명',
+  args: { desc: true, rightColumn: '없음', countBadge: false },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+}
+
+export const WithRightText: Story = {
+  name: '기본 + 우측텍스트',
+  args: { desc: false, rightColumn: '텍스트', countBadge: false },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+}
+
+export const WithRightBadge: Story = {
+  name: '기본 + 우측상태배지',
+  args: { desc: false, rightColumn: '상태배지', countBadge: false },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+}
+
+export const WithDescAndRightText: Story = {
+  name: '기본 + 설명 + 우측텍스트',
+  args: { desc: true, rightColumn: '텍스트', countBadge: false },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+}
+
+export const WithDescAndRightBadge: Story = {
+  name: '기본 + 설명 + 우측상태배지',
+  args: { desc: true, rightColumn: '상태배지', countBadge: false },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+}
+
+export const WithCountBadge: Story = {
+  name: '기본 + 카운트배지',
+  args: { desc: false, rightColumn: '없음', countBadge: true },
+  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
 }

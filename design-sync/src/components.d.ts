@@ -13,6 +13,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UiAccordion: typeof import('@/ui/accordion')['Accordion']
+    UiAccordionContent: typeof import('@/ui/accordion')['AccordionContent']
+    UiAccordionItem: typeof import('@/ui/accordion')['AccordionItem']
+    UiAccordionTrigger: typeof import('@/ui/accordion')['AccordionTrigger']
     UiAvatar: typeof import('@/ui/avatar')['Avatar']
     UiAvatarFallback: typeof import('@/ui/avatar')['AvatarFallback']
     UiAvatarImage: typeof import('@/ui/avatar')['AvatarImage']
@@ -94,6 +98,7 @@ declare module 'vue' {
     UiSidebarMenuSubItem: typeof import('@/ui/sidebar')['SidebarMenuSubItem']
     UiSidebarTrigger: typeof import('@/ui/sidebar')['SidebarTrigger']
     UiSkeleton: typeof import('@/ui/skeleton')['Skeleton']
+    UiTable: typeof import('@/ui/table')['Table']
     UiTableCell: typeof import('@/ui/table')['TableCell']
     UiTableHead: typeof import('@/ui/table')['TableHead']
     UiTagsInput: typeof import('@/ui/tags-input')['TagsInput']

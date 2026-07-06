@@ -4,8 +4,8 @@ import { toast } from 'vue-sonner'
 
 const meta: Meta = {
   title: 'UI 패턴/Toast',
-  tags: ['autodocs'],
-  parameters: { layout: 'centered' },
+  tags: ['autodocs','done'],
+
   argTypes: {
     type: {
       control: 'select',
@@ -37,7 +37,12 @@ export const Default: Story = {
     },
     template: `
       <div>
-        <Toaster :rich-colors="true" :expand="true" :close-button="true" />
+        <Toaster  :expand="false"
+                  :visibleToasts="1"
+                  richColors
+                  :closeButton="true"
+                  closeButtonPosition="top-right"
+                  position="top-right" />
         <UiButton @click="show">토스트 실행</UiButton>
       </div>
     `,

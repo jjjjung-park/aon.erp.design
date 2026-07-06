@@ -5,7 +5,7 @@ import { LucideInfo, LucideCheck, LucideAlertTriangle, LucideCircleAlert } from 
 const meta: Meta<typeof Alert> = {
   title: 'UI 패턴/Alert',
   component: Alert,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'done'],
   argTypes: {
     variant: {
       control: 'select',

@@ -200,12 +200,12 @@
   */
   /*thead 정렬 버튼*/
   .arrow-up {
-    mask: url('../images/ico/sort-default.svg') no-repeat center;
+    mask: url('../assets/images/ico/sort-default.svg') no-repeat center;
     @apply inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50 mb-1;
   }
 
   .arrow-down {
-    mask: url('../images/ico/sort-default.svg') no-repeat center;
+    mask: url('../assets/images/ico/sort-default.svg') no-repeat center;
     @apply rotate-180 inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50;
   }
 
@@ -277,11 +277,19 @@
 
   /*toast custom*/
   li[data-sonner-toast][data-styled='true'] {
-    @apply !p-padding-sm  !text-sm;
+    @apply !p-padding-sm
+  }
+
+  [data-sonner-toast][data-styled='true'] [data-title]{
+    @apply !text-sm !font-bold;
   }
 
   [data-sonner-toast][data-styled='true'] [data-description] {
-    @apply text-xs;
+    @apply !text-xs;
+  }
+
+  [data-sonner-toast] [data-icon] {
+    @apply !mr-0 !ml-0;
   }
 
   /*박스 형태 리스트 + dnd + collapsible 스타일*/
