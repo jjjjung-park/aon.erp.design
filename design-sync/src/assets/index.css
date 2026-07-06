@@ -200,12 +200,12 @@
   */
   /*thead 정렬 버튼*/
   .arrow-up {
-    mask: url('../images/ico/sort-default.svg') no-repeat center;
+    mask: url('../assets/images/ico/sort-default.svg') no-repeat center;
     @apply inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50 mb-1;
   }
 
   .arrow-down {
-    mask: url('../images/ico/sort-default.svg') no-repeat center;
+    mask: url('../assets/images/ico/sort-default.svg') no-repeat center;
     @apply rotate-180 inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50;
   }
 

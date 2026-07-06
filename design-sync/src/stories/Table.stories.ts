@@ -22,10 +22,10 @@ export const FullTable: Story = {
         <UiTableHeader>
           <UiTableRow>
             <Th type="checkbox" />
-            <Th data="이름" />
-            <Th data="이메일" />
-            <Th data="부서" />
-            <Th data="상태" />
+            <Th data="이름" :sort="args.sort" :resizing="args.resizing" />
+            <Th data="이메일" :sort="args.sort" :resizing="args.resizing" />
+            <Th data="부서" :sort="args.sort" :resizing="args.resizing" />
+            <Th data="상태" :sort="args.sort" :resizing="args.resizing" />
             <Th type="function" />
           </UiTableRow>
         </UiTableHeader>
@@ -46,9 +46,13 @@ export const FullTable: Story = {
   }),
   argTypes: {
     secondary: { control: 'boolean', description: 'table-secondary 클래스 적용' },
+    sort:      { control: 'boolean', description: 'Th 정렬 버튼 표시' },
+    resizing:  { control: 'boolean', description: 'Th 컬럼 리사이징 핸들' },
   },
   args: {
     secondary: false,
+    sort: false,
+    resizing: true,
   },
 }
 
