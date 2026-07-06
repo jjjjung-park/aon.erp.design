@@ -10,7 +10,7 @@ export const badgeVariants = cva(
       variant: {
         /* 상태 */
         info:     "bg-subtle text-muted border",
-        outline:  "border text-default border-border bg-background",
+        outline:  "!border text-default border-border bg-background",
         process:  "bg-primary-light text-primary border border-primary",
         accept:   "bg-success-light text-success border border-success",
         reject:   "bg-danger-light text-danger border border-danger",
