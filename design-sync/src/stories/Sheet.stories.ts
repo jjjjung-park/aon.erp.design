@@ -91,6 +91,79 @@ export const Triple: Story = {
   parameters: { viewport: { defaultViewport: 'large' } },
 }
 
+export const FormLayout: StoryObj = {
+  name: '폼 레이아웃',
+  render: (args) => ({
+    components: { SheetBase, Button },
+    setup() { return { args } },
+    template: `
+      <SheetBase :open="true" v-bind="args">
+        <template #body>
+          <div class="list-layout--grid">
+            <h4 class="col-span-full">기본 정보</h4>
+            <div class="flex flex-col gap-1.5">
+              <p class="text-sm font-bold">이름</p>
+              <UiInput placeholder="이름을 입력해 주세요" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <p class="text-sm font-bold">이메일</p>
+              <UiInput placeholder="이메일을 입력해 주세요" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <p class="text-sm font-bold">부서</p>
+              <UiInput placeholder="부서를 입력해 주세요" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <p class="text-sm font-bold">직책</p>
+              <UiInput placeholder="직책을 입력해 주세요" />
+            </div>
+          </div>
+        </template>
+        <template #footer>
+          <Button>저장</Button>
+        </template>
+      </SheetBase>
+    `,
+  }),
+  args: { title: '폼 레이아웃' },
+}
+
+export const ListLayout: StoryObj = {
+  name: '리스트 레이아웃',
+  render: (args) => ({
+    components: { SheetBase, Button },
+    setup() {
+      const items = [
+        { id: 1, label: '항목 A', desc: '설명 텍스트입니다', date: '2025.01.10' },
+        { id: 2, label: '항목 B', desc: '설명 텍스트입니다', date: '2025.02.14' },
+        { id: 3, label: '항목 C', desc: '설명 텍스트입니다', date: '2025.03.22' },
+        { id: 4, label: '항목 D', desc: '설명 텍스트입니다', date: '2025.04.05' },
+        { id: 5, label: '항목 E', desc: '설명 텍스트입니다', date: '2025.05.18' },
+      ]
+      return { args, items }
+    },
+    template: `
+      <SheetBase :open="true" v-bind="args">
+        <template #body>
+          <div class="px-6 py-4 flex flex-col divide-y divide-border">
+            <div v-for="item in items" :key="item.id" class="list-block-item justify-between hover:bg-surface-muted">
+              <div class="flex flex-col gap-0.5 truncate">
+                <p class="text-sm font-bold truncate">{{ item.label }}</p>
+                <p class="text-xs text-muted truncate">{{ item.desc }}</p>
+              </div>
+              <span class="text-xs text-muted shrink-0">{{ item.date }}</span>
+            </div>
+          </div>
+        </template>
+        <template #footer>
+          <Button>확인</Button>
+        </template>
+      </SheetBase>
+    `,
+  }),
+  args: { title: '리스트 레이아웃' },
+}
+
 // 🔁 원복용: 버튼 트리거 방식
 // export const Default: Story = {
 //   name: 'SheetBase — 인터랙티브',

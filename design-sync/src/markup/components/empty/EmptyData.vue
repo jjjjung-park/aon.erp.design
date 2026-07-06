@@ -2,7 +2,7 @@
   <div class="bg-surface-muted text-muted w-full h-full flex items-center justify-center">
     <p class="flex flex-col gap-2 items-center ">
       <slot>
-        <LucideInfo/>
+        <LucideInfo class="size-4"/>
         <p>데이터가 없습니다. </p>
       </slot>
     </p>
