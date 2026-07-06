@@ -10,9 +10,9 @@ import {
 } from "reka-ui"
 import { cn } from "@/lib/utils"
 
-const props = defineProps<AccordionTriggerProps & { class?: HTMLAttributes["class"] }>()
+const props = defineProps<AccordionTriggerProps & { class?: HTMLAttributes["class"]; iconClass?: HTMLAttributes["class"] }>()
 
-const delegatedProps = reactiveOmit(props, "class")
+const delegatedProps = reactiveOmit(props, "class", "iconClass")
 </script>
 
 <template>
@@ -30,7 +30,7 @@ const delegatedProps = reactiveOmit(props, "class")
       <slot />
       <slot name="icon">
         <ChevronDown
-          class="pointer-events-none size-6 shrink-0 translate-y-0.5 transition-transform duration-200 text-inherit"
+          :class="cn('pointer-events-none size-6 shrink-0 translate-y-0.5 transition-transform duration-200 text-inherit', props.iconClass)"
         />
       </slot>
     </AccordionTrigger>
