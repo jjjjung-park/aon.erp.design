@@ -4,7 +4,7 @@ import Td from '@/markup/components/table/Td.vue'
 
 const meta: Meta = {
   title: 'UI 패턴/Table',
-  tags: ['autodocs'],
+  tags: ['autodocs','done'],
   parameters: { layout: 'padded' },
 }
 export default meta

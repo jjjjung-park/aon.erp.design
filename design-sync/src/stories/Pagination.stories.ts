@@ -6,7 +6,7 @@ import { ref } from 'vue'
 
 const meta: Meta = {
   title: 'UI 패턴/Pagination',
-  tags: ['autodocs'],
+  tags: ['autodocs','done'],
 }
 export default meta
 
