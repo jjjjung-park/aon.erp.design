@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import SheetBase from '@/markup/components/sheet/SheetBase.vue'
+import FormItem from '@/markup/components/form/FormItem.vue'
 import { Button } from '@/ui/button'
 // import { ref } from 'vue' // 버튼 트리거 방식 원복 시 주석 해제
 
@@ -32,6 +33,22 @@ type Story = StoryObj<typeof SheetBase>
 const sampleBody = `
   <div class="list-layout--grid">
     <UiSkeleton class="h-4 w-1/4 col-span-full" />
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+  </div>
+`
+
+// 3단 전체화면용 스켈레톤 (3단 3줄)
+const sampleBodyTriple = `
+  <div class="list-layout--grid">
+    <UiSkeleton class="h-4 w-1/4 col-span-full" />
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
+    <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
     <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
     <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
     <div class="flex flex-col gap-2"><UiSkeleton class="h-3 w-1/3" /><UiSkeleton class="h-9 w-full" /></div>
@@ -81,8 +98,8 @@ export const Triple: Story = {
     components: { SheetBase, Button },
     setup() { return { args } },
     template: `
-      <SheetBase :open="true" v-bind="args" class="full-size">
-        <template #body>${sampleBody}</template>
+      <SheetBase :open="true" v-bind="args">
+        <template #body>${sampleBodyTriple}</template>
         <template #footer><Button>저장</Button></template>
       </SheetBase>
     `,
@@ -94,29 +111,22 @@ export const Triple: Story = {
 export const FormLayout: StoryObj = {
   name: '폼 레이아웃',
   render: (args) => ({
-    components: { SheetBase, Button },
+    components: { SheetBase, Button, FormItem },
     setup() { return { args } },
     template: `
       <SheetBase :open="true" v-bind="args">
         <template #body>
           <div class="list-layout--grid">
             <h4 class="col-span-full">기본 정보</h4>
-            <div class="flex flex-col gap-1.5">
-              <p class="text-sm font-bold">이름</p>
-              <UiInput placeholder="이름을 입력해 주세요" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <p class="text-sm font-bold">이메일</p>
-              <UiInput placeholder="이메일을 입력해 주세요" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <p class="text-sm font-bold">부서</p>
-              <UiInput placeholder="부서를 입력해 주세요" />
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <p class="text-sm font-bold">직책</p>
-              <UiInput placeholder="직책을 입력해 주세요" />
-            </div>
+            <FormItem label="이름" placeholder="이름을 입력해 주세요" />
+            <FormItem label="이메일" placeholder="이메일을 입력해 주세요" />
+            <FormItem label="부서" placeholder="부서를 입력해 주세요" />
+            <FormItem label="직책" placeholder="직책을 입력해 주세요" />
+            <h4 class="col-span-full">추가 정보</h4>
+            <FormItem label="연락처" placeholder="연락처를 입력해 주세요" />
+            <FormItem label="주소" placeholder="주소를 입력해 주세요" />
+            <FormItem label="입사일" placeholder="입사일을 입력해 주세요" />
+            <FormItem label="비고" placeholder="비고를 입력해 주세요" />
           </div>
         </template>
         <template #footer>
@@ -132,31 +142,43 @@ export const ListLayout: StoryObj = {
   name: '리스트 레이아웃',
   render: (args) => ({
     components: { SheetBase, Button },
-    setup() {
-      const items = [
-        { id: 1, label: '항목 A', desc: '설명 텍스트입니다', date: '2025.01.10' },
-        { id: 2, label: '항목 B', desc: '설명 텍스트입니다', date: '2025.02.14' },
-        { id: 3, label: '항목 C', desc: '설명 텍스트입니다', date: '2025.03.22' },
-        { id: 4, label: '항목 D', desc: '설명 텍스트입니다', date: '2025.04.05' },
-        { id: 5, label: '항목 E', desc: '설명 텍스트입니다', date: '2025.05.18' },
-      ]
-      return { args, items }
-    },
+    setup() { return { args } },
     template: `
       <SheetBase :open="true" v-bind="args">
         <template #body>
-          <div class="px-6 py-4 flex flex-col divide-y divide-border">
-            <div v-for="item in items" :key="item.id" class="list-block-item justify-between hover:bg-surface-muted">
-              <div class="flex flex-col gap-0.5 truncate">
-                <p class="text-sm font-bold truncate">{{ item.label }}</p>
-                <p class="text-xs text-muted truncate">{{ item.desc }}</p>
-              </div>
-              <span class="text-xs text-muted shrink-0">{{ item.date }}</span>
-            </div>
+          <div class="view-list">
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">구분</dt>
+              <dd class="view-list__item-cont">생산</dd>
+            </dl>
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">업체명</dt>
+              <dd class="view-list__item-cont">외주 업체명</dd>
+            </dl>
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">사업자번호</dt>
+              <dd class="view-list__item-cont">000-00-00000</dd>
+            </dl>
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">연락처</dt>
+              <dd class="view-list__item-cont">010-0000-0000</dd>
+            </dl>
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">이메일</dt>
+              <dd class="view-list__item-cont">email@example.com</dd>
+            </dl>
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">담당자</dt>
+              <dd class="view-list__item-cont">홍길동</dd>
+            </dl>
+            <dl class="view-list__item">
+              <dt class="view-list__item-title">설명</dt>
+              <dd class="view-list__item-cont">항목에 대한 설명이 여기에 표시됩니다.</dd>
+            </dl>
           </div>
         </template>
         <template #footer>
-          <Button>확인</Button>
+          <Button>저장</Button>
         </template>
       </SheetBase>
     `,

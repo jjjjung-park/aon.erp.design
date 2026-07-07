@@ -28,7 +28,7 @@
           </div>
         </UiDialogHeader>
 
-        <div class="overflow-y-auto max-h-[calc(100vh-12rem)] px-6">
+        <div class="overflow-y-auto max-h-[calc(100vh-12rem)]">
           <template v-if="!isLoading">
             <slot name="body"/>
           </template>
