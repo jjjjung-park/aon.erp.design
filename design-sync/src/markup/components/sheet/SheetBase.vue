@@ -88,7 +88,7 @@ const props = withDefaults(
 )
 const open = defineModel<boolean>('open')
 
-const fullSize = ref<boolean>(false)
+const fullSize = ref<boolean>(props.fullScreen)
 </script>
 
 <style scoped>
