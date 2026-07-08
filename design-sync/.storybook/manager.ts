@@ -1,11 +1,12 @@
 import { addons } from 'storybook/manager-api'
 import { create } from 'storybook/theming'
 import React from 'react'
+import pkg from '../package.json'
 
 addons.setConfig({
   theme: create({
     base: 'dark',
-    brandTitle: 'AON ERP Design System v0.0.5',
+    brandTitle: `AON ERP Design System v${pkg.version}`,
     brandUrl: '/',
   }),
   sidebar: {
