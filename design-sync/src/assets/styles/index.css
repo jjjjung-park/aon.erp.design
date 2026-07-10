@@ -1,6 +1,6 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
-@import './vars.css';
-@import './tailwind.css';
+@import 'vars.css';
+@import 'tailwind.css';
 
 @layer utilities {
 
@@ -200,12 +200,12 @@
   */
   /*thead 정렬 버튼*/
   .arrow-up {
-    mask: url('../assets/images/ico/sort-default.svg') no-repeat center;
+    mask: url('../images/ico/sort-default.svg') no-repeat center;
     @apply inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50 mb-1;
   }
 
   .arrow-down {
-    mask: url('../assets/images/ico/sort-default.svg') no-repeat center;
+    mask: url('../images/ico/sort-default.svg') no-repeat center;
     @apply rotate-180 inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50;
   }
 
