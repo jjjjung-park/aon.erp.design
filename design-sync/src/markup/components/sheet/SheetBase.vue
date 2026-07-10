@@ -1,7 +1,8 @@
 <template>
   <UiSheet :modal="false" v-model:open="open">
     <!--  router tab 있는 경우 top-21 / 없는 경우 top-10  // 전체화면 정책 변경 시 fullsize : left-5 top-5 w-auto  -->
-    <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120 bottom-0 ', props.class]" :style="props.style">
+    <!--  shadow-gray-400 제거  -->
+    <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120  bottom-0 ', props.class]" :style="props.style">
 
       <UiSheetHeader class="px-padding-lg min-h-14 gap-0">
         <div class="flex justify-between items-center bg-background rounded-t-md gap-0.5">
@@ -18,7 +19,7 @@
                   <LucideMinimize-2/>
                 </template>
               </UiButton>
-              <UiSeparator orientation="vertical" class="h-4"/>
+              <UiSeparator orientation="vertical" size="md"/>
             </template>
             <UiSheetClose as-child>
               <UiButton variant="ghost" size="icon"><LucideX/></UiButton>
@@ -48,7 +49,7 @@
 
       <UiSheetFooter class="mt-auto" v-if="footer">
         <UiSheetClose as-child >
-            <UiButton variant="outline">닫기</UiButton>
+          <UiButton variant="outline">닫기</UiButton>
         </UiSheetClose>
         <slot name="footer"/>
       </UiSheetFooter>
@@ -64,31 +65,30 @@
 import type {HTMLAttributes} from "vue";
 
 const props = withDefaults(
-  defineProps<{
-    title?: string
-    description?: string
-    fullScreen?: boolean
-    class?:HTMLAttributes["class"]
-    style?:HTMLAttributes["style"]
-    isLooading?:boolean
-    open?:boolean
-    dimmed?:boolean
-    footer?:boolean
+    defineProps<{
+      title?: string
+      description?: string
+      fullScreen?: boolean
+      class?:HTMLAttributes["class"]
+      style?:HTMLAttributes["style"]
+      isLooading?:boolean
+      open?:boolean
+      dimmed?:boolean
+      footer?:boolean
 
-  }>(),
-  {
-    title: '기본 타이틀',
-    description: '기본 서브 타이틀',
-    fullScreen:false,
-    isLooading:false,
-    open:false,
-    dimmed:false,
-    footer:true,
-  }
+    }>(),
+    {
+      title: '기본 타이틀',
+      description: '기본 서브 타이틀',
+      fullScreen:false,
+      isLooading:false,
+      open:false,
+      dimmed:false,
+      footer:true,
+    }
 )
 const open = defineModel<boolean>('open')
-
-const fullSize = ref<boolean>(props.fullScreen)
+const fullSize = defineModel('fullSize', {default: false})
 </script>
 
 <style scoped>
