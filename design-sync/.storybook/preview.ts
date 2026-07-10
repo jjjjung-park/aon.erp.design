@@ -1,7 +1,7 @@
 import type { Preview } from '@storybook/vue3-vite'
 import { setup } from '@storybook/vue3'
 import { createRouter, createMemoryHistory } from 'vue-router'
-import '../src/assets/index.css'
+import '@/assets/styles/index.css'
 import 'vue-sonner/style.css'
 
 // Lucide 아이콘 전체 (Lucide prefix로 자동 등록)
