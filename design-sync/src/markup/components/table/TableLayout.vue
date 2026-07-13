@@ -1,49 +1,52 @@
 <template>
   <div class="flex flex-col gap-3 overflow-y-auto h-full px-8 pt-6">
 
-    <div class="table-layout__top grid grid-cols-2 items-center  ">
-      <template v-if="!$slots['data-action']">
-        <div class="table-layout__data-action flex gap-3 items-center">
+    <!--  table-layout__top 영역 자체가 없어야 할 경우 조건 추가  -->
+    <div class="table-layout__top" v-if="tableTop">
+      <!--  dataAction도 prop으로    -->
+      <template v-if="!$slots['data-action'] && dataAction">
+        <div class="table-layout__data-action">
           <p class="text-sm text-muted font-bold ">총 245건</p>
         </div>
       </template>
       <template v-else>
         <slot name="data-action"/>
       </template>
-      <div class="table-layout__table-action gap-2 flex items-center  justify-self-end">
-        <template v-if="!$slots['table-action']">
+      <div class="table-layout__table-action">
+        <!--    tableAction 영역 prop으로 변경 - TODO 슬롯 여부 확인은 이전 화면을 위해 남겨둠 -> 추후 전부 변경해야 됨   -->
+        <template v-if="!$slots['table-action'] && tableAction" >
           <template v-if="filter">
             <InputBase class="h-6 gap-2 text-xs sm" v-if="showFilter">
               <template #prefix>
-                <LucideSearch class="size-3 stroke-3 text-default"/>
+                <LucideSearch class="size-3 text-default"/>
               </template>
             </InputBase>
-            <UiButton variant="ghost" size="icon-sm" title="키워드 검색" @click="showFilter = !showFilter" :class="[{'bg-border':showFilter}, 'relative']">
+            <UiButton variant="ghost" size="icon-sm" title="키워드 검색" @click="showFilter = !showFilter" :class="[{'bg-surface':showFilter}, 'relative']">
               <LucideSearch/>
               <!--   적용된 필터 있음 표시     -->
-              <UiBadge  size="dot" class="absolute top-0.5 right-0.5 "/>
+              <UiBadge  size="dot" class="bg-primary absolute top-0.5 right-0.5 "/>
             </UiButton>
-            <UiSeparator orientation="vertical" class="h-4"/>
+            <UiSeparator v-if="download || setting" orientation="vertical" size="md"/>
           </template>
           <template v-if="download">
-
             <UiButton variant="ghost" size="icon-sm" title="엑셀 다운로드">
               <LucideFolderDown/>
             </UiButton>
-            <UiSeparator orientation="vertical" class="h-4"/>
           </template>
+
           <template v-if="setting">
+            <UiSeparator v-if="download" orientation="vertical" size="md"/>
             <UiDropdownMenu>
               <UiDropdownMenuTrigger as-child>
                 <UiButton variant="ghost" size="icon-sm" class="relative" title="테이블 설정">
                   <LucideSettings/>
                   <!--   적용된 정렬 있음 표시     -->
-                  <UiBadge size="dot" class="absolute top-0.5 right-0.5 "/>
+                  <UiBadge size="dot" class="bg-primary absolute top-0.5 right-0.5 "/>
                 </UiButton>
               </UiDropdownMenuTrigger>
               <UiDropdownMenuContent class="w-40 mr-2 [&>div]:justify-center">
                 <UiDropdownMenuItem @click="open('Setting')">테이블 설정</UiDropdownMenuItem>
-                <UiDropdownMenuItem  @click="open('Sort')" >테이블 정렬 <UiBadge variant="info" class="size-4 text-muted">30</UiBadge></UiDropdownMenuItem>
+                <UiDropdownMenuItem  @click="open('Sort')" >테이블 정렬 <UiBadge size="count">30</UiBadge></UiDropdownMenuItem>
                 <UiDropdownMenuItem >데이터 넓이 초기화</UiDropdownMenuItem>
               </UiDropdownMenuContent>
             </UiDropdownMenu>
@@ -58,7 +61,7 @@
       </div>
     </div>
 
-    <div class="table-layout__table overflow-auto w-full min-w-[calc(1200px-64px] max-h-full" :class="pagination?'':'mb-3'">
+    <div class="table-layout__table overflow-auto w-full max-h-full" :class="pagination?'':'mb-3'">
       <slot name="table"/>
     </div>
 
@@ -82,19 +85,26 @@ import {ref} from "vue";
 const showFilter =ref<boolean>(false)
 
 const props = withDefaults(
-  defineProps<{
-    pagination?: boolean
-    sortList?:any | null
-    filter?:boolean
-    download?:boolean
-    setting?:boolean
-  }>(),
-  {
-    pagination: true,
-    filter:true,
-    download:true,
-    setting:true,
-  }
+    defineProps<{
+      pagination?: boolean
+      sortList?:any | null
+      filter?:boolean
+      download?:boolean
+      setting?:boolean,
+      tableAction?:boolean,
+      dataAction?:boolean,
+      tableTop?:boolean,
+    }>(),
+    {
+      pagination: true,
+      filter:true,
+      download:true,
+      setting:true,
+      tableAction:true,
+      dataAction:true,
+      tableTop:true,
+
+    }
 )
 
 const openValue = ref<boolean>(false);

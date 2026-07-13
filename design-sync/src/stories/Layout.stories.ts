@@ -2,12 +2,15 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import LeftSidebar from '@/markup/components/layout/sideMenu/LeftSidebar.vue'
 import PageTabs from '@/markup/components/tabs/PageTabs.vue'
 import TablePagination from '@/markup/components/pagination/TablePagination.vue'
+import PageSearch from '@/markup/components/accordion/PageSearch.vue'
+import EmptyData from '@/markup/components/empty/EmptyData.vue'
+import TableLayout from '@/markup/components/table/TableLayout.vue'
 import { ref } from 'vue'
-import {LineTabs} from "@/markup/components/tabs";
+import { LineTabs } from '@/markup/components/tabs'
 
 const meta: Meta = {
   component: LineTabs,
-  title: '레이아웃/Layout',
+  title: '레이아웃/PageLayout',
   tags: ['autodocs'],
   parameters: { layout: 'fullscreen' },
 }
@@ -16,45 +19,62 @@ type Story = StoryObj
 
 export const MainLayout: Story = {
   name: 'Index',
-  parameters: { layout: 'fullscreen' },
+  parameters: { layout: 'fullscreen', docs: { story: { height: '400px' } } },
   argTypes: {
+    // 사이드바
+    sidebarOpen:        { control: 'boolean', description: '좌측 메뉴 열림 여부',    table: { category: '사이드바' } },
     // 헤더
-    sidebarOpen:      { control: 'boolean', description: '좌측 메뉴 열림 여부' },
-    showPageTabs:     { control: 'boolean', description: '페이지탭 표시 여부' },
-    multiBrand:       { control: 'boolean', description: '브랜드 선택 셀렉트' },
-    showAlarm:        { control: 'boolean', description: '알람 버튼' },
-    showSettings:     { control: 'boolean', description: '설정 버튼' },
-    showAvatar:       { control: 'boolean', description: '아바타 영역' },
+    multiBrand:         { control: 'boolean', description: '브랜드 선택 셀렉트',      table: { category: '헤더' } },
+    showAlarm:          { control: 'boolean', description: '알람 버튼',               table: { category: '헤더' } },
+    showSettings:       { control: 'boolean', description: '설정 버튼',               table: { category: '헤더' } },
+    showAvatar:         { control: 'boolean', description: '아바타 영역',             table: { category: '헤더' } },
+    showPageTabs:       { control: 'boolean', description: '페이지탭 표시 여부',      table: { category: '헤더' } },
     // 콘텐츠
-    layout:           { control: 'radio', options: ['기본', '분할화면', '빈화면'], description: '레이아웃 타입' },
-    showContentTab:   { control: 'boolean', description: '콘텐츠 탭 영역' },
-    showMainBtn:      { control: 'boolean', description: '메인버튼' },
-    showSubTitleArea: { control: 'boolean', description: '탭 타이틀 영역' },
-    showSubTitle:     { control: 'boolean', description: '타이틀명' },
-    showSubBtn:       { control: 'boolean', description: '서브버튼' },
-    showSearch:       { control: 'boolean', description: '검색 영역' },
-    showPagination:   { control: 'boolean', description: '페이지네이션' },
-    showSplitTab:     { control: 'boolean', description: '분할화면 탭 (분할화면 전용)' },
+    layout:             { control: 'radio', options: ['기본', '분할화면', '빈화면'],  description: '레이아웃 타입',     table: { category: '콘텐츠' } },
+    showSubTitle:       { control: 'boolean', description: '서브 타이틀',             table: { category: '콘텐츠' }, if: { arg: 'layout', neq: '빈화면' } },
+    showMainBtn:        { control: 'boolean', description: '메인버튼',                table: { category: '콘텐츠' }, if: { arg: 'layout', neq: '빈화면' } },
+    showContentTab:     { control: 'boolean', description: '콘텐츠 탭 (분할 영역 전체를 감싸는 탭)',   table: { category: '콘텐츠' }, if: { arg: 'layout', neq: '빈화면' } },
+    showTabTitle:       { control: 'boolean', description: '탭 타이틀',               table: { category: '콘텐츠' }, if: { arg: 'layout', neq: '빈화면' } },
+    showSubBtn:         { control: 'boolean', description: '탭 버튼',                 table: { category: '콘텐츠' }, if: { arg: 'layout', neq: '빈화면' } },
+    showSplitTab:       { control: 'boolean', description: '분할 탭 (분할화면 우측 콘텐츠를 감싸는 탭)', table: { category: '콘텐츠' }, if: { arg: 'layout', eq: '분할화면' } },
+    showSearch:         { control: 'boolean', description: '검색 영역 표시',           table: { category: '검색 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    searchFilter:       { control: 'boolean', description: '조회 저장 필터',           table: { category: '검색 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    // 테이블 영역
+    showDataActionArea:  { control: 'boolean', description: '데이터 건수 영역',       table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    showTableActionArea: { control: 'boolean', description: '테이블 액션 버튼 영역',  table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    showTableFilter:     { control: 'boolean', description: '키워드 검색 버튼',       table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    showTableDownload:   { control: 'boolean', description: '엑셀 다운로드 버튼',     table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    showTableAction:     { control: 'boolean', description: '테이블 액션 버튼',       table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    showPagination:      { control: 'boolean', description: '페이지네이션',           table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
+    tableEmptyData:      { control: 'boolean', description: '데이터 없음 상태',        table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
   },
   args: {
-    sidebarOpen: true,
-    showPageTabs: true,
+    sidebarOpen: false,
     multiBrand: true,
     showAlarm: true,
     showSettings: true,
     showAvatar: true,
+    showPageTabs: true,
     layout: '기본',
-    showContentTab: true,
-    showMainBtn: true,
-    showSubTitleArea: true,
+    showTitle: true, // 항상 표시
     showSubTitle: true,
-    showSubBtn: true,
-    showSearch: true,
-    showPagination: true,
+    showMainBtn: true,
+    showContentTab: false,
+    showTabTitle: false,
+    showSubBtn: false,
     showSplitTab: false,
+    showSearch: true,
+    searchFilter: false,
+    showDataActionArea: true,
+    showTableActionArea: true,
+    showTableFilter: true,
+    showTableDownload: true,
+    showTableAction: true,
+    showPagination: true,
+    tableEmptyData: false,
   },
   render: (args) => ({
-    components: { LeftSidebar, PageTabs, TablePagination, LineTabs },
+    components: { LeftSidebar, PageTabs, TablePagination, PageSearch, TableLayout, EmptyData, LineTabs },
     setup() {
       const page = ref(1)
       const tabs = ref([
@@ -63,22 +83,23 @@ export const MainLayout: Story = {
         { label: '완료', value: 'done', active: false },
         { label: '취소', value: 'cancel', active: false },
       ])
-      const splitTabs = ref([
-        { label: '기본정보', value: 'info', active: true },
-        { label: '상세내역', value: 'detail', active: false },
-      ])
       const onTabChange = (value: string) => {
         tabs.value = tabs.value.map(t => ({ ...t, active: t.value === value }))
       }
+      const splitTabs = ref([
+        { label: '탭1', value: 'tab1', active: true },
+        { label: '탭2', value: 'tab2', active: false },
+        { label: '탭3', value: 'tab3', active: false },
+      ])
       const onSplitTabChange = (value: string) => {
         splitTabs.value = splitTabs.value.map(t => ({ ...t, active: t.value === value }))
       }
-      return { args, page, tabs, splitTabs, onTabChange, onSplitTabChange }
+      return { args, page, tabs, onTabChange, splitTabs, onSplitTabChange }
     },
     template: `
-      <UiSidebarProvider :key="args.sidebarOpen" :defaultOpen="args.sidebarOpen">
+      <UiSidebarProvider :key="args.sidebarOpen" :defaultOpen="args.sidebarOpen" class="min-h-full">
         <LeftSidebar />
-        <UiSidebarInset class="overflow-hidden h-screen">
+        <UiSidebarInset class="overflow-hidden">
 
           <!-- 헤더 -->
           <header class="flex h-10 shrink-0 items-center w-full px-5 gap-3 bg-background border-b-1 border-border">
@@ -129,6 +150,7 @@ export const MainLayout: Story = {
             </div>
           </header>
 
+          <!-- 페이지탭 -->
           <PageTabs v-if="args.showPageTabs" />
 
           <!-- 콘텐츠 -->
@@ -139,7 +161,7 @@ export const MainLayout: Story = {
               <header class="contents-header">
                 <div class="contents-header__title">
                   <h2>화면 명</h2>
-                  <span>화면 설명이 들어갑니다</span>
+                  <span v-if="args.showSubTitle">화면 설명이 들어갑니다</span>
                 </div>
                 <div v-if="args.showMainBtn" class="contents-header__button">
                   <UiButton variant="outline"><LucidePlus />메인버튼</UiButton>
@@ -151,83 +173,130 @@ export const MainLayout: Story = {
             </section>
 
             <!-- 빈화면 -->
-            <div v-if="args.layout === '빈화면'" class="flex-1" />
+            <div v-if="args.layout === '빈화면'" class="flex-1 flex items-center justify-center">
+              <EmptyData />
+            </div>
 
             <!-- 기본 -->
             <template v-else-if="args.layout === '기본'">
-              <section v-if="args.showSubTitleArea" class="px-8 py-6 flex items-center justify-between flex-none">
-                <span v-if="args.showSubTitle" class="body__bold">타이틀명</span>
+              <section v-if="args.showContentTab && (args.showTabTitle || args.showSubBtn)" class="px-8 py-6 flex items-center justify-between flex-none">
+                <span v-if="args.showTabTitle" class="font-bold">타이틀명</span>
                 <div v-if="args.showSubBtn" class="ml-auto">
                   <UiButton variant="outline">서브버튼</UiButton>
                 </div>
               </section>
-              <section v-if="args.showSearch" class="border-b border-border px-8 py-3 flex-none">
-                <div class="flex flex-wrap gap-2 items-center">
-                  <span class="body__bold shrink-0">조회조건 :</span>
-                  <UiInput class="w-48 h-8" placeholder="내용 입력" />
-                  <UiInput class="w-48 h-8" placeholder="내용 입력" />
-                  <UiButton size="sm">조회</UiButton>
-                </div>
+              <section v-if="args.showSearch" class="px-8 pt-6 flex-none">
+                <PageSearch :filter="args.searchFilter">
+                  <template #search-body>
+                    <div class="flex flex-wrap gap-2 items-center">
+                      <UiInput class="w-48 h-8" placeholder="내용 입력" />
+                      <UiInput class="w-48 h-8" placeholder="내용 입력" />
+                    </div>
+                  </template>
+                </PageSearch>
               </section>
-              <section class="border-b border-border px-8 h-[53px] flex items-center justify-between flex-none">
-                <span class="body__bold">총 225건</span>
-                <div class="flex gap-2">
-                  <UiButton variant="outline" size="sm">키워드 검색</UiButton>
-                  <UiButton variant="outline" size="sm">엑셀 다운로드</UiButton>
-                </div>
-              </section>
-              <div class="flex-1 overflow-y-auto">
-                <div class="px-8 py-4 flex flex-col gap-2">
-                  <UiSkeleton class="h-10 w-full" v-for="n in 10" :key="n" />
-                </div>
-              </div>
-              <div v-if="args.showPagination" class="border-t border-border px-8 h-14 flex items-center justify-center flex-none">
-                <TablePagination v-model:page="page" :total="10" />
-              </div>
+              <TableLayout
+                class="flex-1 min-h-0"
+                :table-top="args.showDataActionArea || args.showTableActionArea"
+                :data-action="args.showDataActionArea"
+                :table-action="args.showTableActionArea"
+                :filter="args.showTableFilter"
+                :download="args.showTableDownload"
+                :setting="args.showTableAction"
+                :pagination="args.showPagination"
+              >
+                <template #table>
+                  <UiTable class="table-fixed w-full">
+                    <UiTableHeader class="sticky top-0 z-10">
+                      <UiTableRow>
+                        <UiTableHead v-for="h in ['이름', '부서', '직급', '상태', '등록일']" :key="h">{{ h }}</UiTableHead>
+                      </UiTableRow>
+                    </UiTableHeader>
+                    <UiTableBody v-if="!args.tableEmptyData">
+                      <UiTableRow v-for="n in 10" :key="n">
+                        <UiTableCell v-for="h in ['이름', '부서', '직급', '상태', '등록일']" :key="h">
+                          <UiSkeleton class="h-4 w-full" />
+                        </UiTableCell>
+                      </UiTableRow>
+                    </UiTableBody>
+                  </UiTable>
+                  <div v-if="args.tableEmptyData" class="h-60">
+                    <EmptyData />
+                  </div>
+                </template>
+                <template #pagination>
+                  <TablePagination v-model:page="page" :total="10" />
+                </template>
+              </TableLayout>
             </template>
 
             <!-- 분할화면 -->
             <template v-else>
-              <div v-if="args.showContentTab" class="border-b border-border px-6 flex-none">
-                <LineTabs :tab-list="tabs" @change="onTabChange" />
-              </div>
               <UiResizablePanelGroup direction="horizontal" class="flex-1 min-h-0">
-                <UiResizablePanel :default-size="25" :min-size="20" :max-size="50" class="flex flex-col overflow-hidden p-6 gap-3">
-                  <UiSkeleton class="h-8 w-full" v-for="n in 8" :key="n" />
+                <UiResizablePanel :default-size="30" :min-size="20" :max-size="50" class="flex flex-col overflow-y-auto gap-3 px-6 pt-6">
+                  <UiSkeleton class="h-10 w-full flex-none" v-for="n in 15" :key="n" />
                 </UiResizablePanel>
                 <UiResizableHandle />
                 <UiResizablePanel class="flex flex-col overflow-hidden">
-                  <div v-if="args.showSplitTab" class="border-b border-border px-6 flex-none flex items-end">
-                    <button class="h-8 px-3 body__bold border-b-2 border-default">tab1</button>
-                    <button class="h-8 px-3 body text-muted">tab2</button>
-                  </div>
-                  <section v-if="args.showSubTitleArea" class="border-b border-border px-8 h-15 flex items-center justify-between flex-none">
-                    <span v-if="args.showSubTitle" class="body__bold">타이틀명</span>
+                  <!-- 탭 타이틀 영역 -->
+                  <section v-if="args.showTabTitle || args.showSubBtn" class="px-8 h-15 flex items-center justify-between flex-none">
+                    <span v-if="args.showTabTitle" class="font-bold">타이틀명</span>
                     <div v-if="args.showSubBtn" class="ml-auto">
                       <UiButton variant="outline" size="sm">서브버튼</UiButton>
                     </div>
                   </section>
-                  <section v-if="args.showSearch" class="border-b border-border px-8 py-3 flex-none">
-                    <div class="flex flex-wrap gap-2 items-center">
-                      <span class="body__bold shrink-0">조회조건 :</span>
-                      <UiInput class="w-48 h-8" placeholder="내용 입력" />
-                      <UiButton size="sm">조회</UiButton>
-                    </div>
+                  <!-- 분할 탭 -->
+                  <nav v-if="args.showSplitTab" class="border-b border-border px-8 flex-none">
+                    <LineTabs :tab-list="splitTabs" @change="onSplitTabChange" />
+                  </nav>
+                  <!-- 검색 -->
+                  <section v-if="args.showSearch" class="px-8 pt-6 flex-none">
+                    <PageSearch :filter="args.searchFilter">
+                      <template #search-body>
+                        <div class="flex flex-wrap gap-2 items-center">
+                          <UiInput class="w-48 h-8" placeholder="내용 입력" />
+                        </div>
+                      </template>
+                    </PageSearch>
                   </section>
-                  <section class="border-b border-border px-8 h-[53px] flex items-center justify-between flex-none">
-                    <span class="body__bold">총 225건</span>
-                    <div class="flex gap-2">
-                      <UiButton variant="outline" size="sm">키워드 검색</UiButton>
-                    </div>
-                  </section>
-                  <div class="flex-1 overflow-y-auto">
-                    <div class="px-8 py-4 flex flex-col gap-2">
-                      <UiSkeleton class="h-10 w-full" v-for="n in 8" :key="n" />
-                    </div>
+                  <!-- 컨텐츠 컨트롤 전부 false → Empty -->
+                  <div v-if="!args.showTabTitle && !args.showSubBtn && !args.showSplitTab && !args.showSearch" class="flex-1 flex items-center justify-center">
+                    <EmptyData />
                   </div>
-                  <div v-if="args.showPagination" class="border-t border-border px-8 h-14 flex items-center justify-center flex-none">
-                    <TablePagination v-model:page="page" :total="10" />
-                  </div>
+                  <TableLayout
+                    v-else
+                    class="flex-1 min-h-0"
+                    :table-top="args.showDataActionArea || args.showTableActionArea"
+                    :data-action="args.showDataActionArea"
+                    :table-action="args.showTableActionArea"
+                    :filter="args.showTableFilter"
+                    :download="args.showTableDownload"
+                    :setting="args.showTableAction"
+                    :pagination="args.showPagination"
+                  >
+                    <template #table>
+                      <UiTable class="table-fixed w-full">
+                        <UiTableHeader class="sticky top-0 z-10">
+                          <UiTableRow>
+                            <UiTableHead v-for="h in ['이름', '부서', '상태', '등록일']" :key="h">{{ h }}</UiTableHead>
+                          </UiTableRow>
+                        </UiTableHeader>
+                        <UiTableBody v-if="!args.tableEmptyData">
+                          <UiTableRow v-for="n in 8" :key="n">
+                            <UiTableCell v-for="h in ['이름', '부서', '상태', '등록일']" :key="h">
+                              <UiSkeleton class="h-4 w-full" />
+                            </UiTableCell>
+                          </UiTableRow>
+                        </UiTableBody>
+                      </UiTable>
+                      <div v-if="args.tableEmptyData" class="h-60">
+                        <EmptyData />
+                      </div>
+                    </template>
+                    <template #pagination>
+                      <TablePagination v-model:page="page" :total="10" />
+                    </template>
+                  </TableLayout>
                 </UiResizablePanel>
               </UiResizablePanelGroup>
             </template>
@@ -238,18 +307,3 @@ export const MainLayout: Story = {
     `,
   }),
 }
-
-export const SidebarStory: Story = {
-  name: 'Sidebar',
-  render: () => ({
-    components: { LeftSidebar },
-    template: `
-      <div class="h-screen flex">
-        <UiSidebarProvider>
-          <LeftSidebar />
-        </UiSidebarProvider>
-      </div>
-    `,
-  }),
-}
-

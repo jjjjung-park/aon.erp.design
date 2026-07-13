@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
-import { PanelLeft } from 'lucide-vue-next'
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/ui/button'
 import { useSidebar } from './utils'
@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{
     variant: 'ghost',
   })
 
-const { toggleSidebar } = useSidebar()
+const { toggleSidebar, open } = useSidebar()
 </script>
 
 <template>
@@ -26,7 +26,7 @@ const { toggleSidebar } = useSidebar()
     @click="toggleSidebar"
     size="icon"
   >
-    <component :is="props.icon || PanelLeft" />
+    <component :is="props.icon || (open ? ArrowLeftIcon : ArrowRightIcon)" />
     <span class="sr-only">Toggle Sidebar</span>
   </Button>
 </template>

@@ -331,6 +331,17 @@
     @apply !bg-primary-light opacity-50 border-b-1 !border-primary;
   }
 
+  /* 테이블 레이아웃 */
+  .table-layout__top{
+    @apply flex items-center justify-between;
+  }
+  .table-layout__data-action{
+    @apply flex items-center gap-2;
+  }
+  .table-layout__table-action{
+    @apply flex gap-2 items-center ml-auto;
+  }
+
   /*컴포넌트*/
   .contents-header {
     @apply flex items-center justify-between w-full h-23;
