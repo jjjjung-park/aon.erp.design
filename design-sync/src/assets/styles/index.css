@@ -469,28 +469,45 @@
   }
 
   /*list 타입 추가*/
-  .data-list {
+  .data-list{
+    @apply flex flex-col;
   }
   .data-list__item {
-    @apply first:border-t-1 border-b-1 border-gray-200 min-h-16 p-3 flex items-center justify-between min-w-0;
+    @apply flex items-center gap-2 border-b border-border p-3 min-w-0 min-h-16 first:border-t;
   }
   .data-list__item.active {
     @apply bg-primary-light;
   }
+  .data-list__body {
+    @apply flex flex-col gap-1 min-w-0 w-full;
+  }
   .data-list__cont {
-    @apply flex flex-col gap-1 truncate min-w-0;
+    @apply flex items-center gap-2 min-w-0 justify-between [&_*]:truncate [&_*]:min-w-0;
   }
-  .data-list__cont-left {
-    @apply items-start;
+  .data-list__cont > [data-slot='button'] {
+    @apply flex-1 min-w-0 !block !h-auto truncate !text-left;
   }
-  .data-list__cont-right {
-    @apply items-end;
-  }
-  .data-list__cont > * {
-    @apply truncate max-w-full min-w-0;
+  /* __cont 내 좌/우 분할 단위 */
+  .data-list__group {
+    @apply flex items-center gap-1 min-w-0 flex-1 [&_p]:truncate [&_span]:truncate;
   }
   .data-list__desc {
-    @apply text-xs text-muted truncate block basis-1/2;
+    @apply text-xs text-muted truncate min-w-0 flex-1;
+  }
+  /* divider로 구분되는 데이터 */
+  .data-list__meta {
+    @apply flex items-center justify-end gap-1 min-w-0 flex-1 [&_span]:truncate text-xs text-muted [&_[data-orientation]]:shrink-0;
+  }
+
+  .data-list__slot{
+    @apply flex flex-col gap-2 pt-1 w-full;
+  }
+
+  .data-list__item--selected {
+    @apply bg-primary-light relative before:content-[""] before:absolute before:size-4 before:bg-[url(../images/ico/check.svg)] before:bg-no-repeat before:bg-contain before:left-3;
+  }
+  .data-list__item--clickable{
+    @apply cursor-pointer hover:bg-surface-muted
   }
 
   /* icon-list */
@@ -588,9 +605,7 @@
   .barcode-box .data-list__item {
     @apply !pl-12;
   }
-  .data-list__item--selected {
-    @apply bg-primary-light relative before:content-[""] before:absolute before:size-4 before:bg-[url(@assets/images/ico/check.svg)] before:bg-no-repeat before:bg-contain before:left-4;
-  }
+
 
   /*자주 쓰이는 스타일링*/
   .icon-btn__trash--danger {
