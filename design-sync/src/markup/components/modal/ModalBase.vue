@@ -1,5 +1,5 @@
 <template>
-  <UiDialog>
+  <UiDialog v-model:open="open">
     <UiDialogContent :class="[fullSize?'full-size':'min-w-120', props.class]" :style="props.style">
       <UiDialogHeader class="px-4 ">
         <!--    -mx-2 추가      -->
@@ -73,6 +73,7 @@ const props = withDefaults(
     }
 )
 
+const open = defineModel<boolean>('open', { default: false })
 const fullSize = defineModel('fullSize', {default: false})
 
 </script>
