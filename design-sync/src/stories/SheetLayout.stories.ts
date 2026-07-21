@@ -127,7 +127,7 @@ export const Index: Story = {
                 <dl class="view-list__item col-span-full"><dt class="view-list__item-title">직책</dt><dd class="view-list__item-cont">과장</dd></dl>
               </template>
               <template v-if="args.showTable">
-                <UiTable class="col-span-full border-b table-fixed w-full">
+                <UiTable class="col-span-full table-secondary table-fixed w-full">
                   <UiTableHeader><UiTableRow><UiTableHead>이름</UiTableHead><UiTableHead>이메일</UiTableHead><UiTableHead>부서</UiTableHead><UiTableHead>직책</UiTableHead></UiTableRow></UiTableHeader>
                   <UiTableBody>
                     <UiTableRow><UiTableCell>홍길동</UiTableCell><UiTableCell>hong@example.com</UiTableCell><UiTableCell>개발팀</UiTableCell><UiTableCell>과장</UiTableCell></UiTableRow>
@@ -201,7 +201,7 @@ export const Index: Story = {
                   <!-- 테이블 (카드 내) -->
                   <template v-if="args.showTable">
                     <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
-                    <UiTable class="border-b table-fixed w-full">
+                    <UiTable class="table-secondary table-fixed w-full">
                       <UiTableHeader><UiTableRow><UiTableHead>이름</UiTableHead><UiTableHead>부서</UiTableHead><UiTableHead>직책</UiTableHead></UiTableRow></UiTableHeader>
                       <UiTableBody>
                         <UiTableRow><UiTableCell>홍길동</UiTableCell><UiTableCell>개발팀</UiTableCell><UiTableCell>과장</UiTableCell></UiTableRow>
@@ -214,7 +214,7 @@ export const Index: Story = {
 
               <!-- 테이블 (섹션 레벨, 카드 없을 때) -->
               <template v-if="!args.showCard && args.showTable">
-                <UiTable class="col-span-full border-b table-fixed w-full">
+                <UiTable class="col-span-full table-secondary table-fixed w-full">
                   <UiTableHeader><UiTableRow><UiTableHead>이름</UiTableHead><UiTableHead>이메일</UiTableHead><UiTableHead>부서</UiTableHead></UiTableRow></UiTableHeader>
                   <UiTableBody>
                     <UiTableRow><UiTableCell>홍길동</UiTableCell><UiTableCell>hong@example.com</UiTableCell><UiTableCell>개발팀</UiTableCell></UiTableRow>
@@ -280,7 +280,7 @@ export const Index: Story = {
                   </template>
                   <template v-if="args.showTable">
                     <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
-                    <UiTable class="border-b table-fixed w-full">
+                    <UiTable class="table-secondary table-fixed w-full">
                       <UiTableHeader><UiTableRow><UiTableHead>항목</UiTableHead><UiTableHead>값</UiTableHead></UiTableRow></UiTableHeader>
                       <UiTableBody>
                         <UiTableRow><UiTableCell>급여 유형</UiTableCell><UiTableCell>월급</UiTableCell></UiTableRow>
@@ -293,7 +293,7 @@ export const Index: Story = {
 
               <!-- 테이블 (섹션 레벨, 카드 없을 때) -->
               <template v-if="!args.showCard && args.showTable">
-                <UiTable class="col-span-full border-b table-fixed w-full">
+                <UiTable class="col-span-full table-secondary table-fixed w-full">
                   <UiTableHeader><UiTableRow><UiTableHead>항목</UiTableHead><UiTableHead>값</UiTableHead></UiTableRow></UiTableHeader>
                   <UiTableBody>
                     <UiTableRow><UiTableCell>입사일</UiTableCell><UiTableCell>2023-03-01</UiTableCell></UiTableRow>
