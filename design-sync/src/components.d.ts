@@ -41,6 +41,7 @@ declare module 'vue' {
     UiDialog: typeof import('@/ui/dialog')['Dialog']
     UiDialogClose: typeof import('@/ui/dialog')['DialogClose']
     UiDialogContent: typeof import('@/ui/dialog')['DialogContent']
+    UiDialogDescription: typeof import('@/ui/dialog')['DialogDescription']
     UiDialogFooter: typeof import('@/ui/dialog')['DialogFooter']
     UiDialogHeader: typeof import('@/ui/dialog')['DialogHeader']
     UiDialogTitle: typeof import('@/ui/dialog')['DialogTitle']
