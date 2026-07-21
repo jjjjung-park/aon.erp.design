@@ -10,27 +10,52 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-// ─── 기본 (계층 구조) ─────────────────────────────────────────────────────────
-
 export const Index: Story = {
   name: 'Sheet — 기본',
   argTypes: {
-    columns:      { control: 'radio',   options: ['1단', '2단'], description: '시트 너비 (1단 480px · 2단 960px)' },
-    showFullscreen: { control: 'boolean', description: '전체화면 버튼 표시' },
-    sheetType:    { control: 'radio',   options: ['기본', '폼', '상세'], description: '시트 타입' },
-    showTabs:     { control: 'boolean', description: '탭 레이어 표시' },
-    showSection:  { control: 'boolean', description: '섹션 레이어 표시', if: { arg: 'sheetType', eq: '기본' } },
-    showGroup:    { control: 'boolean', description: '그룹 레이어 표시', if: { arg: 'showSection' } },
-    cardLayout:   { control: 'radio',   options: ['가로', '세로'], description: '카드 내부 레이아웃 (가로: 보더 구분 · 세로: 리사이징)', if: { arg: 'showGroup' } },
+    // ── 레이아웃 ──────────────────────────────────────────────────────────────
+    columns:     { control: 'radio',   options: ['1단', '2단'],   description: '시트 너비 (1단 480px · 2단 960px)', table: { category: '레이아웃' } },
+    showTabs:    { control: 'boolean', description: '탭',                                                          table: { category: '레이아웃' } },
+    showSection: { control: 'boolean', description: '섹션 레이어 (제목 + 구분선)',                                 table: { category: '레이아웃' } },
+    showCard:    { control: 'boolean', description: '카드 레이어',                  if: { arg: 'showSection' },   table: { category: '레이아웃' } },
+    showBorder:  { control: 'boolean', description: '보더 구분 (카드 내부 섹션)', if: { arg: 'showCard' },       table: { category: '레이아웃' } },
+
+    // ── 헤더 ──────────────────────────────────────────────────────────────────
+    statusVariant:  { control: 'select',  options: ['없음', 'info', 'outline', 'process', 'accept', 'reject', 'hold'], description: '상태 뱃지', table: { category: '헤더' } },
+    showFullscreen: { control: 'boolean', description: '전체화면 버튼',                                                                        table: { category: '헤더' } },
+
+    // ── 컨텐츠 ────────────────────────────────────────────────────────────────
+    showCodeTag:      { control: 'boolean', description: '코드 태그 (식별 코드를 상단에 표시)',      if: { arg: 'showSection' },              table: { category: '컨텐츠' } },
+    showDateTag:      { control: 'select',  options: ['없음', '플랫', '섹션', '카드'], description: '날짜 태그 위치 (각 계층 상단 우측)', if: { arg: 'showSection' }, table: { category: '컨텐츠' } },
+    showSectionTitle: { control: 'boolean', description: '섹션 타이틀',                          if: { arg: 'showSection' },            table: { category: '컨텐츠' } },
+    showCardTitle:    { control: 'boolean', description: '카드 타이틀',                          if: { arg: 'showCard' },               table: { category: '컨텐츠' } },
+    showForm:         { control: 'boolean', description: '폼 (input, 라디오, 콤보박스, 날짜 등)',                                       table: { category: '컨텐츠' } },
+    showDetail:       { control: 'boolean', description: '상세 (텍스트, 툴팁, 버튼 등)',                                               table: { category: '컨텐츠' } },
+    showTable:        { control: 'boolean', description: '테이블',                                                                      table: { category: '컨텐츠' } },
+
+    // ── 푸터 ──────────────────────────────────────────────────────────────────
+    showDelete: { control: 'boolean', description: '삭제 버튼', table: { category: '푸터' } },
+    showEdit:   { control: 'boolean', description: '수정 버튼', table: { category: '푸터' } },
+    showSave:   { control: 'boolean', description: '저장 버튼', table: { category: '푸터' } },
   },
   args: {
     columns: '1단',
+    showTabs: false,
+    showSection: false,
+    showCard: false,
+    showBorder: false,
+    statusVariant: '없음',
     showFullscreen: false,
-    sheetType: '기본',
-    showTabs: true,
-    showSection: true,
-    showGroup: true,
-    cardLayout: '가로',
+    showCodeTag: false,
+    showDateTag: '없음',
+    showSectionTitle: false,
+    showCardTitle: false,
+    showForm: true,
+    showDetail: false,
+    showTable: false,
+    showDelete: false,
+    showEdit: false,
+    showSave: true,
   },
   render: (args) => ({
     components: { LineTabs },
@@ -53,7 +78,10 @@ export const Index: Story = {
 
         <!-- 헤더 -->
         <div class="flex justify-between items-center px-6 min-h-14 shrink-0">
-          <h2 class="flex items-center gap-2 title__bold flex-wrap">시트 제목</h2>
+          <h2 class="flex items-center gap-2 title__bold flex-wrap">
+            시트 제목
+            <UiBadge v-if="args.statusVariant !== '없음'" :variant="args.statusVariant" class="shrink-0">상태</UiBadge>
+          </h2>
           <div class="ml-auto flex items-center gap-2 h-5">
             <template v-if="args.showFullscreen">
               <UiButton variant="ghost" size="icon" @click="isFullSize = !isFullSize">
@@ -73,137 +101,206 @@ export const Index: Story = {
         <!-- 바디 -->
         <div class="overflow-y-auto flex-1 container-type--inline">
 
-          <!-- 기본 시트 -->
-          <template v-if="args.sheetType === '기본'">
+          <!-- Section/Label: 코드 태그 + 플랫 날짜 태그 -->
+          <div v-if="args.showCodeTag"
+               class="flex items-center justify-between gap-2 px-6 py-6">
+            <div class="flex flex-wrap gap-1 flex-1 min-w-0">
+              <Tags title="BRD-001" />
+              <Tags title="뉴발란스" />
+            </div>
+            <Tags v-if="args.showDateTag === '플랫'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
+          </div>
+
+          <!-- ── 계층 1: 섹션 없음 (플랫) ───────────────────────────────────── -->
+          <template v-if="!args.showSection">
             <div class="list-layout--grid">
-              <h4 v-if="args.showSection" class="col-span-full">기본 정보</h4>
-              <template v-if="args.showSection && args.showGroup">
+              <template v-if="args.showForm">
+                <FormItem required label="이름"   placeholder="이름을 입력해 주세요" />
+                <FormItem required label="이메일" placeholder="이메일을 입력해 주세요" />
+                <FormItem         label="부서"   placeholder="부서를 선택해 주세요" />
+                <FormItem         label="직책"   placeholder="직책을 선택해 주세요" />
+              </template>
+              <template v-if="args.showDetail">
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">이름</dt><dd class="view-list__item-cont">홍길동</dd></dl>
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">이메일</dt><dd class="view-list__item-cont">hong@example.com</dd></dl>
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">부서</dt><dd class="view-list__item-cont">개발팀</dd></dl>
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">직책</dt><dd class="view-list__item-cont">과장</dd></dl>
+              </template>
+              <template v-if="args.showTable">
+                <UiTable class="col-span-full border-b table-fixed w-full">
+                  <UiTableHeader><UiTableRow><UiTableHead>이름</UiTableHead><UiTableHead>이메일</UiTableHead><UiTableHead>부서</UiTableHead><UiTableHead>직책</UiTableHead></UiTableRow></UiTableHeader>
+                  <UiTableBody>
+                    <UiTableRow><UiTableCell>홍길동</UiTableCell><UiTableCell>hong@example.com</UiTableCell><UiTableCell>개발팀</UiTableCell><UiTableCell>과장</UiTableCell></UiTableRow>
+                    <UiTableRow><UiTableCell>이순신</UiTableCell><UiTableCell>lee@example.com</UiTableCell><UiTableCell>디자인팀</UiTableCell><UiTableCell>차장</UiTableCell></UiTableRow>
+                    <UiTableRow><UiTableCell>김철수</UiTableCell><UiTableCell>kim@example.com</UiTableCell><UiTableCell>마케팅팀</UiTableCell><UiTableCell>대리</UiTableCell></UiTableRow>
+                  </UiTableBody>
+                </UiTable>
+              </template>
+            </div>
+          </template>
+
+          <!-- ── 계층 2/3/4: 섹션 있음 ─────────────────────────────────────── -->
+          <template v-else>
+            <UiSeparator v-if="args.showCodeTag" orientation="horizontal" class="data-[orientation=horizontal]:h-2 bg-gray-100" />
+
+            <!-- 섹션 1: 기본 정보 -->
+            <div class="list-layout--grid">
+              <div v-if="args.showSectionTitle || args.showDateTag === '섹션'" class="col-span-full flex items-center justify-between">
+                <h4 v-if="args.showSectionTitle">기본 정보</h4>
+                <span v-else />
+                <Tags v-if="args.showDateTag === '섹션'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
+              </div>
+
+              <!-- 섹션 레벨 공통 아이템 (카드 밖) -->
+              <template v-if="args.showForm">
+                <FormItem required label="이름"   placeholder="이름을 입력해 주세요" />
+                <FormItem required label="이메일" placeholder="이메일을 입력해 주세요" />
+              </template>
+              <template v-if="args.showDetail">
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">이름</dt><dd class="view-list__item-cont">홍길동</dd></dl>
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">이메일</dt><dd class="view-list__item-cont">hong@example.com</dd></dl>
+              </template>
+
+              <!-- 계층 3/4: 섹션 내 카드 서브그룹 -->
+              <template v-if="args.showCard">
                 <UiCard size="md" class="col-span-full">
-                  <template v-if="args.cardLayout === '가로'">
-                    <div class="list-layout--grid px-0">
-                      <h4>소속 정보</h4>
+                  <div class="list-layout--grid px-0">
+                    <div v-if="args.showCardTitle || args.showDateTag === '카드'" class="col-span-full flex items-center justify-between">
+                      <h4 v-if="args.showCardTitle">소속 정보</h4>
+                      <span v-else />
+                      <Tags v-if="args.showDateTag === '카드'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
+                    </div>
+                    <template v-if="args.showForm">
                       <FormItem label="소속" placeholder="소속을 선택해 주세요" />
                       <FormItem label="부서" placeholder="부서를 선택해 주세요" />
-                    </div>
+                    </template>
+                    <template v-if="args.showDetail">
+                      <dl class="view-list__item col-span-full"><dt class="view-list__item-title">소속</dt><dd class="view-list__item-cont">ABC Holdings</dd></dl>
+                      <dl class="view-list__item col-span-full"><dt class="view-list__item-title">부서</dt><dd class="view-list__item-cont">개발팀</dd></dl>
+                    </template>
+                  </div>
+                  <!-- 계층 4: 카드 내 보더 구분 -->
+                  <template v-if="args.showBorder">
                     <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
                     <div class="list-layout--grid px-0">
-                      <h4>개인 정보</h4>
-                      <FormItem required label="이름" placeholder="이름을 입력해 주세요" />
-                      <FormItem required label="이메일" placeholder="이메일을 입력해 주세요" />
+                      <div v-if="args.showCardTitle || args.showDateTag === '카드'" class="col-span-full flex items-center justify-between">
+                        <h4 v-if="args.showCardTitle">직무 정보</h4>
+                        <span v-else />
+                        <Tags v-if="args.showDateTag === '카드'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
+                      </div>
+                      <template v-if="args.showForm">
+                        <FormItem label="직책" placeholder="직책을 선택해 주세요" />
+                        <FormItem label="직급" placeholder="직급을 선택해 주세요" />
+                      </template>
+                      <template v-if="args.showDetail">
+                        <dl class="view-list__item col-span-full"><dt class="view-list__item-title">직책</dt><dd class="view-list__item-cont">과장</dd></dl>
+                        <dl class="view-list__item col-span-full"><dt class="view-list__item-title">직급</dt><dd class="view-list__item-cont">5급</dd></dl>
+                      </template>
                     </div>
                   </template>
-                  <template v-else>
-                    <UiResizablePanelGroup direction="horizontal" class="min-h-[180px]">
-                      <UiResizablePanel :default-size="50" class="container-type--inline">
-                        <div class="list-layout--grid px-0 pr-4 h-full">
-                          <h4>소속 정보</h4>
-                          <FormItem label="소속" placeholder="소속을 선택해 주세요" class="col-span-full" />
-                          <FormItem label="부서" placeholder="부서를 선택해 주세요" class="col-span-full" />
-                        </div>
-                      </UiResizablePanel>
-                      <UiResizableHandle />
-                      <UiResizablePanel :default-size="50" class="container-type--inline">
-                        <div class="list-layout--grid px-0 pl-4 h-full">
-                          <h4>개인 정보</h4>
-                          <FormItem required label="이름" placeholder="이름을 입력해 주세요" class="col-span-full" />
-                          <FormItem required label="이메일" placeholder="이메일을 입력해 주세요" class="col-span-full" />
-                        </div>
-                      </UiResizablePanel>
-                    </UiResizablePanelGroup>
+                  <!-- 테이블 (카드 내) -->
+                  <template v-if="args.showTable">
+                    <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
+                    <UiTable class="border-b table-fixed w-full">
+                      <UiTableHeader><UiTableRow><UiTableHead>이름</UiTableHead><UiTableHead>부서</UiTableHead><UiTableHead>직책</UiTableHead></UiTableRow></UiTableHeader>
+                      <UiTableBody>
+                        <UiTableRow><UiTableCell>홍길동</UiTableCell><UiTableCell>개발팀</UiTableCell><UiTableCell>과장</UiTableCell></UiTableRow>
+                        <UiTableRow><UiTableCell>이순신</UiTableCell><UiTableCell>디자인팀</UiTableCell><UiTableCell>차장</UiTableCell></UiTableRow>
+                      </UiTableBody>
+                    </UiTable>
                   </template>
                 </UiCard>
               </template>
-              <template v-else>
-                <FormItem label="소속" placeholder="소속을 선택해 주세요" />
-                <FormItem label="부서" placeholder="부서를 선택해 주세요" />
-                <FormItem required label="이름" placeholder="이름을 입력해 주세요" />
-                <FormItem required label="이메일" placeholder="이메일을 입력해 주세요" />
+
+              <!-- 테이블 (섹션 레벨, 카드 없을 때) -->
+              <template v-if="!args.showCard && args.showTable">
+                <UiTable class="col-span-full border-b table-fixed w-full">
+                  <UiTableHeader><UiTableRow><UiTableHead>이름</UiTableHead><UiTableHead>이메일</UiTableHead><UiTableHead>부서</UiTableHead></UiTableRow></UiTableHeader>
+                  <UiTableBody>
+                    <UiTableRow><UiTableCell>홍길동</UiTableCell><UiTableCell>hong@example.com</UiTableCell><UiTableCell>개발팀</UiTableCell></UiTableRow>
+                    <UiTableRow><UiTableCell>이순신</UiTableCell><UiTableCell>lee@example.com</UiTableCell><UiTableCell>디자인팀</UiTableCell></UiTableRow>
+                  </UiTableBody>
+                </UiTable>
               </template>
             </div>
-            <template v-if="args.showSection">
-              <UiSeparator orientation="horizontal" class="data-[orientation=horizontal]:h-2 bg-gray-100" />
-              <div class="list-layout--grid">
-                <h4 class="col-span-full">추가 정보</h4>
-                <template v-if="args.showGroup">
-                  <UiCard size="md" class="col-span-full">
-                    <template v-if="args.cardLayout === '가로'">
-                      <div class="list-layout--grid px-0">
-                        <h4>계약 정보</h4>
-                        <FormItem label="입사일" placeholder="날짜를 선택해 주세요" />
-                        <FormItem label="계약 유형" placeholder="유형을 선택해 주세요" />
-                      </div>
-                      <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
-                      <div class="list-layout--grid px-0">
-                        <h4>비고</h4>
-                        <FormItem label="비고" placeholder="비고를 입력해 주세요" class="col-span-full" />
-                      </div>
-                    </template>
-                    <template v-else>
-                      <UiResizablePanelGroup direction="horizontal" class="min-h-[160px]">
-                        <UiResizablePanel :default-size="50" class="container-type--inline">
-                          <div class="list-layout--grid px-0 pr-4 h-full">
-                            <h4>계약 정보</h4>
-                            <FormItem label="입사일" placeholder="날짜를 선택해 주세요" class="col-span-full" />
-                            <FormItem label="계약 유형" placeholder="유형을 선택해 주세요" class="col-span-full" />
-                          </div>
-                        </UiResizablePanel>
-                        <UiResizableHandle />
-                        <UiResizablePanel :default-size="50" class="container-type--inline">
-                          <div class="list-layout--grid px-0 pl-4">
-                            <h4>비고</h4>
-                            <FormItem label="비고" placeholder="비고를 입력해 주세요" class="col-span-full" />
-                          </div>
-                        </UiResizablePanel>
-                      </UiResizablePanelGroup>
-                    </template>
-                  </UiCard>
-                </template>
-                <template v-else>
-                  <FormItem label="입사일" placeholder="날짜를 선택해 주세요" />
-                  <FormItem label="계약 유형" placeholder="유형을 선택해 주세요" />
-                  <FormItem label="비고" placeholder="비고를 입력해 주세요" class="col-span-full" />
-                </template>
+
+            <UiSeparator orientation="horizontal" class="data-[orientation=horizontal]:h-2 bg-gray-100" />
+
+            <!-- 섹션 2: 추가 정보 -->
+            <div class="list-layout--grid">
+              <div v-if="args.showSectionTitle || args.showDateTag === '섹션'" class="col-span-full flex items-center justify-between">
+                <h4 v-if="args.showSectionTitle">추가 정보</h4>
+                <span v-else />
+                <Tags v-if="args.showDateTag === '섹션'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
               </div>
-            </template>
-          </template>
 
-          <!-- 폼 시트 -->
-          <template v-else-if="args.sheetType === '폼'">
-            <div class="list-layout--grid">
-              <h4>기본 정보</h4>
-              <FormItem required label="소속" placeholder="소속을 선택해 주세요" />
-              <FormItem required label="브랜드코드" placeholder="브랜드코드를 입력해 주세요" />
-              <FormItem required label="브랜드명" placeholder="브랜드명을 입력해 주세요" />
-              <FormItem label="브랜드 약칭" placeholder="약칭을 입력해 주세요" />
-            </div>
-            <UiSeparator orientation="horizontal" class="data-[orientation=horizontal]:h-2 bg-gray-100" />
-            <div class="list-layout--grid">
-              <h4>추가 정보</h4>
-              <FormItem label="시즌 코드" placeholder="시즌 코드를 입력해 주세요" />
-              <FormItem label="사용 여부" placeholder="사용 여부를 선택해 주세요" />
-              <FormItem label="정렬 순서" placeholder="숫자를 입력해 주세요" />
-              <FormItem label="비고" placeholder="비고를 입력해 주세요" class="col-span-full" />
-            </div>
-          </template>
+              <!-- 섹션 레벨 공통 아이템 (카드 밖) -->
+              <template v-if="args.showForm">
+                <FormItem label="입사일"    placeholder="날짜를 선택해 주세요" />
+                <FormItem label="계약 유형" placeholder="유형을 선택해 주세요" />
+              </template>
+              <template v-if="args.showDetail">
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">입사일</dt><dd class="view-list__item-cont">2023-03-01</dd></dl>
+                <dl class="view-list__item col-span-full"><dt class="view-list__item-title">계약 유형</dt><dd class="view-list__item-cont">정규직</dd></dl>
+              </template>
 
-          <!-- 상세 시트 -->
-          <template v-else>
-            <div class="view-list">
-              <h4>기본 정보</h4>
-              <dl class="view-list__item"><dt class="view-list__item-title">소속</dt><dd class="view-list__item-cont">ABC Holdings</dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">브랜드코드</dt><dd class="view-list__item-cont">BRD-001</dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">브랜드명</dt><dd class="view-list__item-cont">뉴발란스</dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">브랜드 약칭</dt><dd class="view-list__item-cont">NB</dd></dl>
-            </div>
-            <UiSeparator orientation="horizontal" class="data-[orientation=horizontal]:h-2 bg-gray-100" />
-            <div class="view-list">
-              <h4>추가 정보</h4>
-              <dl class="view-list__item"><dt class="view-list__item-title">시즌 코드</dt><dd class="view-list__item-cont">SS25</dd></dl>
-              <dl class="view-list__item view-list__item--row"><dt class="view-list__item-title">사용 여부</dt><dd class="view-list__item-cont"><UiBadge variant="process">사용</UiBadge></dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">정렬 순서</dt><dd class="view-list__item-cont">1</dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">비고</dt><dd class="view-list__item-cont">—</dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">등록일</dt><dd class="view-list__item-cont">2025-01-15</dd></dl>
-              <dl class="view-list__item"><dt class="view-list__item-title">수정일</dt><dd class="view-list__item-cont">2025-06-20</dd></dl>
+              <!-- 계층 3/4: 섹션 내 카드 서브그룹 -->
+              <template v-if="args.showCard">
+                <UiCard size="md" class="col-span-full">
+                  <div class="list-layout--grid px-0">
+                    <div v-if="args.showCardTitle || args.showDateTag === '카드'" class="col-span-full flex items-center justify-between">
+                      <h4 v-if="args.showCardTitle">계약 세부 정보</h4>
+                      <span v-else />
+                      <Tags v-if="args.showDateTag === '카드'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
+                    </div>
+                    <template v-if="args.showForm">
+                      <FormItem label="급여 유형"  placeholder="급여 유형을 선택해 주세요" />
+                      <FormItem label="근무 형태"  placeholder="근무 형태를 선택해 주세요" />
+                    </template>
+                    <template v-if="args.showDetail">
+                      <dl class="view-list__item col-span-full"><dt class="view-list__item-title">급여 유형</dt><dd class="view-list__item-cont">월급</dd></dl>
+                      <dl class="view-list__item col-span-full"><dt class="view-list__item-title">근무 형태</dt><dd class="view-list__item-cont">재택</dd></dl>
+                    </template>
+                  </div>
+                  <template v-if="args.showBorder">
+                    <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
+                    <div class="list-layout--grid px-0">
+                      <div v-if="args.showCardTitle || args.showDateTag === '카드'" class="col-span-full flex items-center justify-between">
+                        <h4 v-if="args.showCardTitle">비고</h4>
+                        <span v-else />
+                        <Tags v-if="args.showDateTag === '카드'" title="생성일: 25.12.31" variant="outline" class="shrink-0" />
+                      </div>
+                      <template v-if="args.showForm">
+                        <FormItem label="비고" placeholder="비고를 입력해 주세요" class="col-span-full" />
+                      </template>
+                      <template v-if="args.showDetail">
+                        <dl class="view-list__item col-span-full"><dt class="view-list__item-title">비고</dt><dd class="view-list__item-cont">—</dd></dl>
+                      </template>
+                    </div>
+                  </template>
+                  <template v-if="args.showTable">
+                    <UiSeparator orientation="horizontal" class="my-4 data-[orientation=horizontal]:h-px bg-border" />
+                    <UiTable class="border-b table-fixed w-full">
+                      <UiTableHeader><UiTableRow><UiTableHead>항목</UiTableHead><UiTableHead>값</UiTableHead></UiTableRow></UiTableHeader>
+                      <UiTableBody>
+                        <UiTableRow><UiTableCell>급여 유형</UiTableCell><UiTableCell>월급</UiTableCell></UiTableRow>
+                        <UiTableRow><UiTableCell>근무 형태</UiTableCell><UiTableCell>재택</UiTableCell></UiTableRow>
+                      </UiTableBody>
+                    </UiTable>
+                  </template>
+                </UiCard>
+              </template>
+
+              <!-- 테이블 (섹션 레벨, 카드 없을 때) -->
+              <template v-if="!args.showCard && args.showTable">
+                <UiTable class="col-span-full border-b table-fixed w-full">
+                  <UiTableHeader><UiTableRow><UiTableHead>항목</UiTableHead><UiTableHead>값</UiTableHead></UiTableRow></UiTableHeader>
+                  <UiTableBody>
+                    <UiTableRow><UiTableCell>입사일</UiTableCell><UiTableCell>2023-03-01</UiTableCell></UiTableRow>
+                    <UiTableRow><UiTableCell>계약 유형</UiTableCell><UiTableCell>정규직</UiTableCell></UiTableRow>
+                  </UiTableBody>
+                </UiTable>
+              </template>
             </div>
           </template>
 
@@ -212,14 +309,13 @@ export const Index: Story = {
         <!-- 푸터 -->
         <div class="flex justify-between gap-2 p-4 shrink-0">
           <UiButton variant="outline">닫기</UiButton>
-          <div v-if="args.sheetType === '상세'" class="flex gap-2">
-            <UiButton variant="destructive">삭제</UiButton>
-            <UiButton>수정</UiButton>
+          <div class="flex gap-2">
+            <UiButton v-if="args.showDelete" variant="destructive">삭제</UiButton>
+            <UiButton v-if="args.showEdit" variant="secondary">수정</UiButton>
+            <UiButton v-if="args.showSave">저장</UiButton>
           </div>
-          <UiButton v-else>저장</UiButton>
         </div>
       </div>
     `,
   }),
 }
-
