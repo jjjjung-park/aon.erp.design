@@ -18,8 +18,14 @@ export const FullTable: Story = {
     components: { Th, Td },
     setup() { return { args } },
     template: `
-      <UiTable :class="['table-fixed w-full', args.secondary ? 'table-secondary' : 'border-b']">
+      <UiTable :class="['table-fixed w-full', args.secondary ? 'table-secondary' : 'border-b', args.groupTh ? 'table--group-header' : '']">
         <UiTableHeader>
+          <UiTableRow v-if="args.groupTh">
+            <Th colspan="1" />
+            <Th colspan="2">기본정보</Th>
+            <Th colspan="2">조직 현황</Th>
+            <Th colspan="1" />
+          </UiTableRow>
           <UiTableRow>
             <Th type="checkbox" />
             <Th data="이름" :sort="args.sort" :resizing="args.resizing" />
@@ -45,15 +51,58 @@ export const FullTable: Story = {
     `,
   }),
   argTypes: {
+    groupTh:   { control: 'boolean', description: '그룹 Th — 컬럼 묶음 헤더 행 표시' },
     secondary: { control: 'boolean', description: 'table-secondary 클래스 적용' },
     sort:      { control: 'boolean', description: 'Th 정렬 버튼 표시' },
     resizing:  { control: 'boolean', description: 'Th 컬럼 리사이징 핸들' },
   },
   args: {
+    groupTh: false,
     secondary: false,
     sort: false,
     resizing: true,
   },
+}
+
+// ─── Group Th ─────────────────────────────────────────────────────────────────
+
+export const GroupThStory: Story = {
+  name: 'Th — 그룹 헤더',
+  render: () => ({
+    components: { Th, Td },
+    template: `
+      <UiTable class="table-fixed w-full table--group-header">
+        <UiTableHeader>
+          <UiTableRow>
+            <Th colspan="1" />
+            <Th colspan="2">기본정보</Th>
+            <Th colspan="2">조직 현황</Th>
+            <Th colspan="1" />
+          </UiTableRow>
+          <UiTableRow>
+            <Th type="checkbox" />
+            <Th data="이름" />
+            <Th data="이메일" />
+            <Th data="부서" />
+            <Th data="상태" />
+            <Th type="function" />
+          </UiTableRow>
+        </UiTableHeader>
+        <UiTableBody>
+          <UiTableRow v-for="i in 3" :key="i">
+            <Td type="checkbox" />
+            <Td><UiSkeleton class="h-4 w-full" /></Td>
+            <Td><UiSkeleton class="h-4 w-3/4" /></Td>
+            <Td><UiSkeleton class="h-4 w-1/2" /></Td>
+            <Td><UiBadge variant="process">처리중</UiBadge></Td>
+            <Td type="function">
+              <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
+            </Td>
+          </UiTableRow>
+        </UiTableBody>
+      </UiTable>
+    `,
+  }),
 }
 
 // ─── Th ───────────────────────────────────────────────────────────────────────

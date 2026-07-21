@@ -14,7 +14,7 @@
     </UiTableCell>
   </template>
   <template v-else>
-    <UiTableCell :style="style" :class="props.class">
+    <UiTableCell :style="style" :class="[props.class, attrs.class]">
       <div :style="style">
         <slot>
           <p>{{ data }}</p>
@@ -27,6 +27,9 @@
 
 <script setup lang="ts">
 import type {HTMLAttributes} from "vue";
+import { useAttrs } from 'vue'
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   data?: string
@@ -38,6 +41,8 @@ const props = withDefaults(defineProps<{
   type: 'default',
   checkDisabled:false
 })
+
+const attrs = useAttrs()
 </script>
 
 <style scoped>

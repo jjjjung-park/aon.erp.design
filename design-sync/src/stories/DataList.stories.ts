@@ -5,108 +5,133 @@ const meta: Meta = {
   tags: ['autodocs', 'done'],
   parameters: { layout: 'centered' },
   argTypes: {
-    active: {
-      control: 'boolean',
-      description: '활성 상태 (첫 번째 아이템)',
-    },
-    clickable: {
-      control: 'boolean',
-      description: '호버/클릭 가능 상태',
-    },
-    desc: {
-      control: 'boolean',
-      description: '설명 텍스트 (data-list__desc)',
-    },
-    rightColumn: {
-      control: 'radio',
-      options: ['없음', '텍스트', '상태배지'],
-      description: '우측 영역',
-    },
-    countBadge: {
-      control: 'boolean',
-      description: '카운터 배지',
-    },
+    rightIcon:   { control: 'boolean', description: '우측 아이콘' },
+    showDesc:    { control: 'boolean', description: '2행 — 서브텍스트' },
+    showMeta:    { control: 'boolean', description: '2행 — 메타 정보 (시즌/컬러 등)' },
+    showAction:  { control: 'boolean', description: '3행 — 인터랙션 요소 (Select)' },
+    showBadge:   { control: 'boolean', description: '카운트 배지 (제목 우측)' },
+    showRightText: { control: 'boolean', description: '우측 텍스트' },
+    showStatus:  { control: 'boolean', description: '상태 배지 (우측)' },
+    selected:    { control: 'boolean', description: '선택 상태 — data-list__item--selected (첫 번째 아이템)' },
+    active:      { control: 'boolean', description: '활성 상태 (첫 번째 아이템)' },
+    clickable:   { control: 'boolean', description: '호버/클릭 가능 상태' },
   },
   args: {
+    rightIcon: false,
+    showDesc: false,
+    showMeta: false,
+    showAction: false,
+    showBadge: false,
+    showRightText: false,
+    showStatus: false,
+    selected: false,
     active: false,
     clickable: false,
-    desc: false,
-    rightColumn: '없음',
-    countBadge: false,
   },
 }
 export default meta
-type Story = StoryObj<{ active: boolean; clickable: boolean; desc: boolean; rightColumn: '없음' | '텍스트' | '상태배지'; countBadge: boolean }>
+type Story = StoryObj
 
 const items = [
-  { name: '홍길동', desc: '개발팀 · 사원', date: '2024-01-15', count: 5 },
-  { name: '김철수', desc: '디자인팀 · 대리', date: '2024-03-22', count: 12 },
-  { name: '이영희', desc: '기획팀 · 과장', date: '2023-11-08', count: 999 },
+  { code: 'W530KALK W530KALK', name: 'Summit Ridge Fleece Pullover Summit Ridge', count: 3,  year: '2025', season: 'SS', color: 'REA', size: 'XL'  },
+  { code: 'T220NBWH',          name: 'Fleece Pullover',                            count: 12, year: '2024', season: 'FW', color: 'BLU', size: 'M'   },
+  { code: 'K990GRBK',          name: 'Down Jacket Series',                         count: 1,  year: '2023', season: 'SS', color: 'GRN', size: 'L'   },
 ]
 
-const renderTemplate = `
-  <ul class="data-list w-80">
+const template = `
+  <ul class="data-list w-96">
     <li
       v-for="(item, i) in items"
-      :key="item.name"
+      :key="item.code"
       class="data-list__item"
-      :class="[{ active: i === 0 && args.active }, args.clickable ? 'cursor-pointer hover:bg-surface-muted' : 'cursor-default']"
+      :class="[{ 'active': i === 0 && args.active }, { 'data-list__item--selected pl-10 ': i === 0 && args.selected }, args.clickable ? 'cursor-pointer hover:bg-surface-muted' : '']"
     >
-      <div class="data-list__cont data-list__cont-left">
-        <p v-if="args.countBadge" class="flex items-center gap-1">
-          <strong class="truncate">{{ item.name }}</strong>
-          <UiBadge size="count">{{ item.count > 99 ? '99+' : item.count }}</UiBadge>
-        </p>
-        <strong class="truncate" v-else>{{ item.name }}</strong>
-        <span v-if="args.desc" class="data-list__desc">{{ item.desc }}</span>
+      <div class="data-list__body">
+
+        <!-- 1행: 제목 + 우측 -->
+        <div class="data-list__cont">
+          <div class="data-list__group">
+            <p class="font-bold">{{ item.code }}</p>
+            <UiBadge v-if="args.showBadge" class="shrink-0" size="count">{{ item.count > 99 ? '99+' : item.count }}</UiBadge>
+          </div>
+          <div v-if="args.showRightText || args.showStatus" class="data-list__group justify-end">
+            <span v-if="args.showRightText" class="text-sm font-bold">우측 텍스트 영역</span>
+            <UiBadge v-if="args.showStatus" variant="outline" class="shrink-0">상태 뱃지</UiBadge>
+          </div>
+        </div>
+
+        <!-- 2행: 서브텍스트 + 메타 -->
+        <div v-if="args.showDesc || args.showMeta" class="data-list__cont">
+          <span v-if="args.showDesc" class="data-list__desc">{{ item.name }}</span>
+          <div v-if="args.showMeta" :class="['data-list__meta', args.showDesc ? 'justify-end' : 'justify-start']">
+            <span class="shrink-0">{{ item.year }}</span>
+            <UiSeparator orientation="vertical" size="sm" />
+            <span>{{ item.season }}</span>
+            <UiSeparator orientation="vertical" size="sm" />
+            <span>{{ item.color }}</span>
+            <UiSeparator orientation="vertical" size="sm" />
+            <span>{{ item.size }}</span>
+          </div>
+        </div>
+
+        <!-- 3행: 자유 아이템 -->
+        <div v-if="args.showAction" class="data-list__slot">
+          <UiSelect>
+            <UiSelectTrigger class="w-full">
+              <UiSelectValue placeholder="사유를 선택 해 주세요." />
+            </UiSelectTrigger>
+            <UiSelectContent>
+              <UiSelectItem value="1">사유 1</UiSelectItem>
+              <UiSelectItem value="2">사유 2</UiSelectItem>
+            </UiSelectContent>
+          </UiSelect>
+        </div>
+
       </div>
-      <div v-if="args.rightColumn === '텍스트'" class="data-list__cont data-list__cont-right">
-        <span>{{ item.date }}</span>
-        <span v-if="args.desc" class="data-list__desc">등록일</span>
-      </div>
-      <UiBadge v-if="args.rightColumn === '상태배지'" variant="hold" class="self-start">예약중</UiBadge>
+
+      <LucideCheck v-if="args.rightIcon" class="size-4 text-primary shrink-0" />
     </li>
   </ul>
 `
 
-export const Base: Story = {
+const render = (args: any) => ({ setup() { return { args, items } }, template })
+
+// ─── 최소 ──────────────────────────────────────────────────────────────────────
+
+export const Index: Story = {
   name: '기본',
-  args: { desc: false, rightColumn: '없음', countBadge: false },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+  args: { rightIcon: false, showDesc: false, showAction: false, showBadge: false, showStatus: false },
+  render,
 }
+
+// ─── 쇼케이스 ─────────────────────────────────────────────────────────────────
 
 export const WithDesc: Story = {
-  name: '기본 + 설명',
-  args: { desc: true, rightColumn: '없음', countBadge: false },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+  name: '2행 — 서브텍스트',
+  args: { showDesc: true, showMeta: true },
+  render,
 }
 
-export const WithRightText: Story = {
-  name: '기본 + 우측텍스트',
-  args: { desc: false, rightColumn: '텍스트', countBadge: false },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+export const WithIcons: Story = {
+  name: '우측 아이콘',
+  args: { rightIcon: true },
+  render,
 }
 
-export const WithRightBadge: Story = {
-  name: '기본 + 우측상태배지',
-  args: { desc: false, rightColumn: '상태배지', countBadge: false },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+export const WithBadge: Story = {
+  name: '카운트 배지',
+  args: { showBadge: true },
+  render,
 }
 
-export const WithDescAndRightText: Story = {
-  name: '기본 + 설명 + 우측텍스트',
-  args: { desc: true, rightColumn: '텍스트', countBadge: false },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+export const WithStatus: Story = {
+  name: '상태 배지 (우측)',
+  args: { showStatus: true },
+  render,
 }
 
-export const WithDescAndRightBadge: Story = {
-  name: '기본 + 설명 + 우측상태배지',
-  args: { desc: true, rightColumn: '상태배지', countBadge: false },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
-}
-
-export const WithCountBadge: Story = {
-  name: '기본 + 카운트배지',
-  args: { desc: false, rightColumn: '없음', countBadge: true },
-  render: (args) => ({ setup() { return { args, items } }, template: renderTemplate }),
+export const MaxCase: Story = {
+  name: '최대 — 전체 구성',
+  args: { rightIcon: true, showDesc: true, showMeta: true, showAction: true, showBadge: true, showRightText: true, showStatus: true, selected: true, active: false, clickable: true },
+  render,
 }

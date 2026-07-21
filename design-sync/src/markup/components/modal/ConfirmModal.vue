@@ -1,6 +1,6 @@
 <template>
 <!-- 삭제,컨펌 전용 사이즈  -->
-  <ModalBase class="w-90" >
+  <ModalBase v-model:open="open" class="w-90" >
     <template #body>
       <div class="flex gap-4 mb-6">
         <p class="rounded-full bg-primary-light text-primary size-12 flex items-center justify-center"><LucideCheckIcon class="size-6"/></p>
@@ -25,6 +25,8 @@
 <script setup lang="ts">
 import ModalBase from "@/markup/components/modal/ModalBase.vue";
 import {toast} from "vue-sonner";
+
+const open = defineModel<boolean>('open', { default: false })
 
 const props = withDefaults(
   defineProps<{

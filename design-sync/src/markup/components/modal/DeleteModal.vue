@@ -1,5 +1,5 @@
 <template>
-  <ModalBase class="w-90" >
+  <ModalBase v-model:open="open" class="w-90" >
     <template #body>
       <div class="flex gap-4 mb-6">
         <p class="rounded-full bg-danger-light text-danger size-12 flex items-center justify-center"><LucideTrash2 class="size-6"/></p>
@@ -24,6 +24,8 @@
 <script setup lang="ts">
 import ModalBase from "@/markup/components/modal/ModalBase.vue";
 import {toast} from "vue-sonner";
+
+const open = defineModel<boolean>('open', { default: false })
 
 const props = withDefaults(
   defineProps<{

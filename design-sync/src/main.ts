@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import './assets/index.css'
+import './assets/styles/index.css'
 import 'vue-sonner/style.css'
 import * as LucideIcons from 'lucide-vue-next'
 import { Button } from '@/ui/button'
