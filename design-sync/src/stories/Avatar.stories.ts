@@ -4,7 +4,7 @@ import logoSrc from '@/assets/images/logo.svg'
 
 const meta: Meta = {
   title: '기초/Avatar',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }
 export default meta

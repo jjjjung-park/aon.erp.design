@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
   title: '기초/Separator',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }
 export default meta

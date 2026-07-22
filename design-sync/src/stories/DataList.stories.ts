@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 
 const meta: Meta = {
   title: 'UI 패턴/리스트/DataList',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
     rightIcon:   { control: 'boolean', description: '우측 아이콘' },

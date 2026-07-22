@@ -3,7 +3,7 @@ import PageSearch from "@/markup/components/accordion/PageSearch.vue";
 
 const meta: Meta = {
   title: 'UI 패턴/Accordion',
-  tags: ['autodocs','done'],
+  tags: ['autodocs'],
   parameters: { layout: 'padded' },
 }
 export default meta

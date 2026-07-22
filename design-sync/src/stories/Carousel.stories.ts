@@ -5,7 +5,7 @@ import { watchOnce } from '@vueuse/core'
 
 const meta: Meta = {
   title: 'UI 패턴/Carousel',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
     thumbnail: { control: 'boolean', description: '썸네일 연동 표시' },

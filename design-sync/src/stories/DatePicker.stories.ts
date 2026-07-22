@@ -7,7 +7,7 @@ import YearRange from '@/ui/aon/year-range/index.vue'
 
 const meta: Meta = {
   title: 'UI 패턴/DatePicker',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
   argTypes: {
     pickerType: {

@@ -5,7 +5,7 @@ import CountTooltip from '@/markup/components/popover/CountTooltip.vue'
 
 const meta: Meta = {
   title: 'UI 패턴/Tooltip',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   argTypes: {
     side: {
       control: 'select',
