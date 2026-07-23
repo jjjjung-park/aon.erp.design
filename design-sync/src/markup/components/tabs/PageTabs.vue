@@ -1,6 +1,6 @@
 <template>
   <UiScrollArea>
-    <div class="flex pt-1 px-4 bg-light border-border relative border-b-1 h-11">
+    <div class="flex pt-1 px-4 bg-surface-muted border-border relative border-b-1 h-11">
       <template v-for="(tab, index) in tabsList">
         <div ref="$tabItem" :data-status="tab.active" class=" flex items-center justify-between px-padding-sm min-w-[200px] h-full text-sm border-border font-bold cursor-pointer text-subtle-text hover:text-muted"
              :class="tab.active?'page-tab--active':''" @click="changeTab(tab.value)">

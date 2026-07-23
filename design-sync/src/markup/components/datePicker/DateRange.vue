@@ -1,45 +1,59 @@
 <template>
   <UiPopover
-      v-model:open="open"
-      @update:open="toggleOpen()"
-      :default-open="props.forceOpen">
+    v-model:open="open"
+    @update:open="toggleOpen()"
+    :default-open="props.forceOpen">
     <UiPopoverTrigger as-child :class="cn({'border-danger':ariaInvalid}, props.class)"  :aria-invalid="ariaInvalid">
       <div tabindex="0"
-          :class="['flex gap-1 justify-between items-center border-1 rounded-sm px-padding-xs bg-background w-full h-8 focus-visible:ring-ring/50',
-          open ? 'border-primary' : 'border-border']">
-        <p :class="['flex items-center gap-1', {'text-disabled-text': !value.start && !value.end}]">
-          <LucideCalendar class="size-4 text-muted flex-none"/>
+           :class="['flex gap-1 justify-between items-center border-1 rounded-sm px-padding-xs bg-background w-full h-8 focus-visible:ring-ring/50',
+          open ? 'border-primary' : 'border-border']" >
+        <p :class="['flex items-center gap-1', {'text-disabled-text':(!value.start && !value.end)}]">
+          <LucideCalendar class="size-4 text-muted"/>
           <template v-if="value.start">
             <template v-if="value.end">
-              {{ formatter.custom(toDate(value.start), { dateStyle: 'medium' }) }}
+              {{
+                formatter.custom(toDate(value.start), {
+                  dateStyle: "medium",
+                })
+              }}
               -
-              {{ formatter.custom(toDate(value.end), { dateStyle: 'medium' }) }}
+              {{
+                formatter.custom(toDate(value.end), {
+                  dateStyle: "medium",
+                })
+              }}
             </template>
+
             <template v-else>
-              {{ formatter.custom(toDate(value.start), { dateStyle: 'medium' }) }}
+              {{
+                formatter.custom(toDate(value.start), {
+                  dateStyle: "medium",
+                })
+              }}
             </template>
           </template>
+
           <template v-else>
             날짜를 선택해 주세요
           </template>
         </p>
-        <UiButton variant="ghost" class="hover:bg-transparent" size="inline-icon" @click.prevent.stop="clear" :disabled="!value.start && !value.end">
-          <LucideX :class="[(!value.start && !value.end) ? 'text-transparent' : 'text-muted']"/>
+        <UiButton variant="ghost" class="hover:bg-transparent" size="inline-icon" @click.prevent.stop="clear">
+          <LucideX :class="!value ? 'text-transparent':'text-muted'"/>
         </UiButton>
       </div>
     </UiPopoverTrigger>
     <UiPopoverContent class="w-auto p-0" >
       <UiRangeCalendar
-          locale="ko"
-          v-model="value"
-          class="p-3"
-          :number-of-months="2"
-          :week-starts-on="0"
-          disable-days-outside-current-view
-          :min-value="minDate"
-          :max-value="maxDate"
-          initial-focus
-          @update:model-value="change"
+        locale="ko"
+        v-model="value"
+        class="p-3"
+        :number-of-months="2"
+        :week-starts-on="0"
+        disable-days-outside-current-view
+        :min-value="minDate"
+        :max-value="maxDate"
+        initial-focus
+        @update:model-value="change"
       >
       </UiRangeCalendar>
     </UiPopoverContent>
@@ -64,20 +78,20 @@ import { ref, watch } from "vue"
 const {format} = useDate()
 
 const props = withDefaults(
-    defineProps<{
-      forceOpen?: boolean
-      class?: HTMLAttributes["class"]
-      ariaInvalid?: boolean
-      min?: string | Date
-      max?: string | Date
+  defineProps<{
+    forceOpen?: boolean
+    class?: HTMLAttributes["class"]
+    ariaInvalid?: boolean
+    min?: string | Date
+    max?: string | Date
 
-    }>(),
-      {
-        forceOpen: false,
-        placeholder: '',
-        ariaInvalid: false,
-      }
-    )
+  }>(),
+  {
+    forceOpen: false,
+    placeholder: '',
+    ariaInvalid: false,
+  }
+)
 const open = ref<boolean>(props.forceOpen)
 
 const value = ref<DateRange>({ start: undefined, end: undefined })

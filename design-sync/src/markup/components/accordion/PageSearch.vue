@@ -1,19 +1,20 @@
 <template>
   <UiAccordion class="w-full border-1 border-border rounded-md px-6 py-3" collapsible default-value="accordion">
     <UiAccordionItem value="accordion" class="grid gap-3 ">
-      <UiAccordionTrigger class="leading-[1.5]">조회 조건</UiAccordionTrigger>
-      <UiAccordionContent class="grid gap-4">
+      <UiAccordionTrigger class="">조회 조건</UiAccordionTrigger>
+      <!--  pb-2 추가    -->
+      <UiAccordionContent class="grid gap-4 pb-2">
         <slot name="search-body">
           content
         </slot>
-        <!--   클래스 bg-surface-muted/50 -> bg-surface-muted 변경     -->
-        <div class="rounded-md bg-surface-muted px-4 py-3 flex  items-center gap-3" v-if="filter">
+        <!--   클래스 rounded-md -> rounded-sm 변경     -->
+        <div class="rounded-sm bg-surface-muted px-4 py-3 flex  items-center gap-2" v-if="filter">
           <p class="flex items-center flex-none">
             <LucideBookmark class="size-4 mr-1"/>
             <span class="caption__bold">조회 저장</span>
-            <UiSeparator orientation="vertical" class="h-4 ml-3"/>
+            <UiSeparator orientation="vertical" size="sm" class="ml-2"/>
           </p>
-          <div class="flex flex-wrap gap-3">
+          <div class="flex flex-wrap gap-2">
             <slot name="search-filter">
               <!--     variant="ghost" => outline 변경         -->
               <Tags title="적용된 조회" variant="secondary" type="chip" closeable class="cursor-pointer"/>

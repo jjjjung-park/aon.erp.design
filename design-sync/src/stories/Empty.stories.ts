@@ -5,7 +5,7 @@ import EmptyPage from '@/markup/components/empty/EmptyPage.vue'
 // EmptyData / EmptyPage 모두 외부 props 없음
 const meta: Meta = {
   title: 'UI 패턴/Empty',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: {
     controls: { hideNoControlsWarning: true },
   },

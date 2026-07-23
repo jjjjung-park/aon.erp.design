@@ -6,14 +6,15 @@
   >
     <UiPopoverTrigger as-child :class="[{'border-danger':ariaInvalid}, props.class]" :aria-invalid="ariaInvalid">
       <div tabindex="0"
-          :class="['flex gap-1 justify-between items-center border-1 rounded-sm px-padding-xs bg-background w-full h-8 focus-visible:outline-0 focus-visible:border-primary',
+           :class="['flex gap-1 justify-between items-center border-1 rounded-sm px-padding-xs bg-background w-full h-8 focus-visible:outline-0 focus-visible:border-primary',
           open ? 'border-primary' : 'border-border']">
-        <p :class="['flex items-center gap-1', {'text-disabled-text': !isValue}]">
+        <p :class="['flex items-center gap-1', {'text-disabled-text': !isValue}]"
+        >
           <LucideCalendar class="size-4 text-muted flex-none"/>
           {{ value ?? props.placeholder }}
         </p>
         <UiButton variant="ghost" class="hover:bg-transparent" size="inline-icon" @click.prevent.stop="clear" :disabled="!isValue">
-          <LucideX :class="[!isValue ? 'text-transparent' : 'text-muted']"/>
+          <LucideX class="size-4" :class="!isValue ? 'text-transparent':'text-muted'"/>
         </UiButton>
       </div>
     </UiPopoverTrigger>
@@ -32,7 +33,7 @@
 <script setup lang="ts">
 import {parseDate} from '@internationalized/date'
 import {type DateValue} from 'reka-ui'
-import type {HTMLAttributes} from "vue"
+import type {HTMLAttributes} from "vue";
 
 const model = defineModel<string>({required: true})
 const props = withDefaults(
@@ -45,7 +46,7 @@ const props = withDefaults(
   {
     forceOpen: false,
     placeholder: '',
-    ariaInvalid: false,
+    ariaInvalid:false
   }
 )
 
@@ -70,12 +71,12 @@ const toggleOpen = (): void => {
     open.value = true
   }
 }
-const change = (_date: DateValue | undefined): void => {
+const change = (_date: DateValue): void => {
   open.value = false
 }
 
 const clear = (): void => {
-  model.value = ''
+  model.value = null
   if (!props.forceOpen && open.value) {
     open.value = false
   }

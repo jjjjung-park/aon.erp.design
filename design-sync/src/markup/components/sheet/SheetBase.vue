@@ -49,7 +49,7 @@
 
       <UiSheetFooter class="mt-auto" v-if="footer">
         <UiSheetClose as-child >
-          <UiButton variant="outline">닫기</UiButton>
+            <UiButton variant="outline">닫기</UiButton>
         </UiSheetClose>
         <slot name="footer"/>
       </UiSheetFooter>
@@ -65,27 +65,27 @@
 import type {HTMLAttributes} from "vue";
 
 const props = withDefaults(
-    defineProps<{
-      title?: string
-      description?: string
-      fullScreen?: boolean
-      class?:HTMLAttributes["class"]
-      style?:HTMLAttributes["style"]
-      isLooading?:boolean
-      open?:boolean
-      dimmed?:boolean
-      footer?:boolean
+  defineProps<{
+    title?: string
+    description?: string
+    fullScreen?: boolean
+    class?:HTMLAttributes["class"]
+    style?:HTMLAttributes["style"]
+    isLooading?:boolean
+    open?:boolean
+    dimmed?:boolean
+    footer?:boolean
 
-    }>(),
-    {
-      title: '기본 타이틀',
-      description: '기본 서브 타이틀',
-      fullScreen:false,
-      isLooading:false,
-      open:false,
-      dimmed:false,
-      footer:true,
-    }
+  }>(),
+  {
+    title: '기본 타이틀',
+    description: '기본 서브 타이틀',
+    fullScreen:false,
+    isLooading:false,
+    open:false,
+    dimmed:false,
+    footer:true,
+  }
 )
 const open = defineModel<boolean>('open')
 const fullSize = defineModel('fullSize', {default: false})

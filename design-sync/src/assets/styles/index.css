@@ -1,26 +1,25 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
-@import 'vars.css';
-@import 'tailwind.css';
+@import './vars.css';
+@import './tailwind.css';
 
 @layer utilities {
-
   /* 소형 아이콘 stroke 보정 — size-3(12px): 2.8, size-4(16px): 2.4 */
   svg.lucide.size-3 { stroke-width: calc(var(--shape-stroke-xs) * (24 / 12)); }
   svg.lucide.size-4 { stroke-width: calc(var(--shape-stroke-sm) * (24 / 16)); }
 
 
   .title {
-    @apply text-md leading-[1.4];
+    @apply text-md;
   }
   .title__bold {
-    @apply text-md font-bold leading-[1.4];
+    @apply text-md font-bold;
   }
 
   .caption {
-    @apply text-xs leading-[1.4];
+    @apply text-xs;
   }
   .caption__bold {
-    @apply text-xs font-bold leading-[1.4];
+    @apply text-xs font-bold;
   }
 
   :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
@@ -36,13 +35,6 @@
     container-type: inline-size;
   }
 
-  /*생각보다 많이 써서 클래스 처리*/
-  .bg-light {
-    background-color: var(--surface-muted);
-  }
-  .border-light {
-    border-color: var(--border-default);
-  }
 
   div[data-slot='combobox-anchor']:has(input[data-disabled]),
   div[data-slot='input-group']:has(input:disabled) {
@@ -62,7 +54,7 @@
   }
 
   div[data-slot='input-group']:has(input[readonly]) {
-    @apply bg-gray-100;
+    @apply bg-surface-muted;
   }
 
   input[readonly] {
@@ -146,7 +138,7 @@
   }
 
   .table-secondary th {
-    @apply !h-8 bg-gray-100 !text-xs !border-gray-200 text-muted;
+    @apply !h-8 bg-surface-muted !text-xs !border-border text-muted;
   }
 
   .table-secondary tbody tr:first-child td,
@@ -201,12 +193,12 @@
   /*thead 정렬 버튼*/
   .arrow-up {
     mask: url('../images/ico/sort-default.svg') no-repeat center;
-    @apply inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50 mb-1;
+    @apply inline-block w-2 h-2 bg-border hover:bg-primary/50 mb-1;
   }
 
   .arrow-down {
     mask: url('../images/ico/sort-default.svg') no-repeat center;
-    @apply rotate-180 inline-block w-2 h-2 bg-gray-300 hover:bg-primary/50;
+    @apply rotate-180 inline-block w-2 h-2 bg-border hover:bg-primary/50;
   }
 
   .arrow-up.active,
@@ -216,11 +208,11 @@
 
   /*table group header  bem 패턴 오타 : 언더바 -> 하이픈 두개, 메인 테이블은 bg 제거*/
   .table--group-header thead tr th {
-    @apply !border-b-0 !border-t-1 !border-gray-200 text-muted relative;
+    @apply !border-b-0 !border-t-1 !border-border text-muted relative;
   }
 
   .table--group-header thead tr th:not(:last-child):before {
-    @apply bg-gray-200 w-[1px] absolute right-0 top-0 bottom-0 content-[''] z-0;
+    @apply bg-subtle w-[1px] absolute right-0 top-0 bottom-0 content-[''] z-0;
   }
 
   .table--group-header thead tr:first-child th {
@@ -232,18 +224,17 @@
   }
 
   /* table cross header */
-  /* left-0 z-10 제거 - 화면에서 넣기 */
   .table__row-header {
-    @apply font-bold !sticky !text-center;
+    @apply !sticky !text-center !text-default;
   }
   .table__row-header * {
     @apply justify-center;
   }
   .table__row-header:after {
-    @apply content-[''] absolute right-0 top-0 bottom-0 w-[1px] bg-gray-200 z-5;
+    @apply content-[''] absolute right-0 top-0 bottom-0 w-[1px] bg-subtle z-5;
   }
   .table-secondary tr .table__row-header {
-    @apply !bg-gray-100 text-muted;
+    @apply !bg-surface-muted text-muted;
   }
 
   /*pin 스타일링 css에서 처리*/
@@ -252,7 +243,7 @@
   }
   /*시트 테이블 pin*/
   .table-secondary tr > .pinned--left {
-    @apply bg-gray-100;
+    @apply bg-surface-muted;
   }
 
   tr:has(.pinned--left):hover td,
@@ -261,7 +252,7 @@
   }
   /*left pin 일때만 가능, right pin 추가될 경우 변경해야 함*/
   tr > .pinned--left:not(:has(~ .pinned--left)):after {
-    @apply content-[''] absolute z-10 w-px inset-y-0 right-0 bg-gray-200;
+    @apply content-[''] absolute z-10 w-px inset-y-0 right-0 bg-subtle;
   }
   /*tr > .pinned--left:not(:has(~ .pinned--left)):after{
     @apply content-[''] absolute top-0 right-0 h-full w-0.5 shadow-[3px_0_8px_1px_rgba(0,0,0,0.05)] z-9 [clip-path:inset(0_-12px_0_2px)]
@@ -302,7 +293,7 @@
 
   div[data-slot='collapsible']:not([class*='item--']) > .list-block-item,
   ul > .list-block-item {
-    @apply outline-none hover:bg-gray-100;
+    @apply outline-none hover:bg-surface-muted;
   }
 
   /*list-block-item__dragging -> item--dragging 클래스명 변경*/
@@ -311,7 +302,7 @@
   }
 
   .item--drag-base:not(tr) {
-    @apply bg-gray-100 rounded-sm opacity-50;
+    @apply bg-surface-muted rounded-sm opacity-50;
   }
 
   .item--drag-target:not(tr) {
@@ -320,11 +311,11 @@
 
   /* 테이블용 별도 처리*/
   tr.item--dragging td {
-    @apply !bg-gray-200;
+    @apply !bg-subtle;
   }
 
   tr.item--drag-base td {
-    @apply !bg-gray-200 opacity-50 !border-gray-400;
+    @apply !bg-subtle opacity-50 !border-border;
   }
 
   tr.item--drag-target td {
@@ -398,7 +389,7 @@
   /*모달, 시트에서 사용*/
   .full-size {
     container-type: inline-size;
-    @apply !left-5 !right-5 !top-5 !bottom-5 !w-auto !translate-0 !shadow-lg rounded-md;
+    @apply !left-5 !right-5 !top-5 !bottom-5 !w-auto !translate-0 !shadow-lg rounded-md ;
   }
 
   .file-dragging {
@@ -414,7 +405,7 @@
   }
 
   .select-content__list-item {
-    @apply cursor-pointer data-[state=checked]:bg-primary-light data-[state=checked]:text-primary data-[highlighted]:bg-gray-100 data-[state=checked]:data-[highlighted]:bg-gray-100 relative flex items-center gap-2 rounded-sm px-2  h-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled-text [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4 w-full;
+    @apply cursor-pointer data-[state=checked]:bg-primary-light data-[state=checked]:text-primary data-[highlighted]:bg-surface-muted data-[state=checked]:data-[highlighted]:bg-surface-muted relative flex items-center gap-2 rounded-sm px-2  h-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled-text [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4 w-full;
   }
 
   .addr-list {
@@ -434,13 +425,13 @@
   }
 
   /*  .view-list.border-list .view-list__item{
-      @apply border-b-1 border-gray-200 pb-4
+      @apply border-b-1 border-border pb-4
     }*/
 
   .view-list {
-    @apply flex flex-col gap-4 px-6 py-4;
+    @apply flex flex-col gap-4 p-6;
   }
-  .view-list > h4 {
+  .view-list h4 {
     @apply font-bold;
   }
   .view-list__item {
@@ -451,13 +442,13 @@
   }
   /*border-b-1 border-muted pb-2 last:border-b-0*/
   .view-list__item-title {
-    @apply text-xs;
+    @apply text-xs ;
   }
   .view-list__item--row .view-list__item-title {
     @apply text-sm;
   }
   .view-list__item-cont {
-    @apply text-sm px-padding-xs font-bold min-h-8 inline-flex items-center [&>*]:truncate;
+    @apply text-sm px-padding-sm font-bold min-h-8 inline-flex items-center [&>*]:truncate;
   }
 
   .view-list__item-cont:has(~ .view-list__item-cont),
@@ -469,6 +460,29 @@
   }
 
   /*list 타입 추가*/
+  /*.data-list {
+  }
+  .data-list__item {
+    @apply first:border-t-1 border-b-1 border-border min-h-16 p-3 flex items-center justify-between min-w-0;
+  }
+  .data-list__item.active {
+    @apply bg-primary-light;
+  }
+  .data-list__cont {
+    @apply flex flex-col gap-1 truncate min-w-0;
+  }
+  .data-list__cont-left {
+    @apply items-start;
+  }
+  .data-list__cont-right {
+    @apply items-end;
+  }
+  .data-list__cont > * {
+    @apply truncate max-w-full min-w-0;
+  }
+  .data-list__desc {
+    @apply text-xs text-muted truncate block basis-1/2;
+  }*/
   .data-list{
     @apply flex flex-col;
   }
@@ -504,7 +518,7 @@
   }
 
   .data-list__item--selected {
-    @apply bg-primary-light relative before:content-[""] before:absolute before:size-4 before:bg-[url(../images/ico/check.svg)] before:bg-no-repeat before:bg-contain before:left-3;
+    @apply bg-primary-light relative before:content-[""] before:absolute before:size-4 before:bg-[url(@assets/images/ico/check.svg)] before:bg-no-repeat before:bg-contain before:left-3;
   }
   .data-list__item--clickable{
     @apply cursor-pointer hover:bg-surface-muted
@@ -515,10 +529,10 @@
     @apply flex flex-col;
   }
   .icon-list__item {
-    @apply flex items-start gap-4 border-b-1 border-gray-200 p-6 hover:bg-gray-100 relative;
+    @apply flex items-start gap-4 border-b-1 border-border p-6 hover:bg-surface-muted relative;
   }
   .icon-list__icon {
-    @apply relative size-10 rounded-full shrink-0 flex items-center justify-center [&>svg]:size-5;
+    @apply relative size-10 rounded-full shrink-0 flex items-center justify-center [&>svg]:size-4;
   }
   /*읽지 않은 신규 알림 표시 - 알림 탭에서만 쓰임*/
   .icon-list__notification {
@@ -579,20 +593,20 @@
 
   /* 라우터 탭(페이지탭) 수정*/
   .page-tab--active {
-    @apply bg-white !h-[40px] border-b-white rounded-t-md border-x-1 border-t-1 relative !text-default [&_svg]:text-default;
+    @apply bg-background !h-[40px] border-b-white rounded-t-md border-x-1 border-t-1 relative !text-default [&_svg]:text-default;
   }
 
   .page-tab--active:before,
   .page-tab--active:after {
-    @apply content-[''] absolute size-4  border-b-1  border-gray-300 bg-gray-100  bottom-0;
+    @apply content-[''] absolute size-4  border-b-1  border-border bg-surface-muted  bottom-0;
   }
 
   .page-tab--active:before {
-    @apply rounded-br-md  border-r-1 -left-4  shadow-[3px_2px_0_1px_var(--color-gray-0)];
+    @apply rounded-br-md  border-r-1 -left-4  shadow-[3px_2px_0_1px_#fff];
   }
 
   .page-tab--active:after {
-    @apply rounded-bl-md border-l-1 -right-4  shadow-[-3px_2px_0_1px_var(--color-gray-0)];
+    @apply rounded-bl-md border-l-1 -right-4  shadow-[-3px_2px_0_1px_#fff];
   }
 
   /*  바코드 관리*/
@@ -603,7 +617,7 @@
 
   /*바코드용 data-list 추가 클래스, 다른데서도 쓰일 디자인 같아서 클래스로 추가함*/
   .barcode-box .data-list__item {
-    @apply !pl-12;
+    @apply !pl-10;
   }
 
 
@@ -613,8 +627,24 @@
   }
 }
 
-
 /* bom */
 [data-slot='data-diff'] {
   @apply [&_span]:text-danger [&_[data-slot='popover-trigger']]:bg-danger-light [&>[data-slot='input-group']]:text-danger [&>[data-slot='input-group']]:bg-danger-light;
+}
+
+
+/*모달 내 separator*/
+[data-slot='dialog-content'] [data-slot='separator-root'][data-orientation='horizontal']{
+  @apply -mx-6
+}
+
+/* 태그 타입*/
+.tag--resizing{
+  @apply flex items-center gap-1 w-fit max-w-full min-w-0
+}
+.tag--resizing > *:not(.tag--resizing__item--truncate){
+  @apply shrink-0
+}
+.tag--resizing__item--truncate{
+  @apply min-w-0 truncate
 }

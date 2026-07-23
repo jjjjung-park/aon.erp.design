@@ -228,7 +228,7 @@ const preview: Preview = {
           'UI 패턴':    ['FormItem', 'Dropdown', 'Select', 'DatePicker', 'ButtonGroup', 'ButtonSet', 'FileDropZone', 'Card', 'Collapsible', '리스트', 'Accordion', 'Alert', 'Toast', 'Tooltip', 'Tabs', 'Stepper', 'Pagination', 'Carousel', 'Table', 'Empty', 'Modal', 'Sheet'],
           // 그룹: 폼(FormItem~ButtonGroup) / 콘텐츠(FileDropZone~Accordion) / 피드백(Alert,Toast,Tooltip) / 네비게이션(Tabs~Carousel) / 데이터상태(Table,Empty) / 오버레이(Modal,Sheet)
           '레이아웃':   [
-            'TableLayout', 'Resizable',
+            'Resizable', 'TableLayout',
             'Modal', 'Sheet',
             // 'Header',
             'PageLayout',

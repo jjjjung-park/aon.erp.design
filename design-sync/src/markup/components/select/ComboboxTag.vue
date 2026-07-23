@@ -20,7 +20,7 @@
               <template v-if="selectValue.length == 0">
                 <span class="!text-disabled-text">{{ placeholder }}</span>
                 <div class="ml-auto pl-2">
-                  <LucideChevronDown class="text-muted"/>
+                  <LucideChevronDown class="size-4 text-muted"/>
                 </div>
               </template>
 
@@ -63,7 +63,7 @@
                 </div>
 
               </template>
-          </UiTagsInput>
+            </UiTagsInput>
           </template>
           <template v-else>
             <UiTagsInput class="w-full min-h-8 gap-1 py-1 items-center" :aria-invalid="ariaInvalid">
@@ -107,18 +107,18 @@
         </UiScrollArea>
         <!--     virtual scroll 사용 시-->
         <!--     Virtualizer 부모에 height, overflow-auto가 있어야 작동 함    -->
-<!--       <ListboxContent data-empty-text="일치하는 키워드가 없습니다" class="select-content max-h-[calc(var(&#45;&#45;reka-popover-content-available-height)-80px)] overflow-y-auto"  tabindex="0">
-          <ListboxVirtualizer :options="filteredFrameworks" v-slot="{ option : item}"  :estimate-size="32" class="">
-            <ListboxItem :value="item" @select="()=>{searchValue = ''; selectValueSingle = item.label}"
-                          :disabled="item.disabled"
-                          class="select-content__list-item">
-              <span>{{ item.label }}</span>
-              <ListboxItemIndicator class="ml-auto inline-flex items-center justify-center">
-                <LucideCheckIcon />
-              </ListboxItemIndicator>
-            </ListboxItem>
-          </ListboxVirtualizer>
-        </ListboxContent>-->
+        <!--       <ListboxContent data-empty-text="일치하는 키워드가 없습니다" class="select-content max-h-[calc(var(&#45;&#45;reka-popover-content-available-height)-80px)] overflow-y-auto"  tabindex="0">
+                  <ListboxVirtualizer :options="filteredFrameworks" v-slot="{ option : item}"  :estimate-size="32" class="">
+                    <ListboxItem :value="item" @select="()=>{searchValue = ''; selectValueSingle = item.label}"
+                                  :disabled="item.disabled"
+                                  class="select-content__list-item">
+                      <span>{{ item.label }}</span>
+                      <ListboxItemIndicator class="ml-auto inline-flex items-center justify-center">
+                        <LucideCheckIcon />
+                      </ListboxItemIndicator>
+                    </ListboxItem>
+                  </ListboxVirtualizer>
+                </ListboxContent>-->
       </UiPopoverContent>
     </ListboxRoot>
   </UiPopover>
@@ -131,11 +131,10 @@ import {
   ListboxItemIndicator,
   ListboxRoot,
   useFilter,
-  TagsInputClear,
   ListboxVirtualizer
 
 } from "reka-ui"
-import {computed, type HTMLAttributes, ref, watch} from "vue"
+import {computed, type HTMLAttributes, ref} from "vue"
 import {InputBase} from "@/markup/components/inputs";
 import Tags from "@/markup/components/tag/Tags.vue";
 import {cn} from "@/lib/utils.ts";

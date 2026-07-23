@@ -22,6 +22,7 @@
               {{ data }}
             </slot>
           </p>
+          <LucideSquarePen class="size-3 text-muted flex-none" v-if="edit"/>
           <div class="flex flex-col items-center" v-if="sort">
             <button class="arrow-up"/>
             <button class="arrow-down"/>
@@ -43,11 +44,13 @@ const props = withDefaults(defineProps<{
   resizing?:boolean
   sort?:boolean
   checkDisabled?:boolean
+  edit?:boolean
 }>(), {
   type: 'default',
   resizing:true,
   sort:false,
-  checkDisabled:false
+  checkDisabled:false,
+  edit:false,
 })
 </script>
 

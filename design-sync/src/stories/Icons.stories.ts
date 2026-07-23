@@ -28,7 +28,7 @@ const sizeRules = [
 
 const meta: Meta = {
   title: 'Foundation/Icons',
-  tags: ['autodocs', 'done'],
+  tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }
 export default meta
