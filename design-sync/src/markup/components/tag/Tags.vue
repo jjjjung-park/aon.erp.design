@@ -23,7 +23,7 @@ type TagsProps = {
 } & (
   | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info'; closeable?: never }
   | { type: 'chip'; variant?: 'secondary' | 'outline'; closeable?: boolean }
-)
+  )
 
 const props = defineProps<TagsProps>()
 </script>

@@ -68,7 +68,7 @@
     <!--   데이터없음 영역 추가 -->
     <slot name="empty"/>
 
-    <div class=" pb-6 bg-background pt-3 mt-auto w-full" v-if="pagination">
+    <div class="pb-6 bg-background pt-3 mt-auto w-full" v-if="pagination">
       <slot name="pagination"/>
     </div>
 
@@ -85,26 +85,26 @@ import {ref} from "vue";
 const showFilter =ref<boolean>(false)
 
 const props = withDefaults(
-    defineProps<{
-      pagination?: boolean
-      sortList?:any | null
-      filter?:boolean
-      download?:boolean
-      setting?:boolean,
-      tableAction?:boolean,
-      dataAction?:boolean,
-      tableTop?:boolean,
-    }>(),
-    {
-      pagination: true,
-      filter:true,
-      download:true,
-      setting:true,
-      tableAction:true,
-      dataAction:true,
-      tableTop:true,
+  defineProps<{
+    pagination?: boolean
+    sortList?:any | null
+    filter?:boolean
+    download?:boolean
+    setting?:boolean,
+    tableAction?:boolean,
+    dataAction?:boolean,
+    tableTop?:boolean,
+  }>(),
+  {
+    pagination: true,
+    filter:true,
+    download:true,
+    setting:true,
+    tableAction:true,
+    dataAction:true,
+    tableTop:true,
 
-    }
+  }
 )
 
 const openValue = ref<boolean>(false);
