@@ -392,6 +392,17 @@
     @apply !left-5 !right-5 !top-5 !bottom-5 !w-auto !translate-0 !shadow-lg rounded-md ;
   }
 
+  /*모달 전용 반응형 너비 — 브라우저가 좁아지면 min까지, 넓어지면 max까지 (90vw 기준으로 그 사이를 유동)*/
+  .modal-sm {
+    width: clamp(360px, 90vw, 480px);
+  }
+  .modal-md {
+    width: clamp(480px, 90vw, 720px);
+  }
+  .modal-lg {
+    width: clamp(720px, 90vw, 1200px);
+  }
+
   .file-dragging {
     @apply !border-primary !bg-primary-light;
   }

@@ -1,6 +1,6 @@
 <template>
   <UiDialog v-model:open="open">
-    <UiDialogContent :class="[fullSize?'full-size':'min-w-120', props.class]" :style="props.style">
+    <UiDialogContent :class="[fullSize?'full-size':'w-120', props.class]" :style="props.style">
       <UiDialogHeader class="px-4 ">
         <!--    -mx-2 추가      -->
         <div :class="['flex justify-between items-center bg-background rounded-t-md h-14']">
@@ -28,7 +28,7 @@
         </div>
       </UiDialogHeader>
 
-      <div :class="[fullSize?'h-screen flex flex-col ':'overflow-y-auto max-h-[calc(100vh-12rem)]', 'px-6']">
+      <div :class="['flex flex-col overflow-y-auto px-6', fullSize?'h-screen':'max-h-[calc(100vh-12rem)]']">
         <template v-if="!isLoading">
           <slot name="body"/>
         </template>

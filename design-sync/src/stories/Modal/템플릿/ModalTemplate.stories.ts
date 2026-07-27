@@ -496,10 +496,10 @@ export const ImageUploadModal: Story = {
   }),
 }
 
-// ─── 데이터 추가 모달 (1040px) ────────────────────────────────────────────────
+// ─── 데이터 추가 모달 (1200px) ────────────────────────────────────────────────
 
 export const DataAddModal: Story = {
-  name: '데이터 추가 모달 (1040px)',
+  name: '데이터 추가 모달 (1200px)',
   argTypes: {
     splitType: {
       control: 'radio',
@@ -514,7 +514,7 @@ export const DataAddModal: Story = {
     components: { PageSearch },
     setup() { return { args } },
     template: `
-      <div :class="['bg-background rounded-md shadow-bottom flex flex-col w-[1040px]', args.splitType === 'vertical' ? 'h-[620px]' : '']">
+      <div :class="['bg-background rounded-md shadow-bottom flex flex-col modal-lg', args.splitType === 'vertical' ? 'h-[620px]' : '']">
         <div class="flex justify-between items-center px-4 h-14 shrink-0">
           <span class="font-bold text-sm">팀원 추가</span>
           <UiButton variant="ghost" size="icon"><LucideX /></UiButton>
