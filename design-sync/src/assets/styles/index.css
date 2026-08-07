@@ -392,17 +392,6 @@
     @apply !left-5 !right-5 !top-5 !bottom-5 !w-auto !translate-0 !shadow-lg rounded-md ;
   }
 
-  /*모달 전용 반응형 너비 — 브라우저가 좁아지면 min까지, 넓어지면 max까지 (90vw 기준으로 그 사이를 유동)*/
-  .modal-sm {
-    width: clamp(360px, 90vw, 480px);
-  }
-  .modal-md {
-    width: clamp(480px, 90vw, 720px);
-  }
-  .modal-lg {
-    width: clamp(720px, 90vw, 1200px);
-  }
-
   .file-dragging {
     @apply !border-primary !bg-primary-light;
   }
@@ -464,36 +453,14 @@
 
   .view-list__item-cont:has(~ .view-list__item-cont),
   .view-list__item-cont + .view-list__item-cont {
-    @apply min-h-7;
+    @apply min-h-6;
   }
   .view-list__item--row .view-list__item-cont {
     @apply min-h-auto;
   }
 
   /*list 타입 추가*/
-  /*.data-list {
-  }
-  .data-list__item {
-    @apply first:border-t-1 border-b-1 border-border min-h-16 p-3 flex items-center justify-between min-w-0;
-  }
-  .data-list__item.active {
-    @apply bg-primary-light;
-  }
-  .data-list__cont {
-    @apply flex flex-col gap-1 truncate min-w-0;
-  }
-  .data-list__cont-left {
-    @apply items-start;
-  }
-  .data-list__cont-right {
-    @apply items-end;
-  }
-  .data-list__cont > * {
-    @apply truncate max-w-full min-w-0;
-  }
-  .data-list__desc {
-    @apply text-xs text-muted truncate block basis-1/2;
-  }*/
+
   .data-list{
     @apply flex flex-col;
   }
@@ -658,4 +625,17 @@
 }
 .tag--resizing__item--truncate{
   @apply min-w-0 truncate
+}
+
+/* 모달 사이즈 재정립 최소-480, 중간-720, 라지-1200 / 중간 ~ 라지 반응형 적용*/
+.w-modal-sm{
+  @apply w-120
+}
+
+.w-modal-md{
+  @apply w-[clamp(480px,95vw,720px)]
+}
+
+.w-modal-lg{
+  @apply  w-[clamp(480px,95vw,1200px)]
 }

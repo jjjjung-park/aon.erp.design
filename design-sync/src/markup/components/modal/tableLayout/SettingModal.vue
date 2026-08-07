@@ -1,6 +1,6 @@
 
 <template>
-  <ModalBase v-model:open="open" title="테이블 설정" :class="groupHeader?'min-w-90':'w-180'">
+  <ModalBase v-model:open="open" title="테이블 설정" :class="groupHeader?'!w-90':'w-modal-md'" :is-looading="false">
     <template #body>
       <div class="flex gap-8 pb-4">
         <div v-if="!groupHeader" class="flex flex-col gap-2 w-1/2">

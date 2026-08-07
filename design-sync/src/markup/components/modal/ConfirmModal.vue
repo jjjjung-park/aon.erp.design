@@ -1,6 +1,5 @@
 <template>
-<!-- 삭제,컨펌 전용 사이즈  -->
-  <ModalBase v-model:open="open" class="w-90" >
+  <ModalBase v-model:open="open" >
     <template #body>
       <div class="flex gap-4 mb-6">
         <p class="rounded-full bg-primary-light text-primary size-12 flex items-center justify-center"><LucideCheckIcon class="size-6"/></p>

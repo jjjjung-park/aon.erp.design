@@ -25,7 +25,8 @@ const forwardedProps = useForwardProps(delegatedProps)
       :class="
       cn(
         'peer border-border text-default data-[state=checked]:border-primary ' +
-         'dark:aria-invalid:border-danger aria-invalid:border-danger dark:bg-inputs/30 ' +
+         'dark:group-aria-invalid:border-danger group-aria-invalid:border-danger dark:bg-inputs/30 ' +
+         'group-aria-invalid:ring-2 group-aria-invalid:ring-danger/20 dark:group-aria-invalid:ring-danger/40 ' +
           'aspect-square size-4 shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none disabled:cursor-not-allowed disabled:data-[state=checked]:border-disabled disabled:border-disabled ',
         props.class,
       )

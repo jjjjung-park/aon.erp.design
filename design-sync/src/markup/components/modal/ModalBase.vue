@@ -1,6 +1,6 @@
 <template>
   <UiDialog v-model:open="open">
-    <UiDialogContent :class="[fullSize?'full-size':'w-120', props.class]" :style="props.style">
+    <UiDialogContent :class="[fullSize?'full-size':'w-modal-sm', props.class]" :style="props.style">
       <UiDialogHeader class="px-4 ">
         <!--    -mx-2 추가      -->
         <div :class="['flex justify-between items-center bg-background rounded-t-md h-14']">
