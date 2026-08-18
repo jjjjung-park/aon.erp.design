@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref } from 'vue'
 import ComboboxTag from '@/markup/components/select/ComboboxTag.vue'
 import DatePicker from '@/markup/components/datePicker/DatePicker.vue'
+import FormAddr from '@/markup/components/form/FormAddr.vue'
+import { InputBase } from '@/markup/components/inputs'
 
 const sampleItems = [
   { label: '옵션 1', value: '1' },
@@ -55,7 +57,7 @@ type Story = StoryObj<{
 }>
 
 export const Default: Story = {
-  name: 'FormItem',
+  name: '기본',
   render: (args) => ({
     components: { ComboboxTag, DatePicker },
     setup() {
@@ -108,6 +110,61 @@ export const Default: Story = {
               :placeholder="args.placeholder"
               :disabled="args.disabled"
             />
+          </template>
+        </FormItem>
+      </div>
+    `,
+  }),
+}
+
+export const FrequentCombobox: Story = {
+  name: '콤보박스',
+  render: () => ({
+    components: { ComboboxTag },
+    setup() {
+      const category = ref('')
+      return { sampleItems, category }
+    },
+    template: `
+      <div class="w-80">
+        <FormItem label="콤보박스">
+          <template #input-item>
+            <ComboboxTag :list-item="sampleItems" placeholder="옵션을 선택하세요" v-model:selectValueSingle="category" />
+          </template>
+        </FormItem>
+      </div>
+    `,
+  }),
+}
+
+export const FrequentAddress: Story = {
+  name: '주소검색',
+  render: () => ({
+    components: { FormAddr },
+    template: `
+      <div class="w-160">
+        <FormAddr />
+      </div>
+    `,
+  }),
+}
+
+export const FrequentInputButton: Story = {
+  name: '인풋+버튼형',
+  render: () => ({
+    components: { InputBase },
+    setup() {
+      const userId = ref('')
+      return { userId }
+    },
+    template: `
+      <div class="w-80">
+        <FormItem label="인풋+버튼형">
+          <template #input-item>
+            <div class="flex gap-2">
+              <InputBase v-model="userId" placeholder="아이디를 입력해 주세요" />
+              <UiButton variant="secondary">중복확인</UiButton>
+            </div>
           </template>
         </FormItem>
       </div>

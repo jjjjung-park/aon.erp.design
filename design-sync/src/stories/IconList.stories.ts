@@ -35,7 +35,7 @@ export default meta
 type Story = StoryObj<{ iconType: 'default' | 'success' | 'warning'; unread: boolean; subtitle: boolean; actionButton: '더보기' | '삭제' }>
 
 export const Default: Story = {
-  name: 'IconList',
+  name: '기본',
   render: (args) => ({
     setup() {
       return { args }

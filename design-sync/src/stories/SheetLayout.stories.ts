@@ -1,6 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { ref, watch } from 'vue'
 import { LineTabs } from '@/markup/components/tabs'
+import ComboboxTag from '@/markup/components/select/ComboboxTag.vue'
+import ComboboxBase from '@/markup/components/select/ComboboxBase.vue'
+import SelectBase from '@/markup/components/select/SelectBase.vue'
+import DatePicker from '@/markup/components/datePicker/DatePicker.vue'
+import { InputBase, InputPassword } from '@/markup/components/inputs'
+import { Textarea } from '@/ui/textarea'
+
+const inputFormSampleItems = [
+  { label: '옵션 1', value: '1' },
+  { label: '옵션 2', value: '2' },
+  { label: '옵션 3', value: '3' },
+  { label: '옵션 4', value: '4' },
+]
 
 const meta: Meta = {
   title: '레이아웃/Sheet',
@@ -8,7 +21,7 @@ const meta: Meta = {
   parameters: { layout: 'centered' },
   argTypes: {
     // ── 레이아웃 ──────────────────────────────────────────────────────────────
-    columns:     { control: 'radio',   options: ['1단', '2단'],   description: '시트 너비 (1단 480px · 2단 960px)', table: { category: '레이아웃' } },
+    columns:     { control: 'radio',   options: ['1단', '2단', '3단'],   description: '시트 너비 (1단 480px · 2단 960px · 3단 1440px)', table: { category: '레이아웃' } },
     showTabs:    { control: 'boolean', description: '탭',                                                          table: { category: '레이아웃' } },
     showSection: { control: 'boolean', description: '섹션 레이어 (제목 + 구분선)',                                 table: { category: '레이아웃' } },
     showCard:    { control: 'boolean', description: '카드 레이어',                  if: { arg: 'showSection' },   table: { category: '레이아웃' } },
@@ -36,7 +49,7 @@ const meta: Meta = {
   render: (args) => ({
     components: { LineTabs },
     setup() {
-      const widthMap: Record<string, string> = { '1단': '480px', '2단': '960px' }
+      const widthMap: Record<string, string> = { '1단': '480px', '2단': '960px', '3단': '1440px' }
       const isFullSize = ref(false)
       watch(() => args.columns, () => { isFullSize.value = false })
       const tabList = ref([
@@ -496,4 +509,124 @@ export const Max: Story = {
     showEdit: true,
     showSave: true,
   },
+}
+
+const inputFormsWidthMap: Record<string, string> = { '1단': '480px', '2단': '960px', '3단': '1440px' }
+
+const renderInputForms = (args: { columns: string }) => ({
+  components: { ComboboxTag, ComboboxBase, SelectBase, DatePicker, InputBase, InputPassword, UiTextarea: Textarea },
+  setup() {
+    const text = ref('')
+    const password = ref('')
+    const textarea = ref('')
+    const dateValue = ref('')
+    return { args, widthMap: inputFormsWidthMap, sampleItems: inputFormSampleItems, text, password, textarea, dateValue }
+  },
+  template: `
+    <div class="bg-background flex flex-col shadow-bottom" :style="{ width: widthMap[args.columns], height: '640px' }">
+
+      <!-- 헤더 -->
+      <div class="flex justify-between items-center px-6 min-h-14 shrink-0">
+        <h2 class="flex items-center gap-2 title__bold flex-wrap">입력폼 모음</h2>
+        <div class="ml-auto flex items-center gap-2 h-5">
+          <UiButton variant="ghost" size="icon"><LucideX /></UiButton>
+        </div>
+      </div>
+
+      <!-- 바디 -->
+      <div class="overflow-y-auto flex-1 container-type--inline">
+        <div class="list-layout--grid">
+          <FormItem label="텍스트" v-model="text" placeholder="내용을 입력해 주세요" />
+
+          <FormItem label="비밀번호">
+            <template #input-item>
+              <InputPassword v-model="password" />
+            </template>
+          </FormItem>
+
+          <FormItem label="텍스트에어리어">
+            <template #input-item>
+              <UiTextarea v-model="textarea" placeholder="내용을 입력해 주세요" />
+            </template>
+          </FormItem>
+
+          <FormItem label="셀렉트">
+            <template #input-item>
+              <SelectBase :list-item="sampleItems" placeholder="선택하세요" />
+            </template>
+          </FormItem>
+
+          <FormItem label="콤보박스">
+            <template #input-item>
+              <ComboboxBase :list-item="sampleItems" placeholder="검색 후 선택하세요" />
+            </template>
+          </FormItem>
+
+          <FormItem label="콤보박스 (태그/다중선택)">
+            <template #input-item>
+              <ComboboxTag :list-item="sampleItems" multiple placeholder="옵션을 선택하세요" />
+            </template>
+          </FormItem>
+
+          <FormItem label="날짜 선택">
+            <template #input-item>
+              <DatePicker v-model="dateValue" placeholder="날짜를 선택하세요" />
+            </template>
+          </FormItem>
+
+          <FormItem label="체크박스">
+            <template #input-item>
+              <div class="flex items-center gap-2 h-8">
+                <UiCheckbox id="fi-checkbox" />
+                <UiLabel for="fi-checkbox">동의합니다</UiLabel>
+              </div>
+            </template>
+          </FormItem>
+
+          <FormItem label="라디오 그룹" class="h-auto">
+            <template #input-item>
+              <UiRadioGroup class="flex flex-row flex-wrap gap-4">
+                <div v-for="item in sampleItems" :key="item.value" class="flex items-center gap-2">
+                  <UiRadioGroupItem :id="'fi-r' + item.value" :value="item.value" />
+                  <UiLabel :for="'fi-r' + item.value">{{ item.label }}</UiLabel>
+                </div>
+              </UiRadioGroup>
+            </template>
+          </FormItem>
+
+          <FormItem label="스위치">
+            <template #input-item>
+              <div class="flex items-center gap-2 h-8">
+                <UiSwitch id="fi-switch" />
+                <UiLabel for="fi-switch">알림 받기</UiLabel>
+              </div>
+            </template>
+          </FormItem>
+
+          <FormItem label="에러 상태" validate-text="필수 입력 항목입니다." aria-invalid required>
+            <template #input-item>
+              <InputBase aria-invalid placeholder="내용을 입력해 주세요" />
+            </template>
+          </FormItem>
+
+          <FormItem label="비활성화" disabled>
+            <template #input-item>
+              <InputBase disabled placeholder="비활성화 상태" />
+            </template>
+          </FormItem>
+        </div>
+      </div>
+
+      <!-- 푸터 -->
+      <div class="flex justify-between gap-2 p-4 shrink-0">
+        <UiButton variant="outline">닫기</UiButton>
+      </div>
+    </div>
+  `,
+})
+
+export const InputForms: Story = {
+  name: '입력폼 모음',
+  args: { columns: '1단' },
+  render: renderInputForms,
 }

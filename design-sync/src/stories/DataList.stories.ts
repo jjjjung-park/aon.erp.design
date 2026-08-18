@@ -107,7 +107,7 @@ export const Index: Story = {
 // ─── 쇼케이스 ─────────────────────────────────────────────────────────────────
 
 export const WithDesc: Story = {
-  name: '2행 — 서브텍스트',
+  name: '2행 서브텍스트',
   args: { showDesc: true, showMeta: true },
   render,
 }
@@ -131,7 +131,7 @@ export const WithStatus: Story = {
 }
 
 export const MaxCase: Story = {
-  name: '최대 — 전체 구성',
+  name: '전체 구성',
   args: { rightIcon: true, showDesc: true, showMeta: true, showAction: true, showBadge: true, showRightText: true, showStatus: true, selected: true, active: false, clickable: true },
   render,
 }

@@ -9,7 +9,7 @@ export default meta
 type Story = StoryObj
 
 export const Column: Story = {
-  name: 'ViewList — 세로',
+  name: '세로',
   render: () => ({
     template: `
       <div class="view-list w-80 border border-border rounded-sm">
@@ -36,7 +36,7 @@ export const Column: Story = {
 }
 
 // export const Row: Story = {
-//   name: 'ViewList — 가로',
+//   name: '가로',
 //   render: () => ({
 //     template: `
 //       <div class="view-list w-80 border border-border rounded-sm">
@@ -63,7 +63,7 @@ export const Column: Story = {
 // }
 
 export const MultiCont: Story = {
-  name: 'ViewList — 복수 값',
+  name: '복수 값',
   render: () => ({
     template: `
       <div class="view-list w-80 border border-border rounded-sm">

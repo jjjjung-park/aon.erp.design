@@ -24,7 +24,7 @@ export default meta
 type Story = StoryObj<{ pickerType: '년도' | '년도 범위' | '날짜' | '날짜 범위' }>
 
 export const Default: Story = {
-  name: 'DatePicker',
+  name: '기본',
   render: (args) => ({
     components: { DatePicker, DateRange, YearPicker, YearRange },
     setup() {
