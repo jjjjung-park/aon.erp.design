@@ -69,7 +69,14 @@
     <slot name="empty"/>
 
     <div class="pb-6 bg-background pt-3 mt-auto w-full" v-if="pagination">
-      <slot name="pagination"/>
+      <slot name="pagination">
+        <div class="table-layout__bottom flex items-center justify-between">
+          <TablePagination/>
+          <div class="w-40">
+            <ComboboxTag single :listItem="[{label:'50개씩 보기', value:50},{label:'100개씩 보기', value:100},{label:'200개씩 보기', value:200},{label:'300개씩 보기', value:300}]"/>
+          </div>
+        </div>
+      </slot>
     </div>
 
 

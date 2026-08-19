@@ -10,7 +10,7 @@ export default meta
 type Story = StoryObj
 
 export const Search: Story = {
-  name: 'Accordion — 검색',
+  name: '검색',
   render: () => ({
     components: { PageSearch },
     template: `
@@ -25,7 +25,7 @@ export const Search: Story = {
 }
 
 export const SheetAccordion: Story = {
-  name: 'Accordion — 시트 아코디언',
+  name: '시트 아코디언',
   render: () => ({
     template: `
       <UiAccordion class="w-full border-1 border-border rounded-md" collapsible type="single" default-value="style">
@@ -41,7 +41,7 @@ export const SheetAccordion: Story = {
 }
 
 export const ModalAccordion: Story = {
-  name: 'Accordion — 모달 아코디언',
+  name: '모달 아코디언',
   render: () => ({
     template: `
       <UiAccordion class="w-full rounded-sm bg-surface-muted px-3 py-2" collapsible type="single" :default-value="'sku1'">

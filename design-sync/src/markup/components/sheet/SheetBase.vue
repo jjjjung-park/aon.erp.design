@@ -2,7 +2,7 @@
   <UiSheet :modal="false" v-model:open="open">
     <!--  router tab 있는 경우 top-21 / 없는 경우 top-10  // 전체화면 정책 변경 시 fullsize : left-5 top-5 w-auto  -->
     <!--  shadow-gray-400 제거  -->
-    <UiSheetContent class="top-21" :class="[fullSize?'full-size':'min-w-120  bottom-0 ', props.class]" :style="props.style">
+    <UiSheetContent class="top-21" :class="[fullSize?'full-size':'w-120  bottom-0 ', props.class]" :style="props.style">
 
       <UiSheetHeader class="px-padding-lg min-h-14 gap-0">
         <div class="flex justify-between items-center bg-background rounded-t-md gap-0.5">

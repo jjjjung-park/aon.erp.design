@@ -1,8 +1,8 @@
 <template>
   <!-- 우측정렬 스타일 추가  [&.text-right_input:not(:placeholder-shown)]:text-right -->
-  <div :class="cn('flex flex-col h-20 gap-1 [&:has([aria-invalid=true])_span.caption]:text-danger w-full [&.text-right_input:not(:placeholder-shown)]:text-right', props.class)">
+  <div :class="cn('flex flex-col h-20 gap-1 [&:has([aria-invalid=true])_span.caption]:!text-danger w-full [&.text-right_input:not(:placeholder-shown)]:text-right [&:has([data-slot=radio-group-item])]:gap-2', props.class)">
     <UiLabel class="text-xs flex gap-0.5 mb-1" v-if="label">{{ label }}<span class="text-danger" v-if="required">*</span></UiLabel>
-    <slot name="input-item">
+    <slot name="input-item" :aria-invalid="ariaInvalid" :required="required">
       <!--  div 제거    -->
       <InputBase :aria-invalid="ariaInvalid" :placeholder="placeholder" :disabled="disabled" :readonly="readonly" v-model="modelValue" :type="type"/>
 

@@ -13,7 +13,7 @@ type Story = StoryObj
 // ─── Full ─────────────────────────────────────────────────────────────────────
 
 export const FullTable: Story = {
-  name: 'Table — 전체 조합',
+  name: '전체 조합',
   render: (args) => ({
     components: { Th, Td },
     setup() { return { args } },

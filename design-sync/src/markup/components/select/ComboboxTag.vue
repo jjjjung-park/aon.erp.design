@@ -33,7 +33,7 @@
                   </UiButton>
                 </UiTagsInputItem>
 
-                <UiTooltipProvider>
+                <UiTooltipProvider v-if="countType">
                   <UiTooltip>
                     <UiTooltipTrigger as-child>
                       <Tags
@@ -92,7 +92,7 @@
 
         </UiTagsInput>
         <UiScrollArea as-child class="max-h-[var(--reka-popover-content-available-height)]">
-          <ListboxContent :data-empty-text="emptyText" class="select-content" tabindex="0">
+          <ListboxContent :data-empty-text="emptyText" class="select-content" tabindex="0" v-if="listItem.length > 0">
             <ListboxItem v-for="item in filteredFrameworks" :key="item.value" :value="item.label" @select="select(item)"
                          :disabled="Boolean(item.disabled)"
                          class="select-content__list-item">
@@ -104,6 +104,10 @@
               </slot>
             </ListboxItem>
           </ListboxContent>
+          <EmptyData class="py-4" v-else>
+            <LucideCircleAlert class="size-4 text-muted"/>
+            데이터가 없습니다
+          </EmptyData>
         </UiScrollArea>
         <!--     virtual scroll 사용 시-->
         <!--     Virtualizer 부모에 height, overflow-auto가 있어야 작동 함    -->
@@ -137,6 +141,7 @@ import {
 import {computed, type HTMLAttributes, ref} from "vue"
 import {InputBase} from "@/markup/components/inputs";
 import Tags from "@/markup/components/tag/Tags.vue";
+import EmptyData from "@/markup/components/empty/EmptyData.vue";
 import {cn} from "@/lib/utils.ts";
 interface ListItem {
   label: string
@@ -152,6 +157,7 @@ const props = withDefaults(
     ariaInvalid?: boolean
     listItem?: ListItem[]
     emptyText?: string
+    countType?: boolean
   }>(),
   {
     placeholder: '내용을 입력하세요',
@@ -159,7 +165,8 @@ const props = withDefaults(
     multiple:false,
     ariaInvalid:false,
     listItem: () => [],
-    emptyText:'일치하는 키워드가 없습니다'
+    emptyText:'일치하는 키워드가 없습니다',
+    countType:true
   }
 )
 

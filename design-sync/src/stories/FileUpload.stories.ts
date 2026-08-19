@@ -10,7 +10,7 @@ export default meta
 type Story = StoryObj
 
 export const Add: Story = {
-  name: '파일 업로드 — 추가',
+  name: '추가',
   render: () => ({
     components: { FileDropzone },
     template: `
@@ -29,7 +29,7 @@ export const Add: Story = {
 
 
 export const FileList: Story = {
-  name: '파일 목록 — 상태별',
+  name: '파일목록 상태별',
   render: () => ({
     template: `
       <div class="w-80 flex flex-col gap-1">

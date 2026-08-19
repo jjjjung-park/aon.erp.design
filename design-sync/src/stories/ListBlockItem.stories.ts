@@ -64,7 +64,7 @@ type Story = StoryObj<{
 }>
 
 export const Default: Story = {
-  name: 'ListBlockItem — 기본',
+  name: '기본',
   render: (args) => ({
     setup() {
       return { args }
@@ -202,7 +202,7 @@ export const Default: Story = {
 }
 
 export const Dnd: Story = {
-  name: 'ListBlockItem — DnD',
+  name: 'DnD',
   render: () => ({
     template: `
       <ul class="w-[360px]">
@@ -216,7 +216,7 @@ export const Dnd: Story = {
 }
 
 export const Collapsible: Story = {
-  name: 'ListBlockItem — Collapsible',
+  name: 'Collapsible',
   render: () => ({
     template: `
       <div class="w-[360px] flex flex-col gap-1">
@@ -261,7 +261,7 @@ export const Collapsible: Story = {
 }
 
 export const DndAndCollapsible: Story = {
-  name: 'ListBlockItem — DnD + Collapsible',
+  name: 'DnD + Collapsible',
   render: () => ({
     template: `
       <div class="w-[360px] flex flex-col gap-1">
@@ -311,7 +311,7 @@ export const DndAndCollapsible: Story = {
 }
 
 export const TableSettings: Story = {
-  name: 'ListBlockItem — 테이블 설정 (DnD + Collapsible + 스태틱 버튼)',
+  name: '테이블 설정 (DnD + Collapsible + 스태틱 버튼)',
   render: () => ({
     template: `
       <div class="w-[360px] flex flex-col gap-1">
@@ -371,7 +371,7 @@ export const TableSettings: Story = {
 }
 
 export const SplitMenuList: Story = {
-  name: 'ListBlockItem — 분할 메뉴 리스트 (DnD + Collapsible + 토글 버튼)',
+  name: '분할 메뉴 리스트 (DnD + Collapsible + 토글 버튼)',
   render: () => ({
     template: `
       <div class="w-[360px] flex flex-col gap-1">
@@ -441,7 +441,7 @@ export const SplitMenuList: Story = {
 }
 
 export const FileList: Story = {
-  name: 'ListBlockItem — 파일 리스트 (상태 아이콘 + 호버 토글 버튼)',
+  name: '파일 리스트 (상태 아이콘 + 호버 토글 버튼)',
   render: () => ({
     template: `
       <div class="w-[360px] flex flex-col gap-1">

@@ -25,7 +25,7 @@ const menuData = {
 }
 
 export const SideMenu: Story = {
-  name: 'Collapsible — 사이드 메뉴',
+  name: '사이드 메뉴',
   render: () => ({
     setup() { return { menuData } },
     template: `
@@ -75,7 +75,7 @@ export const SideMenu: Story = {
 }
 
 export const Default: Story = {
-  name: 'Collapsible — 트리형',
+  name: '트리형',
   render: () => ({
     template: `
       <div class="w-[360px] flex flex-col gap-1">

@@ -3,36 +3,47 @@
     <UiSidebarTrigger :icon="!open?ArrowRight:ArrowLeft" variant="outline" size="icon-sm" class=""/>
 
     <div class="flex items-center justify-between w-full">
-      <ComboboxTag class="w-60" :placeholder="'브랜드를 선택해 주세요'" :list-item="brands">
+      <!--  브랜드가 단건일때    -->
+      <!--      <div class="flex gap-2 items-center">
+        <span class="truncate">thisisneverthat</span>
+      </div>-->
+      <!--  브랜드 여러건일때 /  셀렉트 사이즈 변경 w-60 > w-80    -->
+      <ComboboxTag class="w-80" :placeholder="'브랜드를 선택해 주세요'" :list-item="brands" v-model:selectValueSingle="selectBrand">
         <template #list-item="{item}">
-          <div class="group w-full h-full flex justify-between items-center">
+          <div class="group size-full flex gap-2 items-center">
             <span class="truncate">{{ item.label }}</span>
-            <UiButton variant="ghost" :class="['hover:bg-transparent ml-auto  group-hover:inline-flex', item.value === settingBrand?'inline-flex':'hidden']" size="icon" @click.prevent.stop="defaultSet(item)">
-              <LucideStar :fill="item.value === settingBrand?'var(--color-primary)':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-subtle-text'"/>
+            <!--     평소엔 안보이고 hover, 기본 설정된 브랜드일 때만 보이게 처리       -->
+            <UiButton variant="ghost" :class="['hover:bg-transparent ml-auto group-hover:inline-flex', item.value === settingBrand?'inline-flex':'hidden']" size="icon" @click.prevent.stop="defaultSet(item)">
+              <!--     기본 설정되면 색상 변경       -->
+              <LucideStar :fill=" item.value === settingBrand?'var(--color-primary)':'none'" :class=" item.value === settingBrand ? 'text-primary':'text-subtle-text'"/>
             </UiButton>
           </div>
         </template>
       </ComboboxTag>
 
-      <div class="flex items-center gap-2 ml-auto">
+      <div class="flex items-center gap-2">
         <div class="gap-2 flex items-center">
           <UiButton class="text-muted relative " variant="ghost" size="icon" @click="openAlert = true">
             <LucideBell />
-            <UiBadge size="dot" class="bg-danger absolute top-1 right-1" />
+            <UiBadge size="dot" class="bg-primary absolute top-1 right-1" />
           </UiButton>
-          <UiSeparator orientation="vertical" class="h-4"/>
+          <UiSeparator orientation="vertical" size="md"/>
           <UiButton class="text-muted relative " variant="ghost" size="icon">
             <LucideSettings class=""/>
             <UiBadge size="dot" class="bg-success absolute top-1 right-1" />
           </UiButton>
-          <UiSeparator orientation="vertical" class="h-4"/>
+          <UiSeparator orientation="vertical" size="md"/>
         </div>
         <UiDropdownMenu>
           <UiDropdownMenuTrigger class="flex items-center text-left gap-2 hover:cursor-pointer">
-            <UiAvatar class="size-6">
-              <UiAvatarImage src="@/assets/images/logo.svg" alt="avatar" />
-              <UiAvatarFallback>홍길</UiAvatarFallback>
-            </UiAvatar>
+            <!--  프로필 이미지가 없는 경우   -->
+            <div class=" rounded-full overflow-hidden text-center ">
+              <img src="@/assets/images/ico/avatar-default.svg" alt="avatar" class="size-6 object-cover"/>
+            </div>
+            <!--  프로필 이미지가 있는 경우   -->
+            <div class=" rounded-full overflow-hidden text-center ">
+              <img src="@/assets/images/logo.svg" alt="avatar" class="size-6 object-cover"/>
+            </div>
             <div class="h-8 flex flex-col">
               <p class="caption__bold">홍길동님</p>
               <span class="caption text-muted">안녕하시와요</span>
@@ -73,6 +84,7 @@ const brands = [
   {label:'KATA', value:'kata'},
 ]
 
+const selectBrand = ref<string>('thisisneverthat')
 const settingBrand = ref<string>('thisisneverthat')
 const defaultSet = (item:any) => {
   if(brands.map((brand:any) => brand.value === item.value)){

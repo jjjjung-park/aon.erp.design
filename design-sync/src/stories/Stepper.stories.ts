@@ -23,7 +23,7 @@ const steps = [
 ]
 
 export const Default: Story = {
-  name: 'Stepper — 단계별',
+  name: '단계별',
   render: (args) => ({
     setup() { return { args, steps } },
     template: `

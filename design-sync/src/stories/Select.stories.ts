@@ -46,7 +46,7 @@ export default meta
 type Story = StoryObj<{ type: '기본 셀렉트' | 'comboboxTag'; multiple: '단일' | '멀티'; size: 'sm' | 'default'; placeholder: string; disabled: boolean }>
 
 export const Default: Story = {
-  name: 'Select',
+  name: '기본',
   render: (args) => ({
     components: { SelectBase, ComboboxTag },
     setup() { return { args, sampleItems } },
@@ -72,7 +72,7 @@ export const Default: Story = {
 }
 
 export const Sizes: Story = {
-  name: 'Select — 사이즈',
+  name: '사이즈',
   render: () => ({
     components: { SelectBase },
     setup() { return { sampleItems } },
@@ -86,7 +86,7 @@ export const Sizes: Story = {
 }
 
 export const States: Story = {
-  name: 'Select — 상태',
+  name: '상태',
   render: () => ({
     components: { SelectBase },
     setup() { return { sampleItems } },

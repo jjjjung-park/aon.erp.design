@@ -10,7 +10,7 @@ export default meta
 type Story = StoryObj
 
 export const Add: Story = {
-  name: '이미지 업로드 — 추가',
+  name: '추가',
   render: () => ({
     components: { FileDropzone },
     template: `
@@ -38,7 +38,7 @@ export const Add: Story = {
 }
 
 export const Thumbnail: Story = {
-  name: '이미지 업로드 — 썸네일 상태별',
+  name: '썸네일 상태별',
   render: () => ({
     template: `
       <div class="w-200 flex flex-col gap-2">

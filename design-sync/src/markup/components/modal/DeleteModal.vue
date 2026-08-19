@@ -1,5 +1,5 @@
 <template>
-  <ModalBase v-model:open="open" class="w-90" >
+  <ModalBase v-model:open="open" >
     <template #body>
       <div class="flex gap-4 mb-6">
         <p class="rounded-full bg-danger-light text-danger size-12 flex items-center justify-center"><LucideTrash2 class="size-6"/></p>

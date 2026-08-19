@@ -9,7 +9,7 @@ export default meta
 type Story = StoryObj
 
 export const FormActions: Story = {
-  name: 'ButtonSet — 폼 액션',
+  name: '폼 액션',
   render: () => ({
     template: `
       <div class="flex flex-col gap-4 w-96">
@@ -46,7 +46,7 @@ export const FormActions: Story = {
 }
 
 export const IconGroup: Story = {
-  name: 'ButtonSet — 아이콘',
+  name: '아이콘',
   render: () => ({
     template: `
       <div class="flex items-center gap-1">
@@ -61,7 +61,7 @@ export const IconGroup: Story = {
 }
 
 export const SearchFilter: Story = {
-  name: 'ButtonSet — 검색/필터',
+  name: '검색/필터',
   render: () => ({
     template: `
       <div class="flex items-center gap-2">

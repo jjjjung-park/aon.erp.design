@@ -1,6 +1,6 @@
 
 <template>
-  <ModalBase v-model:open="open" title="테이블 정렬" class="w-180">
+  <ModalBase v-model:open="open" title="테이블 정렬" class="w-modal-md">
     <template #body>
       <div class="flex gap-8 pb-4">
         <div class="flex flex-col gap-2 w-1/2">

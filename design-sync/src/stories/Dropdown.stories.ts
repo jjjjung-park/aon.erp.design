@@ -21,7 +21,7 @@ export default meta
 type Story = StoryObj<{ size: string; withLabel: boolean; iconTrigger: boolean }>
 
 export const Default: Story = {
-  name: 'Dropdown — 인터랙티브',
+  name: '기본',
   render: (args) => ({
     components: { Button },
     setup() { return { args } },
@@ -57,7 +57,7 @@ export const Default: Story = {
 }
 
 export const AvatarTrigger: Story = {
-  name: 'Dropdown — 아바타 트리거',
+  name: '아바타',
   render: () => ({
     setup() { return { avatarDefault } },
     template: `

@@ -9,7 +9,7 @@ export default meta
 type Story = StoryObj
 
 export const Sizes: Story = {
-  name: 'Card — 사이즈',
+  name: '사이즈',
   render: () => ({
     template: `
       <div class="flex flex-wrap gap-4 items-start">

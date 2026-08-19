@@ -21,7 +21,7 @@ export default meta
 type Story = StoryObj<{ type: 'success' | 'info' | 'warning' | 'error' | 'loading' }>
 
 export const Default: Story = {
-  name: 'Toast',
+  name: '기본',
   render: (args) => ({
     components: { Toaster },
     setup() {

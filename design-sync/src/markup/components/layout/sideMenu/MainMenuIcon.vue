@@ -6,7 +6,7 @@
                             :is-active="activeItem.title === item.title"
                            @click="clickAction(item)"
                            @mouseenter="hoverAction(item)">
-        <component :is="item.icon" v-if="item.icon" class="stroke-2"/>
+        <component :is="item.icon" v-if="item.icon"/>
         <!--  하위메뉴 있음 표시 아이콘  -->
         <LucideEllipsisVertical class="absolute right-0 size-5"/>
       </UiSidebarMenuButton>

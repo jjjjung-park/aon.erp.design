@@ -11,7 +11,7 @@ type Story = StoryObj
 // ─── Index ────────────────────────────────────────────────────────────────────
 
 export const Index: Story = {
-  name: 'Sheet — Index',
+  name: 'Index',
   argTypes: {
     title:         { control: 'text',    description: '시트 제목' },
     footer:        { control: 'boolean', description: '하단 footer 표시' },

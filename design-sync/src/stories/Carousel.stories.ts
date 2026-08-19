@@ -18,7 +18,7 @@ export default meta
 type Story = StoryObj<{ thumbnail: boolean }>
 
 export const Default: Story = {
-  name: 'Carousel — 인터랙티브',
+  name: '인터랙티브',
   render: (args) => ({
     setup() {
       const emblaMainApi = ref<CarouselApi>()

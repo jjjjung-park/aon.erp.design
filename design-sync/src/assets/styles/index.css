@@ -453,36 +453,14 @@
 
   .view-list__item-cont:has(~ .view-list__item-cont),
   .view-list__item-cont + .view-list__item-cont {
-    @apply min-h-7;
+    @apply min-h-6;
   }
   .view-list__item--row .view-list__item-cont {
     @apply min-h-auto;
   }
 
   /*list 타입 추가*/
-  /*.data-list {
-  }
-  .data-list__item {
-    @apply first:border-t-1 border-b-1 border-border min-h-16 p-3 flex items-center justify-between min-w-0;
-  }
-  .data-list__item.active {
-    @apply bg-primary-light;
-  }
-  .data-list__cont {
-    @apply flex flex-col gap-1 truncate min-w-0;
-  }
-  .data-list__cont-left {
-    @apply items-start;
-  }
-  .data-list__cont-right {
-    @apply items-end;
-  }
-  .data-list__cont > * {
-    @apply truncate max-w-full min-w-0;
-  }
-  .data-list__desc {
-    @apply text-xs text-muted truncate block basis-1/2;
-  }*/
+
   .data-list{
     @apply flex flex-col;
   }
@@ -647,4 +625,17 @@
 }
 .tag--resizing__item--truncate{
   @apply min-w-0 truncate
+}
+
+/* 모달 사이즈 재정립 최소-480, 중간-720, 라지-1200 / 중간 ~ 라지 반응형 적용*/
+.w-modal-sm{
+  @apply w-120
+}
+
+.w-modal-md{
+  @apply w-[clamp(480px,95vw,720px)]
+}
+
+.w-modal-lg{
+  @apply  w-[clamp(480px,95vw,1200px)]
 }

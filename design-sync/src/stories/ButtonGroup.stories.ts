@@ -9,7 +9,7 @@ export default meta
 type Story = StoryObj
 
 export const Toggle: Story = {
-  name: 'ButtonGroup — 토글',
+  name: '토글',
   render: () => ({
     template: `
       <div class="flex flex-col gap-4">
