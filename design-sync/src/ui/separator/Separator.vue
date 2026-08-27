@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { separatorVariants } from "."
 
 const props = withDefaults(defineProps<
-  SeparatorProps & { class?: HTMLAttributes["class"]; size?: 'sm' | 'md' }
+  SeparatorProps & { class?: HTMLAttributes["class"]; size?: 'sm' | 'md' | 'full' }
 >(), {
   orientation: "horizontal",
   decorative: true,

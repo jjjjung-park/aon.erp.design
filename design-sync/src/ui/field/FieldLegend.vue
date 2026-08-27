@@ -14,8 +14,8 @@ const props = defineProps<{
     :data-variant="variant"
     :class="cn(
       'mb-3 font-bold',
-      'data-[variant=legend]:text-md',
-      'data-[variant=label]:text-sm',
+      'data-[variant=legend]:text-sm',
+      'data-[variant=label]:text-xs',
       props.class,
     )"
   >

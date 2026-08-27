@@ -7,6 +7,7 @@ export const separatorVariants = cva(
       size: {
         sm: 'data-[orientation=vertical]:h-3',
         md: 'data-[orientation=vertical]:h-4',
+        full: 'data-[orientation=vertical]:h-full',
       },
       orientation: {
         vertical: 'bg-border',

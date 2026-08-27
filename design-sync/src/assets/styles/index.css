@@ -138,7 +138,7 @@
   }
 
   .table-secondary th {
-    @apply !h-8 bg-surface-muted !text-xs !border-border text-muted;
+    @apply !h-8 bg-surface-muted !text-xs !border-border text-muted !font-normal;
   }
 
   .table-secondary tbody tr:first-child td,
@@ -453,14 +453,13 @@
 
   .view-list__item-cont:has(~ .view-list__item-cont),
   .view-list__item-cont + .view-list__item-cont {
-    @apply min-h-6;
+    @apply min-h-6 ;
   }
   .view-list__item--row .view-list__item-cont {
     @apply min-h-auto;
   }
 
-  /*list 타입 추가*/
-
+  /*여러 데이터가 한 row에 보이는 list 타입*/
   .data-list{
     @apply flex flex-col;
   }
@@ -627,6 +626,7 @@
   @apply min-w-0 truncate
 }
 
+
 /* 모달 사이즈 재정립 최소-480, 중간-720, 라지-1200 / 중간 ~ 라지 반응형 적용*/
 .w-modal-sm{
   @apply w-120
@@ -638,4 +638,10 @@
 
 .w-modal-lg{
   @apply  w-[clamp(480px,95vw,1200px)]
+}
+
+
+/*dashboard card*/
+.card-type--dashboard{
+  @apply flex-wrap flex-row gap-4 [&_dl]:flex-1 [&_dl]:pr-4 [&_dl:not(:first-child)]:relative [&_dl:not(:first-child)]:before:content-[''] [&_dl:not(:first-child)]:before:absolute [&_dl:not(:first-child)]:before:w-px [&_dl:not(:first-child)]:before:bg-border [&_dl:not(:first-child)]:before:h-12 [&_dl:not(:first-child)]:before:-left-4
 }

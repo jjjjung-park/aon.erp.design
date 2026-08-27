@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import FileDropzone from '@/markup/components/upload/FileDropzone.vue'
 
 const meta: Meta = {
-  title: 'UI 패턴/업로드/파일 업로드',
+  title: 'UI 패턴/upload/파일 업로드',
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
 }

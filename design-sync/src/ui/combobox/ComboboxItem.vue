@@ -17,7 +17,7 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits)
     data-slot="combobox-item"
     v-bind="forwarded"
     :class="cn(
-      ' [&_svg:not([class*=\'text-\'])]:text-primary hover:bg-primary-light hover:text-primary relative flex cursor-pointer items-center gap-2 rounded-sm px-2 h-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled-text [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-5',
+      ' [&_svg:not([class*=\'text-\'])]:text-primary hover:bg-primary-light hover:text-primary relative flex cursor-pointer items-center gap-2 rounded-sm px-2 h-8 text-sm outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:text-disabled-text [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4',
       'aria-[selected=true]:bg-primary-light aria-[selected=true]:text-primary ', props.class)"
   >
     <slot />
