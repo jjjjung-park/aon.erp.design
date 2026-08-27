@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import Th from '@/markup/components/table/Th.vue'
 import Td from '@/markup/components/table/Td.vue'
+import DefaultTable from '@/markup/components/table/DefaultTable.vue'
 
 const meta: Meta = {
   title: 'UI 패턴/Table',
@@ -9,6 +10,33 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
+
+// ─── Default ──────────────────────────────────────────────────────────────────
+
+export const DefaultTableStory: Story = {
+  name: '기본',
+  render: () => ({
+    components: { DefaultTable, Th, Td },
+    template: `
+      <DefaultTable>
+        <UiTableHeader>
+          <UiTableRow>
+            <Th data="이름" />
+            <Th data="이메일" />
+            <Th data="부서" />
+          </UiTableRow>
+        </UiTableHeader>
+        <UiTableBody>
+          <UiTableRow v-for="i in 3" :key="i">
+            <Td><UiSkeleton class="h-4 w-full" /></Td>
+            <Td><UiSkeleton class="h-4 w-3/4" /></Td>
+            <Td><UiSkeleton class="h-4 w-1/2" /></Td>
+          </UiTableRow>
+        </UiTableBody>
+      </DefaultTable>
+    `,
+  }),
+}
 
 // ─── Full ─────────────────────────────────────────────────────────────────────
 

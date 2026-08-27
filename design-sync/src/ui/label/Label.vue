@@ -19,7 +19,8 @@ const delegatedProps = reactiveOmit(props, "class")
       cn(
         'flex items-center gap-2 text-sm leading-none select-none ' +
           'group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:text-disabled-text group-data-[disabled]:pointer-events-none group-data-[disabled]:!text-disabled-text ' +
-           'peer-data-[state=checked]:font-bold peer-disabled:cursor-not-allowed peer-disabled:text-disabled-text',
+           'peer-data-[state=checked]:font-bold peer-disabled:cursor-not-allowed peer-disabled:text-disabled-text ' +
+          'peer-data-[slot=radio-group-item]:cursor-pointer peer-data-[slot=checkbox]:cursor-pointer',
         props.class,
       )
     "

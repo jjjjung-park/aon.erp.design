@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/ui/tooltip'
 import { Button } from '@/ui/button'
-import CountTooltip from '@/markup/components/popover/CountTooltip.vue'
+import CountTooltip from '@/markup/components/tooltips/CountTooltip.vue'
+import DefaultTooltip from '@/markup/components/tooltips/DefaultTooltip.vue'
 
 const meta: Meta = {
   title: 'UI 패턴/Tooltip',
@@ -50,6 +51,31 @@ export const Variants: Story = {
           </Tooltip>
         </div>
       </TooltipProvider>
+    `,
+  }),
+}
+
+export const Default: Story = {
+  name: '기본',
+  render: (args) => ({
+    components: { DefaultTooltip, Button },
+    setup() { return { args } },
+    template: `
+      <div class="flex gap-10 items-center p-10">
+        <DefaultTooltip variant="light" :side="args.side">
+          <template #title>
+            <Button variant="outline">Light</Button>
+          </template>
+          <template #content>라이트 툴팁입니다.</template>
+        </DefaultTooltip>
+
+        <DefaultTooltip variant="dark" :side="args.side">
+          <template #title>
+            <Button variant="outline">Dark</Button>
+          </template>
+          <template #content>다크 툴팁입니다.</template>
+        </DefaultTooltip>
+      </div>
     `,
   }),
 }
