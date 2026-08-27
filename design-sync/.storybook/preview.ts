@@ -222,18 +222,6 @@ const preview: Preview = {
     options: {
       storySort: (a, b) => {
         const categoryOrder = ['Foundation', '기초', 'UI 패턴', '레이아웃']
-        const itemOrder = {
-          'Foundation': ['Typography', 'Color', 'Icons'],
-          '기초':       ['Button', 'Input', 'Checkbox', 'RadioGroup', 'Switch', 'Badge', 'Tag', 'Spinner', 'Progress', 'Avatar', 'Skeleton', 'Separator'],
-          'UI 패턴':    ['FormItem', 'Dropdown', 'Select', 'DatePicker', 'ButtonGroup', 'ButtonSet', 'FileDropZone', 'Card', 'Collapsible', '리스트', 'Accordion', 'Alert', 'Toast', 'Tooltip', 'Tabs', 'Stepper', 'Pagination', 'Carousel', 'Table', 'Empty', 'Modal', 'Sheet'],
-          // 그룹: 폼(FormItem~ButtonGroup) / 콘텐츠(FileDropZone~Accordion) / 피드백(Alert,Toast,Tooltip) / 네비게이션(Tabs~Carousel) / 데이터상태(Table,Empty) / 오버레이(Modal,Sheet)
-          '레이아웃':   [
-            'Resizable', 'TableLayout',
-            'Modal', 'Sheet',
-            // 'Header',
-            'PageLayout',
-          ],
-        }
         if (a.title === '소개') return -1
         if (b.title === '소개') return 1
         const [aCat, aItem] = a.title.split('/')
@@ -245,13 +233,7 @@ const preview: Preview = {
           if (bCatIdx === -1) return -1
           return aCatIdx - bCatIdx
         }
-        const subOrder = itemOrder[aCat] || []
-        const aItemIdx = subOrder.indexOf(aItem)
-        const bItemIdx = subOrder.indexOf(bItem)
-        if (aItemIdx === -1 && bItemIdx === -1) return 0
-        if (aItemIdx === -1) return 1
-        if (bItemIdx === -1) return -1
-        return aItemIdx - bItemIdx
+        return aItem.localeCompare(bItem, 'ko')
       },
     },
   },
