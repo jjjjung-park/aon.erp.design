@@ -22,6 +22,8 @@ const delegatedProps = reactiveOmit(props, "class")
     :class="cn(badgeVariants({ variant, size }), props.class)"
     v-bind="delegatedProps"
   >
+    <span v-if="variant === 'active'" class="size-1.5 rounded-full shrink-0 bg-success" aria-hidden="true" />
+    <span v-else-if="variant === 'inActive'" class="size-1.5 rounded-full shrink-0 bg-subtle" aria-hidden="true" />
     <slot />
   </Primitive>
 </template>

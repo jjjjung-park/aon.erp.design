@@ -5,10 +5,18 @@ const meta: Meta<typeof Badge> = {
   title: '기초/Badge',
   component: Badge,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      subtitle: '개발 : variant(workflow) - 디자인 : Status Badge / 개발 : variant(active,inActive) - 디자인 : Active Badge',
+      description: {
+        component: 'Badge는 상태(Status Badge)·활성 여부(Active Badge)·숫자·알림(count/dot) 용도로 쓰인다.',
+      },
+    },
+  },
   argTypes: {
     variant: {
       control: 'select',
-      options: ['info', 'outline', 'process', 'accept', 'reject', 'hold'],
+      options: ['info', 'outline', 'process', 'accept', 'reject', 'hold', 'active', 'inActive'],
     },
     size: {
       control: 'select',
@@ -33,7 +41,14 @@ export const Default: Story = {
 }
 
 export const StatusVariants: Story = {
-  name: '상태 배지',
+  name: 'Badge — status (workflow)',
+  parameters: {
+    docs: {
+      description: {
+        story: '진행 단계가 있는 워크플로우 상태 표시. 6단계 색상으로 고정, indicator(dot)는 쓰지 않는다 — Figma Status Badge 스펙.',
+      },
+    },
+  },
   render: () => ({
     components: { Badge },
     template: `
@@ -49,8 +64,35 @@ export const StatusVariants: Story = {
   }),
 }
 
+export const ActiveVariants: Story = {
+  name: 'Badge — status (active)',
+  parameters: {
+    docs: {
+      description: {
+        story: '단계 없이 두 값만 오가는 이진 상태 표시(사용/미사용 등). 배경·테두리는 항상 중립으로 고정하고, 앞에 붙는 dot 색으로만 active/inActive를 구분한다 — Figma Active Badge 스펙.',
+      },
+    },
+  },
+  render: () => ({
+    components: { Badge },
+    template: `
+      <div class="flex flex-wrap gap-2 items-center">
+        <Badge variant="active">활성 상태</Badge>
+        <Badge variant="inActive">비활성 상태</Badge>
+      </div>
+    `,
+  }),
+}
+
 export const CountVariant: Story = {
-  name: 'Count (알림 수)',
+  name: 'Badge — count (알림 수)',
+  parameters: {
+    docs: {
+      description: {
+        story: '숫자 강조용. 탭·리스트 옆에 미확인 개수 등을 표시할 때 사용.',
+      },
+    },
+  },
   render: () => ({
     components: { Badge },
     template: `
@@ -64,7 +106,14 @@ export const CountVariant: Story = {
 }
 
 export const DotVariant: Story = {
-  name: 'Dot (알림 표시)',
+  name: 'Badge — dot (알림 표시)',
+  parameters: {
+    docs: {
+      description: {
+        story: '텍스트 없이 점 하나로만 표시하는 단순 알림 인디케이터. 아이콘 위 배지 등 공간이 좁은 곳에 사용.',
+      },
+    },
+  },
   render: () => ({
     components: { Badge },
     template: `
