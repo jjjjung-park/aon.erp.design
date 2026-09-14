@@ -21,7 +21,7 @@ type TagsProps = {
   title?: string
   disabled?: boolean
 } & (
-  | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info'; closeable?: never }
+  | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info' | 'category'; closeable?: never }
   | { type: 'chip'; variant?: 'secondary' | 'outline'; closeable?: boolean }
   )
 
