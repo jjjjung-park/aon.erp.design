@@ -248,7 +248,7 @@
 
   tr:has(.pinned--left):hover td,
   tr:has(.pinned--left):hover td > div {
-    @apply !bg-primary-light;
+    @apply !bg-surface-muted;
   }
   /*left pin 일때만 가능, right pin 추가될 경우 변경해야 함*/
   tr > .pinned--left:not(:has(~ .pinned--left)):after {
