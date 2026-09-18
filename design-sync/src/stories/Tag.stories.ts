@@ -8,15 +8,14 @@ const meta: Meta = {
   tags: ['autodocs'],
   parameters: {
     docs: {
-      subtitle:'개발 : tag - 디자인 : label / 개발 : chip - 디자인 : filter',
       description: {
-        component: 'Tags는 카테고리·칩·라벨링 3가지 용도로 쓰인다. 필터/선택은 Chip, 강조도·체크 표시는 Tag 강조도(Emphasis), 자유 색상 카테고리는 variant="category"를 참고.',
+        component: 'Tags는 카테고리·필터·라벨링 3가지 용도로 쓰인다. ',
       },
     },
   },
   argTypes: {
     type: {
-      control: 'radio',
+      control: { type: 'radio', labels: { tag: 'tag', chip: 'filter' } },
       options: ['tag', 'chip'],
       description: '타입',
     },
@@ -26,42 +25,41 @@ const meta: Meta = {
       description: 'variant',
       if: { arg: 'type', eq: 'tag' },
     },
-    chipVariant: {
+    filterVariant: {
       control: 'select',
       options: ['default', 'secondary', 'outline'],
       description: 'variant',
       if: { arg: 'type', eq: 'chip' },
     },
     title:     { control: 'text',    description: '태그 텍스트' },
-    closeable: { control: 'boolean', description: '닫기 버튼 표시', if: { arg: 'type', eq: 'chip' } },
     disabled:  { control: 'boolean', description: '비활성화',       if: { arg: 'type', eq: 'chip' } },
   },
   args: {
     type: 'tag',
     tagVariant: 'default',
-    chipVariant: 'secondary',
+    filterVariant: 'secondary',
     title: '태그',
-    closeable: false,
     disabled: false,
   },
 }
 export default meta
-type Story = StoryObj<{ type: string; tagVariant: string; chipVariant: string; title: string; closeable: boolean; disabled: boolean }>
+type Story = StoryObj<{ type: string; tagVariant: string; filterVariant: string; title: string; disabled: boolean }>
 
 export const Default: Story = {
   name: 'Tags — 인터랙티브',
   render: (args) => ({
     components: { Tags },
     setup() {
-      const variant = computed(() => args.type === 'chip' ? args.chipVariant : args.tagVariant)
-      return { args, variant }
+      const variant = computed(() => args.type === 'chip' ? args.filterVariant : args.tagVariant)
+      const closeable = computed(() => args.type === 'chip')
+      return { args, variant, closeable }
     },
-    template: `<Tags :type="args.type" :variant="variant" :title="args.title" :closeable="args.closeable" :disabled="args.type === 'chip' ? args.disabled : undefined" />`,
+    template: `<Tags :type="args.type" :variant="variant" :title="args.title" :closeable="closeable" :disabled="args.type === 'chip' ? args.disabled : undefined" />`,
   }),
 }
 
-export const Chip: Story = {
-  name: 'Chip — filter',
+export const Filter: Story = {
+  name: 'filter — 선택 형',
   parameters: {
     docs: {
       description: {
@@ -89,7 +87,7 @@ export const Chip: Story = {
 }
 
 export const TagLevel: Story = {
-  name: 'Tag — label (강조도)',
+  name: 'Tag — 강조 형',
   parameters: {
     docs: {
       description: {
@@ -120,7 +118,7 @@ Checked(secondary)는 강조도 축이 아니라 선택/완료 여부를 나타�
 }
 
 export const Tag: Story = {
-  name: 'Tag — label (카테고리 색상)',
+  name: 'Tag — 카테고리 형',
   parameters: {
     docs: {
       description: {

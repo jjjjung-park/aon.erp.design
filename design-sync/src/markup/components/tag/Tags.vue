@@ -8,10 +8,11 @@
     <slot>
       <p class="truncate caption__bold">{{ title }}</p>
     </slot>
-    <UiButton data-slot="close" v-if="closeable && !props.disabled" variant="ghost" size="inline-icon-sm" class="text-inherit hover:bg-transparent"><LucideX/></UiButton>
+    <UiButton data-slot="close" v-if="showClose" variant="ghost" size="inline-icon-sm" class="text-inherit hover:bg-transparent"><LucideX/></UiButton>
   </div>
 </template>
 <script setup lang="ts">
+import { computed } from 'vue'
 import { cn } from "@/lib/utils"
 import type { HTMLAttributes } from "vue";
 import { tagsVariants } from "@/lib/cva/tag"
@@ -26,4 +27,7 @@ type TagsProps = {
   )
 
 const props = defineProps<TagsProps>()
+
+// type="chip"이면 기본 표시, closeable을 명시적으로 넘기면 그 값 우선, disabled면 항상 숨김
+const showClose = computed(() => (props.closeable ?? props.type === 'chip') && !props.disabled)
 </script>
