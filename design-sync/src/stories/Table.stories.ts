@@ -52,7 +52,10 @@ export const FullTable: Story = {
   },
   render: (args) => ({
     components: { Th, Td, Tags },
-    setup() { return { args } },
+    setup() {
+      const activeId = ref<number | null>(null)
+      return { args, activeId }
+    },
     template: `
       <UiTable :class="['table-fixed w-full', args.secondary ? 'table-secondary' : 'border-b', args.groupTh ? 'table--group-header' : '']">
         <UiTableHeader>
@@ -74,7 +77,7 @@ export const FullTable: Story = {
           </UiTableRow>
         </UiTableHeader>
         <UiTableBody>
-          <UiTableRow>
+          <UiTableRow :selected="activeId === 1" @click="activeId = 1">
             <Td type="checkbox" />
             <Td><UiSkeleton class="h-4 w-full" /></Td>
             <Td><UiSkeleton class="h-4 w-3/4" /></Td>
@@ -86,7 +89,7 @@ export const FullTable: Story = {
               <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
             </Td>
           </UiTableRow>
-          <UiTableRow>
+          <UiTableRow :selected="activeId === 2" @click="activeId = 2">
             <Td type="checkbox" />
             <Td><UiSkeleton class="h-4 w-full" /></Td>
             <Td><UiSkeleton class="h-4 w-3/4" /></Td>
@@ -98,7 +101,7 @@ export const FullTable: Story = {
               <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
             </Td>
           </UiTableRow>
-          <UiTableRow>
+          <UiTableRow :selected="activeId === 3" @click="activeId = 3">
             <Td type="checkbox" />
             <Td><UiSkeleton class="h-4 w-full" /></Td>
             <Td><UiSkeleton class="h-4 w-3/4" /></Td>
