@@ -15,7 +15,7 @@
     </template>
     <template #footer>
       <UiDialogClose as-child>
-        <UiButton variant="destructive" @click="toast.success('요청이 정상 처리되었습니다.')">삭제</UiButton>
+        <UiButton variant="destructive" @click="toast.success('요청이 정상 처리되었습니다.')">{{ buttonName }}</UiButton>
       </UiDialogClose>
     </template>
   </ModalBase>
@@ -31,8 +31,10 @@ const props = withDefaults(
   defineProps<{
     item?:string
     message?:string
+    buttonName?:string
   }>(),{
     message:'삭제하시겠습니까?',
+    buttonName:'삭제'
   }
 )
 </script>

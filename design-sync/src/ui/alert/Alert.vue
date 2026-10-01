@@ -25,16 +25,16 @@ const $emits = defineEmits(['close'])
       <template v-if="variant === 'default'">
       </template>
       <template v-else-if="variant === 'danger'">
-        <LucideAlertTriangle/>
+        <LucideAlertTriangle class="size-4"/>
       </template>
       <template v-else-if="variant === 'warning'">
-        <LucideCircleAlert/>
+        <LucideCircleAlert class="size-4"/>
       </template>
       <template v-else-if="variant === 'success'">
-        <LucideCheck/>
+        <LucideCheck class="size-4"/>
       </template>
-      <template v-if="variant === 'primary'">
-        <LucideInfo/>
+      <template v-else-if="variant === 'primary'">
+        <LucideInfo class="size-4"/>
       </template>
     </slot>
     <slot name="default"/>

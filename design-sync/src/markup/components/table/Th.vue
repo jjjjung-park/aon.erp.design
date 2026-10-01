@@ -1,8 +1,8 @@
 <template>
   <template v-if="type == 'checkbox'">
     <UiTableHead :style="['width:40px;', style]">
-      <div :style="['width:40px;', style]" class="!p-0 size-full flex items-center">
-        <UiLabel class="size-full flex items-center justify-center" @click.stop>
+      <div :style="['width:40px;', style]" class="!p-0 size-full flex items-center justify-center">
+        <UiLabel class="size-full">
           <UiCheckbox :disabled="checkDisabled"/>
         </UiLabel>
       </div>

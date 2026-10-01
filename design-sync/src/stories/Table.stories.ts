@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import Th from '@/markup/components/table/Th.vue'
 import Td from '@/markup/components/table/Td.vue'
 import DefaultTable from '@/markup/components/table/DefaultTable.vue'
+import Tags from '@/markup/components/tag/Tags.vue'
 
 const meta: Meta = {
   title: 'UI 패턴/Table',
@@ -42,16 +43,26 @@ export const DefaultTableStory: Story = {
 
 export const FullTable: Story = {
   name: '전체 조합',
+  parameters: {
+    docs: {
+      description: {
+        story: '실제 화면처럼 한 테이블 안에 Status Badge(플로우), Active Badge(이진), Tag 강조도(중강조 — 고정 식별값), 액션 버튼이 함께 들어간 조합 예시.',
+      },
+    },
+  },
   render: (args) => ({
-    components: { Th, Td },
-    setup() { return { args } },
+    components: { Th, Td, Tags },
+    setup() {
+      const activeId = ref<number | null>(null)
+      return { args, activeId }
+    },
     template: `
       <UiTable :class="['table-fixed w-full', args.secondary ? 'table-secondary' : 'border-b', args.groupTh ? 'table--group-header' : '']">
         <UiTableHeader>
           <UiTableRow v-if="args.groupTh">
             <Th colspan="1" />
             <Th colspan="2">기본정보</Th>
-            <Th colspan="2">조직 현황</Th>
+            <Th colspan="4">조직 현황</Th>
             <Th colspan="1" />
           </UiTableRow>
           <UiTableRow>
@@ -60,18 +71,46 @@ export const FullTable: Story = {
             <Th data="이메일" :sort="args.sort" :resizing="args.resizing" />
             <Th data="부서" :sort="args.sort" :resizing="args.resizing" />
             <Th data="상태" :sort="args.sort" :resizing="args.resizing" />
+            <Th data="사용 여부" :sort="args.sort" :resizing="args.resizing" />
+            <Th data="구분" :sort="args.sort" :resizing="args.resizing" />
             <Th type="function" />
           </UiTableRow>
         </UiTableHeader>
         <UiTableBody>
-          <UiTableRow v-for="i in 5" :key="i">
+          <UiTableRow :selected="activeId === 1" @click="activeId = 1">
             <Td type="checkbox" />
             <Td><UiSkeleton class="h-4 w-full" /></Td>
             <Td><UiSkeleton class="h-4 w-3/4" /></Td>
             <Td><UiSkeleton class="h-4 w-1/2" /></Td>
-            <Td><UiBadge variant="process">처리중</UiBadge></Td>
+            <Td><UiBadge variant="process">진행중</UiBadge></Td>
+            <Td><UiBadge variant="active">사용</UiBadge></Td>
+            <Td><Tags type="tag" variant="info" title="0차 오더" /></Td>
             <Td type="function">
               <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
+            </Td>
+          </UiTableRow>
+          <UiTableRow :selected="activeId === 2" @click="activeId = 2">
+            <Td type="checkbox" />
+            <Td><UiSkeleton class="h-4 w-full" /></Td>
+            <Td><UiSkeleton class="h-4 w-3/4" /></Td>
+            <Td><UiSkeleton class="h-4 w-1/2" /></Td>
+            <Td><UiBadge variant="accept">완료</UiBadge></Td>
+            <Td><UiBadge variant="inActive">미사용</UiBadge></Td>
+            <Td><Tags type="tag" variant="info" title="1차 오더" /></Td>
+            <Td type="function">
+              <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
+            </Td>
+          </UiTableRow>
+          <UiTableRow :selected="activeId === 3" @click="activeId = 3">
+            <Td type="checkbox" />
+            <Td><UiSkeleton class="h-4 w-full" /></Td>
+            <Td><UiSkeleton class="h-4 w-3/4" /></Td>
+            <Td><UiSkeleton class="h-4 w-1/2" /></Td>
+            <Td><UiBadge variant="reject">반려</UiBadge></Td>
+            <Td><UiBadge variant="active">사용</UiBadge></Td>
+            <Td><Tags type="tag" variant="info" title="0차 오더" /></Td>
+            <Td type="function">
+              <UiButton variant="outline" size="sm">보기</UiButton>
             </Td>
           </UiTableRow>
         </UiTableBody>

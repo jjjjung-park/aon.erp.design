@@ -74,7 +74,8 @@
 import {ref} from "vue";
 import {type SidebarProps} from "@/ui/sidebar";
 import {
-  Building2, DraftingCompass, Info,
+  Blocks,
+  Building2, DraftingCompass, IdCard, Info, Package,
   Puzzle, Scissors,
   Settings,
 } from 'lucide-vue-next'
@@ -90,43 +91,6 @@ const props = withDefaults(defineProps<SidebarProps>(), {
 // menu sample data.
 const data = {
   mainMenu: [
-    {
-      title: '시스템 관리',
-      url: '#',
-      icon: Settings,
-      isActive: false,
-      subItems: [
-        {
-          title:'권한 관리',
-          childItem: [
-            {
-              title: '컴포넌트 관리',
-              url: '/markup/system/component',
-            },
-            {
-              title: '메뉴 관리',
-              url: '/markup/system/menu',
-            },
-            {
-              title: '권한 그룹 관리',
-              url: '/markup/system/permissionGroups',
-            },
-            {
-              title: '사용자 권한 그룹 관리',
-              url: '/markup/system/userGroups',
-            },
-            {
-              title: '사용자 권한 관리',
-              url: '/markup/system/user',
-            },
-          ]
-        },
-        {
-          title:'코드 관리',
-          url: '#',
-        }
-      ],
-    },
     {
       title: '기업 관리',
       url: '#',
@@ -202,7 +166,32 @@ const data = {
           url: '/markup/basic/exchange-rate',
           isActive:false
         },
+        {
+          title: '창고 관리',
+          url: '/markup/basic/warehouse',
+          isActive:false
+        },
+        {
+          title: '판매처 관리',
+          childItem: [
+            {
+              title: '홀세일 판매처 관리',
+              url: '/markup/basic/whole-sale',
+              isActive:false
+            },
+            {
+              title: '오프라인 판매처 관리',
+              url: '/markup/basic/offline-sale',
+              isActive:false
+            },
+            {
+              title: '온라인 판매처 관리',
+              url: '/markup/basic/online-sale',
+              isActive:false
+            },
 
+          ]
+        },
       ],
     },
     {
@@ -317,6 +306,172 @@ const data = {
           url: '/markup/production/expected-receive',
         },
       ]
+    },
+    {
+      title: '물류 관리',
+      url: '#',
+      icon: Package,
+      isActive: false,
+      subItems: [
+        {
+          title:'물류 현황',
+
+        },
+        {
+          title:'물류 기본정보',
+
+        },
+        {
+          title:'입고 관리',
+          childItem: [
+            {
+              title: '입고 예정 관리',
+              url: '/markup/logistics/expected-receive',
+            },
+            {
+              title: '입고 확정',
+              url: '/markup/logistics/confirm-receive',
+            },
+            {
+              title: '입고 현황',
+              url: '/markup/logistics/status-receive',
+            },
+          ]
+        },
+        {
+          title:'재고 관리',
+
+        },
+        {
+          title:'출고 관리',
+
+        },
+        {
+          title:'교환/반품 처리',
+
+        },
+        {
+          title:'배송 관리',
+
+        },
+        {
+          title:'재고 실사',
+
+        },
+      ]
+    },
+    {
+      title: '외부 연동 관리',
+      url: '#',
+      icon: Blocks,
+      isActive: false,
+      subItems: [
+        {
+          title:'WMS 연동 관리',
+          childItem: [
+            {
+              title: '창고 연동 관리',
+              url: '/markup/integration/warehouse',
+            },
+            {
+              title: '매장(판매처) 연동 관리',
+              url: '/markup/integration/sales',
+            },
+            {
+              title: '입고처(업체) 연동 관리',
+              url: '/markup/integration/partner',
+            },
+            {
+              title: '상품(SKU) 연동 관리',
+              url: '/markup/integration/sku',
+            },
+          ]
+        },
+
+      ],
+    },
+    {
+      title: 'MD 관리',
+      url: '#',
+      icon: IdCard,
+      isActive: false,
+      subItems: [
+        {
+          title:'재고 배분관리',
+          childItem: [
+            {
+              title: '홀세일 수주 관리',
+              url: '/markup/md/whole-sale-order',
+            },
+            {
+              title: '해외직출 수주 관리',
+              url: '/markup/md/drop-ship-order',
+            },
+            {
+              title: '재고 가용화',
+              url: '/markup/md/stock-available',
+            },
+            {
+              title: '오프라인 일괄 배분',
+              url: '/markup/md/offline-allocation',
+            },
+            {
+              title: '온라인 일괄 배분',
+              url: '/markup/md/online-allocation',
+            },
+            {
+              title: '보충 요청 관리',
+              url: '/markup/md/stock-replenishment',
+            },
+            {
+              title: 'RT 요청 관리',
+              url: '/markup/md/replenishment-task',
+            },
+            {
+              title: '할인 설정 관리',
+              url: '/markup/md/discount-setting',
+            },
+          ]
+        },
+
+      ],
+    },
+    {
+      title: '시스템 관리',
+      url: '#',
+      icon: Settings,
+      isActive: false,
+      subItems: [
+        {
+          title:'권한 관리',
+          childItem: [
+            {
+              title: '컴포넌트 관리',
+              url: '/markup/system/component',
+            },
+            {
+              title: '메뉴 관리',
+              url: '/markup/system/menu',
+            },
+            {
+              title: '권한 그룹 관리',
+              url: '/markup/system/permissionGroups',
+            },
+            {
+              title: '사용자 권한 그룹 관리',
+              url: '/markup/system/userGroups',
+            },
+            {
+              title: '사용자 권한 관리',
+              url: '/markup/system/user',
+            },
+          ]
+        },
+        {
+          title:'코드 관리',
+          url: '#',
+        }
+      ],
     },
     {
       title: '컴포넌트 모음',

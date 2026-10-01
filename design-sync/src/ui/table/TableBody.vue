@@ -10,7 +10,7 @@ const props = defineProps<{
 <template>
   <tbody
     data-slot="table-body"
-    :class="cn('[&>tr]:hover:bg-primary-light', props.class)"
+    :class="cn(props.class)"
   >
     <slot />
   </tbody>

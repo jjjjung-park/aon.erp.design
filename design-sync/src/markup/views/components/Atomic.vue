@@ -563,7 +563,7 @@
         </td>
       </tr>
       <tr>
-        <th class="bg-slate-100">chips</th>
+        <th class="bg-slate-100">filter</th>
         <td>
           <Tags type="chip" closeable>default</Tags>
         </td>

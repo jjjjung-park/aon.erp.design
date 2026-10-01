@@ -16,7 +16,7 @@
     </UiTableCell>
   </template>
   <template v-else>
-    <UiTableCell :style="style" :class="[props.class, attrs.class]">
+    <UiTableCell :style="style" :class="['text-center', props.class, attrs.class]">
       <div :style="style">
         <slot>
           <p>{{ data }}</p>

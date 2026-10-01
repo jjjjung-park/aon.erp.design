@@ -1,7 +1,7 @@
 <template>
   <UiTooltipProvider>
     <UiTooltip>
-      <UiTooltipTrigger>
+      <UiTooltipTrigger class="flex items-center gap-1">
         <slot name="title"/>
       </UiTooltipTrigger>
       <UiTooltipContent :side="side" align="center" :variant="variant" class="flex flex-col gap-2">
