@@ -6,7 +6,7 @@
       <!--  dataAction도 prop으로    -->
       <template v-if="!$slots['data-action'] && dataAction">
         <div class="table-layout__data-action">
-          <p class="text-sm text-muted font-bold ">총 245건</p>
+          <p class="caption__bold text-muted">총 245건</p>
         </div>
       </template>
       <template v-else>

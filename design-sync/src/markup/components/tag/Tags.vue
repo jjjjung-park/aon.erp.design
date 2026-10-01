@@ -2,7 +2,7 @@
   <div :data-slot="props.type ?? 'tag'"
        :class="cn(
          tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag' }),
-         props.disabled && 'bg-disabled text-disabled-text border-border',
+         props.disabled && 'bg-disabled text-disabled-text border-transparent',
          props.class
        )">
     <slot>
@@ -28,6 +28,6 @@ type TagsProps = {
 
 const props = defineProps<TagsProps>()
 
-// type="chip"이면 기본 표시, closeable을 명시적으로 넘기면 그 값 우선, disabled면 항상 숨김
-const showClose = computed(() => (props.closeable ?? props.type === 'chip') && !props.disabled)
+// chip이어도 closeable을 명시적으로 true로 넘겨야 표시, disabled면 항상 숨김
+const showClose = computed(() => props.closeable && !props.disabled)
 </script>
