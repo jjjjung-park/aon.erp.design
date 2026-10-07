@@ -239,7 +239,7 @@ export const TdInteractive: Story = {
       <UiTable :class="args.secondary ? 'table-secondary' : ''">
         <UiTableHeader>
           <UiTableRow>
-            <Th :type="args.type === 'checkbox' || args.type === 'function' ? args.type : 'default'"
+            <Th :type="args.type === 'checkbox' ? 'checkbox' : (args.type === 'function' || args.type === 'radio') ? 'function' : 'default'"
                 :data="args.type === 'default' ? '컬럼' : ''" />
           </UiTableRow>
         </UiTableHeader>
@@ -253,8 +253,10 @@ export const TdInteractive: Story = {
   }),
   argTypes: {
     data:          { control: 'text',    description: '셀 텍스트 (슬롯 미사용 시)' },
-    type:          { control: 'select',  options: ['default', 'checkbox', 'function'], description: '셀 타입' },
-    checkDisabled: { control: 'boolean', description: '체크박스 비활성화 (type=checkbox)' },
+    type:          { control: 'select',  options: ['default', 'checkbox', 'radio', 'function'], description: '셀 타입' },
+    checkDisabled: { control: 'boolean', description: '체크박스/라디오 비활성화 (type=checkbox, radio)' },
+    radioValue:    { control: 'number',  description: '이 행의 값 (type=radio)' },
+    modelValue:    { control: 'number',  description: '현재 선택된 값 — radioValue와 같으면 체크 (type=radio)' },
     style:         { control: 'text',    description: '인라인 스타일 (width 등)' },
     secondary:     { control: 'boolean', description: 'table-secondary 클래스 적용' },
   },
@@ -262,6 +264,8 @@ export const TdInteractive: Story = {
     data: '셀 내용',
     type: 'default',
     checkDisabled: false,
+    radioValue: 1,
+    modelValue: 1,
     secondary: false,
   },
 }
@@ -288,6 +292,53 @@ export const TdTypes: Story = {
             <Td type="function">
               <UiButton variant="ghost" size="icon-sm"><LucideEllipsis /></UiButton>
             </Td>
+          </UiTableRow>
+        </UiTableBody>
+      </UiTable>
+    `,
+  }),
+}
+
+export const TdRadio: Story = {
+  name: 'Td — 라디오 (단일 선택)',
+  parameters: {
+    docs: {
+      description: {
+        story: '`type="radio"`는 셀마다 라디오 그룹을 하나씩 가진다. `v-model`(model-value)에는 모든 행이 **같은 값(현재 선택된 값)**을 공유하고, `radio-value`는 행마다 자기 값을 넘긴다. `model-value === radio-value`인 행만 체크된다. 헤더 첫 칸은 전체 선택이 없으므로 `Th type="function"`(빈 칸)을 쓴다.',
+      },
+    },
+  },
+  render: () => ({
+    components: { Th, Td },
+    setup() { return { selected: ref(1) } },
+    template: `
+      <UiTable class="table-secondary table-fixed w-full">
+        <UiTableHeader>
+          <UiTableRow>
+            <Th type="function" />
+            <Th data="쇼핑몰 주문 번호 (순번)" />
+            <Th data="주문자 / 연락처 · 수취인 / 연락처" />
+            <Th data="주소" />
+          </UiTableRow>
+        </UiTableHeader>
+        <UiTableBody>
+          <UiTableRow>
+            <Td type="radio" v-model="selected" :radio-value="1" />
+            <Td><div class="flex flex-col"><p>ORD20260802-1127100</p><p>(@101951676)</p></div></Td>
+            <Td><div class="flex flex-col"><p>김초롱초롱나들이 / 000-0000-0000</p><p>김초롱초롱나들이 / 000-0000-0000</p></div></Td>
+            <Td data="(456238) 서울 특별시 어딘가" />
+          </UiTableRow>
+          <UiTableRow>
+            <Td type="radio" v-model="selected" :radio-value="2" />
+            <Td><div class="flex flex-col"><p>ORD20260814-8185247</p><p>(@101402202)</p></div></Td>
+            <Td><div class="flex flex-col"><p>김초롱초롱나들이 / 000-0000-0000</p><p>김초롱초롱나들이 / 000-0000-0000</p></div></Td>
+            <Td data="(456238) 서울 특별시 어딘가" />
+          </UiTableRow>
+          <UiTableRow>
+            <Td type="radio" v-model="selected" :radio-value="3" />
+            <Td><div class="flex flex-col"><p>ORD20260814-8185247</p><p>(@101402201)</p></div></Td>
+            <Td><div class="flex flex-col"><p>김초롱초롱나들이 / 000-0000-0000</p><p>김초롱초롱나들이 / 000-0000-0000</p></div></Td>
+            <Td data="(456238) 서울 특별시 어딘가" />
           </UiTableRow>
         </UiTableBody>
       </UiTable>
