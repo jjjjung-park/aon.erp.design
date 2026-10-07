@@ -51,6 +51,7 @@
     "VariableID:194:10",
     "VariableID:194:11",
     "VariableID:194:12",
+    "VariableID:1445:10447",
     "VariableID:194:13",
     "VariableID:194:14",
     "VariableID:194:15",
@@ -1316,6 +1317,30 @@
           "resolvedValue": 32,
           "alias": "VariableID:189:9",
           "aliasName": "unit/32"
+        }
+      },
+      "scopes": [
+        "ALL_SCOPES"
+      ],
+      "hiddenFromPublishing": false,
+      "codeSyntax": {}
+    },
+    {
+      "id": "VariableID:1445:10447",
+      "name": "spacing/gap/xxs",
+      "description": "",
+      "type": "FLOAT",
+      "valuesByMode": {
+        "30:0": {
+          "type": "VARIABLE_ALIAS",
+          "id": "VariableID:188:776"
+        }
+      },
+      "resolvedValuesByMode": {
+        "30:0": {
+          "resolvedValue": 2,
+          "alias": "VariableID:188:776",
+          "aliasName": "unit/2"
         }
       },
       "scopes": [
