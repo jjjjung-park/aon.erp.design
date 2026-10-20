@@ -4,7 +4,7 @@
       <UiDialogHeader class="px-4 ">
         <!--    -mx-2 추가      -->
         <div :class="['flex justify-between items-center bg-background rounded-t-md h-14']">
-          <UiDialogTitle v-if="title">
+          <UiDialogTitle v-if="title || $slots.title">
             <slot name="title">{{title}}</slot>
           </UiDialogTitle>
           <div class="ml-auto flex items-center gap-2 justify-between h-5">

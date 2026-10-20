@@ -33,6 +33,7 @@ const meta: Meta = {
     },
     title:     { control: 'text',    description: '태그 텍스트' },
     disabled:  { control: 'boolean', description: '비활성화',       if: { arg: 'type', eq: 'chip' } },
+    size:      { control: 'radio',   options: ['default', 'sm'], description: '사이즈' },
   },
   args: {
     type: 'tag',
@@ -40,10 +41,11 @@ const meta: Meta = {
     filterVariant: 'secondary',
     title: '태그',
     disabled: false,
+    size: 'default',
   },
 }
 export default meta
-type Story = StoryObj<{ type: string; tagVariant: string; filterVariant: string; title: string; disabled: boolean }>
+type Story = StoryObj<{ type: string; tagVariant: string; filterVariant: string; title: string; disabled: boolean; size: string }>
 
 export const Default: Story = {
   name: 'Tags — 인터랙티브',
@@ -54,7 +56,7 @@ export const Default: Story = {
       const closeable = computed(() => args.type === 'chip')
       return { args, variant, closeable }
     },
-    template: `<Tags :type="args.type" :variant="variant" :title="args.title" :closeable="closeable" :disabled="args.type === 'chip' ? args.disabled : undefined" />`,
+    template: `<Tags :type="args.type" :variant="variant" :title="args.title" :closeable="closeable" :disabled="args.type === 'chip' ? args.disabled : undefined" :size="args.size" />`,
   }),
 }
 

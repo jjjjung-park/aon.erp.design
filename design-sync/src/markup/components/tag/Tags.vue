@@ -1,12 +1,12 @@
 <template>
   <div :data-slot="props.type ?? 'tag'"
        :class="cn(
-         tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag' }),
+         tagsVariants({ variant: props.variant ?? (props.type === 'chip' ? 'secondary' : 'default'), type: props.type ?? 'tag', size: props.size }),
          props.disabled && 'bg-disabled text-disabled-text border-transparent',
          props.class
        )">
     <slot>
-      <p class="truncate caption__bold">{{ title }}</p>
+      <p class="truncate">{{ title }}</p>
     </slot>
     <UiButton data-slot="close" v-if="showClose" variant="ghost" size="inline-icon-sm" class="text-inherit hover:bg-transparent"><LucideX/></UiButton>
   </div>
@@ -21,6 +21,7 @@ type TagsProps = {
   class?: HTMLAttributes["class"]
   title?: string
   disabled?: boolean
+  size?: 'default' | 'sm'
 } & (
   | { type?: 'tag';  variant?: 'default' | 'secondary' | 'outline' | 'info' | 'category'; closeable?: never }
   | { type: 'chip'; variant?: 'secondary' | 'outline'; closeable?: boolean }

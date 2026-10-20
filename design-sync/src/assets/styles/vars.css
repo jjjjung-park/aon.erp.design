@@ -99,17 +99,6 @@
   --border-brand: var(--color-blue-500);
   --border-brand-subtle: var(--color-blue-50);
 
-  /* icon */
-  --icon-default: var(--text-default);
-  --icon-neutral: var(--text-neutral);
-  --icon-brand: var(--text-brand);
-  --icon-muted: var(--text-muted);
-  --icon-disabled: var(--text-disabled);
-  --icon-subtle: var(--text-subtle);
-  --icon-danger: var(--text-danger);
-  --icon-success: var(--text-success);
-  --icon-warning: var(--text-warning);
-
   /* size */
   --size-xxs: var(--unit-12);
   --size-xs: var(--unit-16);
@@ -129,6 +118,7 @@
   --padding-xxl: var(--unit-32);
 
   /* spacing / gap */
+  --spacing-gap-xxs: var(--unit-2);
   --spacing-gap-xs: var(--unit-4);
   --spacing-gap-sm: var(--unit-8);
   --spacing-gap-md: var(--unit-12);
