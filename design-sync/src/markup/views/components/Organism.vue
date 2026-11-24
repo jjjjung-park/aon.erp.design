@@ -3,6 +3,55 @@
     <h1>organism
 <!--  <MyPlusIcon /> <MyPlayIcon /> <MyCloseIcon />    -->
     </h1>
+    <section>
+      <ul class="data-list">
+        <!-- 최대 경우의 수 -->
+        <li class="data-list__item data-list__item--selected">
+          <LucideCheck class="size-4 text-primary shrink-0 " />
+
+          <div class="data-list__body">
+              <!--    data-list__cont, data-list__group 은 양옆으로 나뉠때만 사용          -->
+            <div class="data-list__cont">
+              <div class="data-list__group">
+                <p class="font-bold">W530KALK W530KALK</p>
+                <UiBadge class="shrink-0" size="count">3</UiBadge>
+              </div>
+              <div class="data-list__group justify-end">
+                <span class="text-sm">right text right text</span>
+                <UiBadge variant="outline" class="shrink-0">예약중</UiBadge>
+              </div>
+            </div>
+
+            <div class="data-list__cont">
+              <span class="data-list__desc">
+                Summit Ridge Fleece Pullover Sum...
+              </span>
+              <div class="data-list__meta justify-end">
+                <!--      shrink-0 필요한데만          -->
+                <span class="shrink-0">2025</span> <UiSeparator orientation="vertical" size="sm"/>
+                <span>SS</span><UiSeparator orientation="vertical" size="sm"/>
+                <span class="">REA</span><UiSeparator orientation="vertical" size="sm"/>
+                <span>XL</span>
+              </div>
+            </div>
+
+            <!-- 3행: 자유 아이템 -->
+            <div class="data-list__slot">
+            </div>
+            <SelectBase placeholder="사유를 선택 해 주세요." />
+          </div>
+
+          <LucideCheck class="size-4 text-primary shrink-0 " />
+        </li>
+
+        <!-- 최소 경우의 수 -->
+        <li class="data-list__item">
+          <div class="data-list__body">
+            <p class="font-bold">W530KALK W530KALK</p>
+          </div>
+        </li>
+      </ul>
+    </section>
     <section class="flex gap-8">
       <section>
         <h2>pushAlert</h2>
@@ -18,7 +67,7 @@
         <SheetBase title="drawer title" description="drawer 타이틀이 있으면 이걸 사용" full-screen v-model:open="drawerOpen" :dimmed="true">
           <template #tab>
             <nav class="border-b-1 border-border px-6 bg-background">
-              <LineTabs :tab-list="tabList" class="data-[state=true]:after:bg-border"/>
+              <LineTabs :tab-list="tabList" class="data-[state=true]:after:bg-default"/>
             </nav>
           </template>
           <template #body>
@@ -140,7 +189,7 @@
                 <p class="font-bold mb-1">조회</p>
                 <span class="caption text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 <strong>미작성 항목</strong>을 선택 후 양식 다운로드 버튼을 클릭해주세요.</span>
               </div>
-              <div class="flex flex-col gap-3 p-4 bg-light">
+              <div class="flex flex-col gap-3 p-4 bg-surface-muted">
                 <div class="flex  gap-2  [&>*]:w-1/2">
                   <ComboboxTag placeholder="발매연도" :list-item="[{label:'2026',value:'val1'},{label:'2025',value:'val2'},{label:'2024',value:'val3'}]"/>
                   <ComboboxTag placeholder="발매 시즌" :list-item="[{label:'SS',value:'val1'},{label:'FW',value:'val2'}]"/>
@@ -154,7 +203,7 @@
                 </div>
               </div>
             </div>
-            <UiSeparator orientation="horizontal" class="!h-2 bg-surface-muted -mx-6 !w-auto"/>
+            <UiSeparator orientation="horizontal" />
           </template>
           <!--    필터가 없이 다운로드 버튼만 있을때    -->
           <template #file-action>
@@ -162,7 +211,7 @@
               <p class="caption !leading-normal text-muted">미작성된 케어라벨 항목만 다운로드를 원하시면 미작성 항목을 선택 후 양식 다운로드 버튼을 클릭해주세요.</p>
               <UiButton variant="outline" size="sm" class="ml-auto"><LucideDownload/>양식 다운로드</UiButton>
             </div>
-            <UiSeparator orientation="horizontal" class="!h-2 bg-surface-muted -mx-6 !w-auto"/>
+            <UiSeparator orientation="horizontal" />
           </template>
           <template #upload-message>
             <div class="text-muted caption text-center px-6 !leading-normal">
@@ -265,7 +314,7 @@
           <h2 class="">size-md</h2>
           <UiCard size="md" class="w-80 min-h-[64px]">
         <UiCardHeader class="flex items-center gap-2">
-          <div class="rounded-sm bg-subtle size-12"></div>
+          <div class="rounded-sm bg-surface-muted size-12"></div>
           <div class="flex flex-col gap-0">
             <p class="title__bold">메뉴 타이틀 영역</p>
             <p>서브 타이블 영역</p>
@@ -284,7 +333,7 @@
         </UiCardHeader>
         <UiCardFooter class="mt-2 justify-between items-start">
           <p>sample text</p>
-          <div class="rounded-full bg-subtle w-6 h-6"></div>
+          <div class="rounded-full bg-surface-muted w-6 h-6"></div>
         </UiCardFooter>
       </UiCard>
         </section>
@@ -293,7 +342,7 @@
 
     <section>
       <h2>검색용 아코디언</h2>
-      <PageSearch/>
+      <PageSearch filter/>
     </section>
 
     <section>
@@ -760,6 +809,7 @@ import Tags from "@/markup/components/tag/Tags.vue";
 import VirtualList from "@/markup/components/list/VirtualList.vue";
 import FileUploadModal from "@/markup/components/modal/FileUploadModal.vue";
 import {Alert, AlertTitle} from "@/components/ui/alert";
+import SelectBase from "@/markup/components/select/SelectBase.vue";
 
 
 const drawerOpen = ref<boolean>(false);

@@ -29,11 +29,7 @@
         </colgroup>
         <UiTableHeader class="sticky top-0 z-10">
           <UiTableRow>
-            <UiTableHead style="width:40px;">
-              <div style="width:40px;" >
-                <UiCheckbox/>
-              </div>
-            </UiTableHead>
+            <Th :type="'checkbox'"/>
             <UiTableHead style="width:250px;">
               <div style="width:250px;" class="text-center">
                 <div class="flex items-center gap-3">
@@ -128,6 +124,7 @@
 <script setup lang="ts">
 import TableLayout from "@/markup/components/table/TableLayout.vue";
 import {InputBase} from "@/markup/components/inputs";
+import Th from "@/markup/components/table/Th.vue";
 </script>
 <style scoped>
 

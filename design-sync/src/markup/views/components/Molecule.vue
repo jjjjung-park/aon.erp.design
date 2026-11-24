@@ -103,7 +103,7 @@
 
           </td>
           <td>
-            <ComboboxDisabled multiple readonly class="w-fit" :list-item="normalList"/>
+            <ComboboxTag multiple disabled class="w-fit" :list-item="normalList"/>
 
           </td>
         </tr>
@@ -153,12 +153,12 @@
       <h1>tabs</h1>
       <div class="my-5">
         <h2>line</h2>
-        <LineTabs :tab-list="[{label:'tab1', value:'tab1', active:true}, {label:'tab2', value:'tab2', active:false}]" />
-        <LineTabs :tab-list="[{label:'tab1', value:'tab1', active:true}, {label:'tab2', value:'tab2', active:false}]" class="data-[state=true]:after:bg-border mt-1"/>
+        <LineTabs :tab-list="tabList"  @change="onChange"/>
+        <LineTabs :tab-list="tabList"  @change=onChange class="mt-1" type="secondary"/>
       </div>
       <div class="my-5">
         <h2>box-tabs</h2>
-        <BoxTabs/>
+        <BoxTabs :tab-list="tabList" @change="onChange"/>
       </div>
       <div class="my-5">
         <h2>page-tabs</h2>
@@ -178,7 +178,7 @@
           <h3 class="title__bold">슬롯</h3>
           <InputFile>
             <p class="flex items-center gap-1 font-bold">
-              <LucidePaperclip :size="16"/>
+              <LucidePaperclip class="size-4"/>
               파일 첨부
             </p>
             <p class="text-muted caption text-center px-6">첨부할 파일을 드래그 또는 클릭하여 추가<br/>(300px, 300mb)</p>
@@ -213,7 +213,6 @@ import DateRange from "@/markup/components/datePicker/DateRange.vue";
 import DatePicker from "@/markup/components/datePicker/DatePicker.vue";
 import InputFile from "@/markup/components/inputs/InputFile.vue";
 import LoadingFull from "@/markup/components/loading/LoadingFull.vue";
-import ComboboxDisabled from "@/markup/components/select/ComboboxDisabled.vue";
 import FormItem from "@/markup/components/form/FormItem.vue";
 
 const virtualList = Array.from({ length: 620 }, (_, i) => ({
@@ -225,12 +224,24 @@ const normalList = [
   { value: 'sveltekit', label: 'SvelteKit', disabled: false },
   { value: 'nuxt', label: 'Nuxt', disabled: false },
   { value: 'remix', label: 'Remix', disabled: false },
-  { value: 'astro', label: 'Astro', disabled: false },
-
+  { value: 'astro', label: 'Astro', disabled: false }
 ]
+
 const loading = ref<boolean>(false)
 const value = ref<string>('')
 const alertShow = ref<boolean>(true)
+const tabList = ref([
+  { label: '전체',   value: 'all',      active: true,  disabled: false },
+  { label: '진행중', value: 'process',  active: false, disabled: false },
+  { label: '완료',   value: 'done',     active: false, disabled: false },
+  { label: '비활성', value: 'disabled', active: false, disabled: true  },
+])
+const activeTab = ref('all')
+const onChange = (val: string) => {
+  tabList.value.forEach(item => item.active = item.value === val);
+  activeTab.value = val;
+}
+
 </script>
 <style scoped>
 table{
