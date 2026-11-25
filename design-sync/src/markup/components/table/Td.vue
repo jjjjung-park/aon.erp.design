@@ -32,8 +32,8 @@
     </UiTableCell>
   </template>
   <template v-else>
-    <UiTableCell :style="style" :class="['text-center', props.class, attrs.class]">
-      <div :style="style">
+    <UiTableCell :style="style" :class="['text-center', props.class, attrs.class]" :title="cellTitle">
+      <div :style="style" ref="cellRef">
         <slot>
           <p>{{ data }}</p>
         </slot>
@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import type {HTMLAttributes} from "vue";
-import { useAttrs } from 'vue'
+import { computed, ref, useAttrs } from 'vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -65,6 +65,10 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{ 'update:modelValue': [value: string | number | undefined] }>()
 
 const attrs = useAttrs()
+const cellRef = ref<HTMLElement | null>(null)
+const cellTitle = computed<string | undefined> (() =>
+  (attrs.title as string | undefined) ?? (cellRef.value?.innerText.replace(/\n+/g, '\n').trim() || undefined)
+)
 </script>
 
 <style scoped>

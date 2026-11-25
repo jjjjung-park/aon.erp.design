@@ -8,7 +8,7 @@
 
       </UiSidebarHeader>
 
-      <UiSidebarContent>
+      <UiSidebarContent class="[&_[data-slot=scroll-area-thumb]]:opacity-0">
         <MainMenuIcon :items="data.mainMenu" :activeItem="activeItem" @update:activeItem="updateActiveItem"/>
       </UiSidebarContent>
 

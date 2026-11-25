@@ -460,31 +460,7 @@
   <section>
     <h1>badge</h1>
     <table class="w-full">
-      <thead class="bg-slate-300">
-      <tr>
-        <th></th>
-        <th>default</th>
-        <th>secondary</th>
-        <th>outline</th>
-        <th>destructive</th>
-      </tr>
-      </thead>
       <tbody>
-      <tr>
-        <th class="bg-slate-100">기본</th>
-        <td>
-          <UiBadge variant="info">info</UiBadge>
-        </td>
-        <td>
-          <UiBadge variant="process">process</UiBadge>
-        </td>
-        <td>
-          <UiBadge variant="outline">outline</UiBadge>
-        </td>
-        <td>
-
-        </td>
-      </tr>
       <tr class="bg-slate-300">
         <th></th>
         <th>progress</th>
@@ -492,9 +468,10 @@
         <th>reject</th>
         <th>hold</th>
         <th>info</th>
+        <th>outline</th>
       </tr>
       <tr>
-        <th class="bg-slate-100">status</th>
+        <th class="bg-slate-100">진행 상태</th>
         <td>
           <UiBadge variant="process">진행</UiBadge>
         </td>
@@ -510,16 +487,32 @@
         <td>
           <UiBadge variant="info">정보</UiBadge>
         </td>
+        <td>
+          <UiBadge variant="outline">미확정</UiBadge>
+        </td>
+      </tr>
+      <tr class="bg-slate-300">
+        <th></th>
+        <th>active</th>
+        <th>inActive</th>
+      </tr>
+      <tr>
+        <th class="bg-slate-100">이진 상태</th>
+        <td>
+          <UiBadge variant="active">사용</UiBadge>
+        </td>
+        <td>
+          <UiBadge variant="inActive">미사용</UiBadge>
+        </td>
       </tr>
       <tr class="bg-slate-300">
         <th></th>
         <th>1자리</th>
         <th>3자리이상</th>
         <th>알림</th>
-        <th>small</th>
       </tr>
       <tr>
-        <th class="bg-slate-100">count</th>
+        <th class="bg-slate-100">count/알림</th>
         <td>
           <UiBadge size="count">1</UiBadge>
         </td>
@@ -527,7 +520,7 @@
           <UiBadge size="count" class="bg-danger text-neutral"><LucideThumbsDown/>999+</UiBadge>
         </td>
         <td>
-          <UiBadge size="dot" class="bg-danger"></UiBadge>
+          <UiBadge size="dot" class="bg-primary"></UiBadge>
         </td>
       </tr>
       </tbody>
@@ -549,32 +542,32 @@
       <tr>
         <th class="bg-slate-100">tag</th>
         <td>
-          <Tags>default</Tags>
+          <Tags>핵심 식별</Tags>
         </td>
         <td>
-          <Tags variant="secondary">secondary</Tags>
+          <Tags variant="secondary">선택 상태</Tags>
         </td>
         <td>
-          <Tags variant="outline">outline</Tags>
+          <Tags variant="outline">부가 정보</Tags>
         </td>
         <td>
-          <Tags variant="info">outline</Tags>
+          <Tags variant="info">고정 식별</Tags>
 
         </td>
       </tr>
       <tr>
-        <th class="bg-slate-100">filter</th>
+        <th class="bg-slate-100">chip</th>
         <td>
-          <Tags type="chip" closeable>default</Tags>
+          <Tags type="chip" variant="default" closeable>선택완료된 태그</Tags>
         </td>
         <td>
-          <Tags type="chip" variant="secondary" closeable>secondary</Tags>
+          <Tags type="chip" variant="secondary" closeable>선택한 태그</Tags>
         </td>
         <td>
-          <Tags type="chip" variant="outline" closeable>outline</Tags>
+          <Tags type="chip" variant="outline" closeable>미선택 태그</Tags>
         </td>
         <td>
-          <Tags type="chip" variant="info" closeable>outline</Tags>
+          <Tags type="chip" variant="info" disabled closeable>비활성 태그</Tags>
 
         </td>
       </tr>

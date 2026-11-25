@@ -22,6 +22,7 @@ export const MainLayout: Story = {
   parameters: { layout: 'fullscreen', docs: { story: { height: '400px' } } },
   argTypes: {
     // 사이드바
+    isSidebar:        { control: 'boolean', description: '좌측 메뉴 사용 여부',    table: { category: '사이드바' } },
     sidebarOpen:        { control: 'boolean', description: '좌측 메뉴 열림 여부',    table: { category: '사이드바' } },
     // 헤더
     multiBrand:         { control: 'boolean', description: '브랜드 선택 셀렉트',      table: { category: '헤더' } },
@@ -40,6 +41,7 @@ export const MainLayout: Story = {
     showSearch:         { control: 'boolean', description: '검색 영역 표시',           table: { category: '검색 영역' }, if: { arg: 'layout', neq: '빈화면' } },
     searchFilter:       { control: 'boolean', description: '조회 저장 필터',           table: { category: '검색 영역' }, if: { arg: 'layout', neq: '빈화면' } },
     // 테이블 영역
+    showTable:  { control: 'boolean', description: '테이블 노출',       table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
     showDataActionArea:  { control: 'boolean', description: '데이터 건수 영역',       table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
     showTableActionArea: { control: 'boolean', description: '테이블 액션 버튼 영역',  table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
     showTableFilter:     { control: 'boolean', description: '키워드 검색 버튼',       table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
@@ -49,22 +51,24 @@ export const MainLayout: Story = {
     tableEmptyData:      { control: 'boolean', description: '데이터 없음 상태',        table: { category: '테이블 영역' }, if: { arg: 'layout', neq: '빈화면' } },
   },
   args: {
-    sidebarOpen: false,
-    multiBrand: true,
-    showAlarm: true,
-    showSettings: true,
+    isSidebar:true,
+    sidebarOpen: true,
+    multiBrand: false,
+    showAlarm: false,
+    showSettings: false,
     showAvatar: true,
-    showPageTabs: true,
+    showPageTabs: false,
     layout: '기본',
     showTitle: true, // 항상 표시
-    showSubTitle: true,
-    showMainBtn: true,
+    showSubTitle: false,
+    showMainBtn: false,
     showContentTab: false,
     showTabTitle: false,
     showSubBtn: false,
     showSplitTab: false,
-    showSearch: true,
+    showSearch: false,
     searchFilter: false,
+    showTable: false,
     showDataActionArea: true,
     showTableActionArea: true,
     showTableFilter: true,
@@ -98,12 +102,12 @@ export const MainLayout: Story = {
     },
     template: `
       <UiSidebarProvider :key="args.sidebarOpen" :defaultOpen="args.sidebarOpen" class="min-h-full">
-        <LeftSidebar />
+        <LeftSidebar v-if="args.isSidebar" />
         <UiSidebarInset class="overflow-hidden">
 
           <!-- 헤더 -->
           <header class="flex h-10 shrink-0 items-center w-full px-5 gap-3 bg-background border-b-1 border-border">
-            <UiSidebarTrigger variant="outline" size="icon-sm" />
+            <UiSidebarTrigger variant="outline" size="icon-sm" v-if="args.isSidebar" />
             <div class="flex items-center justify-between w-full">
               <div v-if="!args.multiBrand" class="flex gap-2 items-center">
                 <span class="truncate">THISISNEVERTHAT</span>
@@ -160,7 +164,7 @@ export const MainLayout: Story = {
             <section class="border-b border-border px-8 flex-none">
               <header class="contents-header">
                 <div class="contents-header__title">
-                  <h2>화면 명</h2>
+                  <h2>성수 플래그십 스토어</h2>
                   <span v-if="args.showSubTitle">화면 설명이 들어갑니다</span>
                 </div>
                 <div v-if="args.showMainBtn" class="contents-header__button">
@@ -197,6 +201,7 @@ export const MainLayout: Story = {
               </section>
               <TableLayout
                 class="flex-1 min-h-0"
+                v-if="args.showTable"
                 :table-top="args.showDataActionArea || args.showTableActionArea"
                 :data-action="args.showDataActionArea"
                 :table-action="args.showTableActionArea"

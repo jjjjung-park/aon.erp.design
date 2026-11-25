@@ -138,11 +138,11 @@
   }
 
   .table-secondary th {
-    @apply !h-8 bg-surface-muted !text-xs !border-border text-muted !font-normal;
+    @apply !h-8 !min-h-8 !max-h-10 bg-surface-muted !text-xs !border-border text-muted !font-normal;
   }
 
-  .table-secondary tbody tr:first-child td,
-  .table-secondary tbody tr:first-child th {
+  .table-secondary tbody tr:first-child:not([data-state='selected']) td,
+  .table-secondary tbody tr:first-child:not([data-state='selected']) th {
     @apply !border-t-0;
   }
 
@@ -535,6 +535,7 @@
     @apply flex flex-col gap-1;
   }
   /* 여러단 용 클래스 추가 */
+  /* 디자인은 h4와 컨텐츠 사이 간격 12지만 h4 높이가 24로 돼있어서 걍 갭 16으로 통일 */
   .list-layout--grid {
     @apply !grid grid-cols-1 gap-y-4 !gap-x-6 p-6;
   }
@@ -543,11 +544,12 @@
     @apply pt-4;
   }
   .list-layout--grid h4 {
-    @apply font-bold;
+    @apply font-bold text-sm;
   }
   .list-layout--grid > h4 {
     @apply col-span-full;
   }
+
   /* 2열 */
   @container (min-width: 960px) {
     .list-layout--grid {
@@ -643,5 +645,6 @@
 
 /*dashboard card*/
 .card-type--dashboard{
-  @apply flex-wrap flex-row gap-4 [&_dl]:flex-1 [&_dl]:pr-4 [&_dl:not(:first-child)]:relative [&_dl:not(:first-child)]:before:content-[''] [&_dl:not(:first-child)]:before:absolute [&_dl:not(:first-child)]:before:w-px [&_dl:not(:first-child)]:before:bg-border [&_dl:not(:first-child)]:before:h-12 [&_dl:not(:first-child)]:before:-left-4
+  @apply flex-wrap flex-row gap-4 [&_dl]:flex-1 [&_dl]:pr-4 [&_dl:not(:first-child)]:relative [&_dl:not(:first-child)]:before:content-[''] [&_dl:not(:first-child)]:before:absolute [&_dl:not(:first-child)]:before:w-px [&_dl:not(:first-child)]:before:bg-border [&_dl:not(:first-child)]:before:h-full [&_dl:not(:first-child)]:before:-left-4
 }
+

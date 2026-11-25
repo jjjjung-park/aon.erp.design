@@ -238,11 +238,36 @@ const preview: Preview = {
     },
   },
 
+  // 툴바에서 디자인 모드(ERP/POS) 전환 — <html data-mode="pos"> (속성 없음 = ERP)
+  // Dialog·Sheet는 body로 포털 이동하므로 래퍼가 아니라 html에 걸어야 한다.
+  globalTypes: {
+    mode: {
+      description: '디자인 모드',
+      toolbar: {
+        title: '모드',
+        icon: 'paintbrush',
+        items: [
+          { value: 'erp', title: 'ERP' },
+          { value: 'pos', title: 'POS' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    mode: 'erp',
+  },
+
   decorators: [
-    (story) => ({
-      components: { story },
-      template: '<story />',
-    })
+    (story, context) => {
+      const el = document.documentElement
+      if (context.globals.mode === 'pos') el.dataset.mode = 'pos'
+      else delete el.dataset.mode
+      return {
+        components: { story },
+        template: '<story />',
+      }
+    }
   ],
 }
 
