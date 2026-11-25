@@ -30,5 +30,9 @@ coverage/
 ## Local reference (프로젝트 분석용 임시 복사본)
 _reference/
 
+## Local docs (개인 작업용 문서, 커밋 대상 아님)
+design-sync/docs/figma-snapshots/
+토큰작업-가이드.md
+
 *storybook.log
 storybook-static
